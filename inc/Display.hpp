@@ -2,6 +2,7 @@
 #define DISPLAY_HPP
 #include <SDL2/SDL.h>
 #include "Texture.hpp"
+#include "Vector2.hpp"
 
 class Display
 {
@@ -18,7 +19,7 @@ public:
     bool init();
     bool loadTextures();
     void close();
-    void RenderAll();
+    void RenderAll(Vector2 playerPos);
 };
 
 

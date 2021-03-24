@@ -1,5 +1,7 @@
 #include "../inc/GameObj.hpp"
 #include "../inc/Display.hpp"
+#include "../inc/Player.hpp"
+#include "../inc/Vector2.hpp"
 #include <SDL2/SDL.h>
 
 GameObj::GameObj()
@@ -31,6 +33,7 @@ void GameObj::start()
 
 			//Event handler
 			SDL_Event e;
+			Player p1{};
 
 			//While application is running
 			while( !quit )
@@ -44,7 +47,9 @@ void GameObj::start()
 						quit = true;
 					}
 				}
-				gDisp.RenderAll();
+				Vector2 p1Pos = p1.update();
+
+				gDisp.RenderAll(p1Pos);
 			}
 		}
 	}

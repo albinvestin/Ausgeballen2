@@ -1,5 +1,6 @@
 #include "../inc/Display.hpp"
 #include "../inc/Texture.hpp"
+#include "../inc/Vector2.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
 // extern SDL_Renderer* gRenderer;
@@ -105,7 +106,7 @@ void Display::close()
     IMG_Quit();
 }
 
-void Display::RenderAll()
+void Display::RenderAll(Vector2 playerPos)
 {
     //Clear screen
     SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
@@ -115,7 +116,7 @@ void Display::RenderAll()
     gBackgroundTexture.render( 0, 0, gRenderer );
 
     //Render Foo' to the screen
-    gFooTexture.render( 240, 190, gRenderer );
+    gFooTexture.render( playerPos.x, playerPos.y, gRenderer );
 
     //Update screen
     SDL_RenderPresent( gRenderer );
