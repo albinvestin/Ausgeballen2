@@ -15,14 +15,14 @@ GameObj::~GameObj()
 void GameObj::start()
 {
     //Start up SDL and create window
-	if( !gDisp.init() )
+	if( !mDisplay.init() )
 	{
 		printf( "Failed to initialize!\n" );
 	}
 	else
 	{
 		//Load media
-		if( !gDisp.loadTextures() )
+		if( !mDisplay.loadTextures() )
 		{
 			printf( "Failed to load media!\n" );
 		}
@@ -47,9 +47,9 @@ void GameObj::start()
 						quit = true;
 					}
 				}
-				Vector2 p1Pos = p1.update();
+				Vec2 p1Pos = p1.update();
 
-				gDisp.RenderAll(p1Pos);
+				mDisplay.RenderAll(p1Pos);
 			}
 		}
 	}
@@ -57,7 +57,7 @@ void GameObj::start()
 
 void GameObj::close()
 {
-    gDisp.close();
+    mDisplay.close();
 
 	//Quit SDL subsystems
 	SDL_Quit();

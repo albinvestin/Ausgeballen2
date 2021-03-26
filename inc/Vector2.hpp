@@ -1,6 +1,6 @@
 #ifndef VECTOR2_HPP
 #define VECTOR2_HPP
-struct Vector2
+struct Vec2
 {
     int x, y = 0;
 };

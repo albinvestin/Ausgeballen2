@@ -5,7 +5,7 @@
 class GameObj
 {
 private:
-    Display gDisp{};
+    Display mDisplay{};
 public:
     GameObj();
     ~GameObj();

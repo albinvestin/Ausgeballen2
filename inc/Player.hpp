@@ -5,11 +5,11 @@
 class Player
 {
 private:
-    Vector2 mPos, mVel;
+    Vec2 mPos, mVel;
 public:
     Player();
     ~Player();
-    Vector2 update();
+    Vec2 update();
 };
 
 

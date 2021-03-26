@@ -3,7 +3,7 @@
 #include <SDL2/SDL.h>
 
 Player::Player()
-    : mPos(Vector2{100,100}), mVel(Vector2{1,1})
+    : mPos(Vec2{100,100}), mVel(Vec2{1,1})
 {
 }
 
@@ -11,7 +11,7 @@ Player::~Player()
 {
 }
 
-Vector2 Player::update()
+Vec2 Player::update()
 {
     mPos.x += mVel.x;
     mPos.y += mVel.y;

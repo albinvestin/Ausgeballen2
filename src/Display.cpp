@@ -36,8 +36,8 @@ bool Display::init()
 		}
 
 		//Create window
-		gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
-		if( gWindow == NULL )
+		mWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+		if( mWindow == NULL )
 		{
 			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
 			success = false;
@@ -45,8 +45,8 @@ bool Display::init()
 		else
 		{
 			//Create renderer for window
-			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
-			if( gRenderer == NULL )
+			mRenderer = SDL_CreateRenderer( mWindow, -1, SDL_RENDERER_ACCELERATED );
+			if( mRenderer == NULL )
 			{
 				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
 				success = false;
@@ -54,7 +54,7 @@ bool Display::init()
 			else
 			{
 				//Initialize renderer color
-				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+				SDL_SetRenderDrawColor( mRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 
 				//Initialize PNG loading
 				int imgFlags = IMG_INIT_PNG;
@@ -76,14 +76,14 @@ bool Display::loadTextures()
 	bool success = true;
 
 	//Load Foo' texture
-	if( !gFooTexture.loadFromFile( "../res/dot.bmp", gRenderer ) )
+	if( !mBallTexture.loadFromFile( "../res/dot.bmp", mRenderer ) )
 	{
 		printf( "Failed to load Foo' texture image!\n" );
 		success = false;
 	}
 	
 	//Load background texture
-	if( !gBackgroundTexture.loadFromFile( "../res/heart.png", gRenderer ) )
+	if( !mHearthTexture.loadFromFile( "../res/heart.png", mRenderer ) )
 	{
 		printf( "Failed to load background texture image!\n" );
 		success = false;
@@ -94,30 +94,30 @@ bool Display::loadTextures()
 
 void Display::close()
 {
-    gFooTexture.free();
-	gBackgroundTexture.free();
+    mBallTexture.free();
+	mHearthTexture.free();
 
-    SDL_DestroyRenderer( gRenderer );
-	gRenderer = NULL;
-    SDL_DestroyWindow( gWindow );
-	gWindow = NULL;
+    SDL_DestroyRenderer( mRenderer );
+	mRenderer = NULL;
+    SDL_DestroyWindow( mWindow );
+	mWindow = NULL;
 
     // Quit SDL2_image system
     IMG_Quit();
 }
 
-void Display::RenderAll(Vector2 playerPos)
+void Display::RenderAll(Vec2 playerPos)
 {
     //Clear screen
-    SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-    SDL_RenderClear( gRenderer );
+    SDL_SetRenderDrawColor( mRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+    SDL_RenderClear( mRenderer );
 
     //Render background texture to screen
-    gBackgroundTexture.render( 0, 0, gRenderer );
+    mHearthTexture.render( 0, 0, mRenderer );
 
     //Render Foo' to the screen
-    gFooTexture.render( playerPos.x, playerPos.y, gRenderer );
+    mBallTexture.render( playerPos.x, playerPos.y, mRenderer );
 
     //Update screen
-    SDL_RenderPresent( gRenderer );
+    SDL_RenderPresent( mRenderer );
 }

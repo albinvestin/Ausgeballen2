@@ -9,17 +9,17 @@ class Display
 private:
     const int SCREEN_WIDTH = 640;
     const int SCREEN_HEIGHT = 480;
-    SDL_Window* gWindow = NULL;
-    SDL_Renderer* gRenderer = NULL;
-    LTexture gFooTexture;
-    LTexture gBackgroundTexture;
+    SDL_Window* mWindow = NULL;
+    SDL_Renderer* mRenderer = NULL;
+    LTexture mBallTexture;
+    LTexture mHearthTexture;
 public:
     Display();
     ~Display();
     bool init();
     bool loadTextures();
     void close();
-    void RenderAll(Vector2 playerPos);
+    void RenderAll(Vec2 playerPos);
 };
 
 
