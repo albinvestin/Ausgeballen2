@@ -40,6 +40,7 @@ void GameObj::start()
 			Player p1{};
 			InputHandler inputHandler{};
 			Vec2 p1Pos;
+			float p1AimDir;
 
 			//While application is running
 			while( input != quit )
@@ -48,10 +49,11 @@ void GameObj::start()
 				
 				if (input == player1Key)
 				{
-					p1Pos = p1.update();
+					p1Pos = p1.updatePos();
 				}
+				p1AimDir = p1.updateAimDirection();
 
-				mDisplay.RenderAll(p1Pos);
+				mDisplay.RenderAll(p1Pos, p1AimDir);
 			}
 		}
 	}

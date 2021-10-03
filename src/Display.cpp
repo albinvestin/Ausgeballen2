@@ -8,6 +8,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #endif
+#include <math.h>
 
 // extern SDL_Renderer* gRenderer;
 // extern SDL_Window* gWindow;
@@ -112,17 +113,26 @@ void Display::close()
     IMG_Quit();
 }
 
-void Display::RenderAll(Vec2 playerPos)
+void Display::RenderAll(Vec2 playerPos, float angle) // TODO: give angle and pos in some better way to display.
 {
     //Clear screen
     SDL_SetRenderDrawColor( mRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
     SDL_RenderClear( mRenderer );
 
     //Render background texture to screen
-    mHearthTexture.render( 0, 0, mRenderer );
+    // mHearthTexture.render( 0, 0, mRenderer );
 
     //Render Foo' to the screen
     mBallTexture.render( playerPos.x, playerPos.y, mRenderer );
+
+	// Render player1 shooting direction
+	SDL_SetRenderDrawColor(mRenderer, 0, 0, 255, 150);
+
+	int centerX = playerPos.x+10;
+	int centerY = playerPos.y+10;
+
+	SDL_RenderDrawLine(mRenderer, centerX, centerY, centerX + cos(angle)*20, centerY + sin(angle)*20);
+
 
     //Update screen
     SDL_RenderPresent( mRenderer );

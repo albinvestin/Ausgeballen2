@@ -23,7 +23,7 @@ public:
     bool init();
     bool loadTextures();
     void close();
-    void RenderAll(Vec2 playerPos);
+    void RenderAll(Vec2 playerPos, float playerAimDir);
 };
 
 

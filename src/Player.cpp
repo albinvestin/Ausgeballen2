@@ -15,7 +15,7 @@ Player::~Player()
 {
 }
 
-Vec2 Player::update()
+Vec2 Player::updatePos()
 {
     mPos.x += mVel.x;
     mPos.y += mVel.y;
@@ -31,3 +31,12 @@ Vec2 Player::update()
 }
 
 
+float Player::updateAimDirection()
+{
+    mAimDirection += 3.14/3200;
+	if (mAimDirection > 2*3.14)
+	{
+		mAimDirection = 0;
+	}
+    return mAimDirection;
+}
