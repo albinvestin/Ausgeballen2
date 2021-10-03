@@ -2,6 +2,7 @@
 #include "../inc/Display.hpp"
 #include "../inc/Player.hpp"
 #include "../inc/Vector2.hpp"
+#include "../inc/InputHandler.hpp"
 #ifdef __APPLE__
 #include <SDL2/SDL.h>
 #else
@@ -32,26 +33,23 @@ void GameObj::start()
 		}
 		else
 		{	
-			//Main loop flag
-			bool quit = false;
-
-			//Event handler
-			SDL_Event e;
+			int input;
+			int quit = 1; // TODO: make a DEFINE.
+			int player1Key = 2; // TODO; make DEFINE
+			
 			Player p1{};
+			InputHandler inputHandler{};
+			Vec2 p1Pos;
 
 			//While application is running
-			while( !quit )
+			while( input != quit )
 			{
-				//Handle events on queue
-				while( SDL_PollEvent( &e ) != 0 )
+				input = inputHandler.EventHandler();
+				
+				if (input == player1Key)
 				{
-					//User requests quit
-					if( e.type == SDL_QUIT )
-					{
-						quit = true;
-					}
+					p1Pos = p1.update();
 				}
-				Vec2 p1Pos = p1.update();
 
 				mDisplay.RenderAll(p1Pos);
 			}
