@@ -1,6 +1,10 @@
 #ifndef DISPLAY_HPP
 #define DISPLAY_HPP
+#ifdef __APPLE__
 #include <SDL2/SDL.h>
+#else
+#include <SDL.h>
+#endif
 #include "Texture.hpp"
 #include "Vector2.hpp"
 

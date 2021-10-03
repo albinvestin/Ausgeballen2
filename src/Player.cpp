@@ -1,6 +1,10 @@
 #include "../inc/Player.hpp"
 #include "../inc/Vector2.hpp"
+#ifdef __APPLE__
 #include <SDL2/SDL.h>
+#else
+#include <SDL.h>
+#endif
 
 Player::Player()
     : mPos(Vec2{100,100}), mVel(Vec2{1,1})

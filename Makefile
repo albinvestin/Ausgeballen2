@@ -24,7 +24,14 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 # The -MMD and -MP flags together generate Makefiles for us!
 # These files will have .d instead of .o as the output.
 CPPFLAGS := $(INC_FLAGS) -MMD -MP
-LDFLAGS = -framework SDL2 -framework SDL2_image -F /Library/Frameworks -I /Library/Frameworks/SDL2.framework/Headers -I /Library/Frameworks/SDL2_image.framework/Headers
+
+ifeq ($(OS),Windows_NT)
+	# is Windows_NT on XP, 2000, 7, Vista, 10...
+	LDFLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -LC:\MINGWdev\lib
+	CPPFLAGS += -IC:\MINGWdev\include\SDL2
+else
+	LDFLAGS = -framework SDL2 -framework SDL2_image -F /Library/Frameworks -I /Library/Frameworks/SDL2.framework/Headers -I /Library/Frameworks/SDL2_image.framework/Headers
+endif
 CXXFLAGS = -Wall -Wextra -Wpedantic
 
 # The final build step.

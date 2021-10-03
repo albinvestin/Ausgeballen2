@@ -2,7 +2,11 @@
 #include "../inc/Display.hpp"
 #include "../inc/Player.hpp"
 #include "../inc/Vector2.hpp"
+#ifdef __APPLE__
 #include <SDL2/SDL.h>
+#else
+#include <SDL.h>
+#endif
 
 GameObj::GameObj()
 {

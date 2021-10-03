@@ -1,8 +1,14 @@
 #include "../inc/Display.hpp"
 #include "../inc/Texture.hpp"
 #include "../inc/Vector2.hpp"
+#ifdef __APPLE__
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
+#else
+#include <SDL.h>
+#include <SDL_image.h>
+#endif
+
 // extern SDL_Renderer* gRenderer;
 // extern SDL_Window* gWindow;
 // extern LTexture gFooTexture;
