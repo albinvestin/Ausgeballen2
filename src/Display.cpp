@@ -125,6 +125,11 @@ void Display::RenderAll(EntityHandler entities)
     //Render background texture to screen
     // mHearthTexture.render( 0, 0, mRenderer );
 
+	// Render bullets
+	//SDL_SetRenderDrawColor( mRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+	Vec2 bulletPos = entities.GetBullet1Pos();
+	mHearthTexture.render( bulletPos.x, bulletPos.y, mRenderer );
+
     //Render Foo' to the screen
 	Vec2 playerPos = entities.GetP1Pos();
 	float angle = entities.GetP1Aim();
@@ -138,7 +143,6 @@ void Display::RenderAll(EntityHandler entities)
 	int centerY = playerPos.y+10;
 
 	SDL_RenderDrawLine(mRenderer, centerX, centerY, centerX + cos(angle)*20, centerY + sin(angle)*20);
-
 
     //Update screen
     SDL_RenderPresent( mRenderer );

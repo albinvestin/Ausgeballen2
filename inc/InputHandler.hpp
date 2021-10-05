@@ -17,7 +17,7 @@ class InputHandler
 private:
     SDL_Event mEvent;
     //std::vector<SDL_KeyCode> mPlayerKeys; Should I use a std::map?
-    enum returnValues {noinput = 0, quit = 1, player1Key}; // TODO: use better camelcase?
+    enum returnValues {noinput = 0, quit = 1, player1Key, player1Bullet}; // TODO: use better camelcase?
 public:
     InputHandler();
     ~InputHandler();

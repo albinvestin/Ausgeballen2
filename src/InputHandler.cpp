@@ -26,6 +26,13 @@ int InputHandler::EventHandler()
         {
             returnValue = quit;
         }
+        else if(mEvent.type == SDL_KEYDOWN)
+        {
+            if (mEvent.key.keysym.sym == SDLK_b)
+            {
+                returnValue = player1Bullet;
+            }
+        }
         // else if(mEvent.type == SDL_KEYDOWN)
         // {
         //     switch( mEvent.key.keysym.sym )
