@@ -1,6 +1,6 @@
 #ifndef DISPLAY_HPP
 #define DISPLAY_HPP
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(__linux__)
 #include <SDL2/SDL.h>
 #else
 #include <SDL.h>

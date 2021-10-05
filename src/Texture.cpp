@@ -1,7 +1,10 @@
 #include "../inc/Texture.hpp"
-#ifdef __APPLE__
-#include <SDL2_image/SDL_image.h>
+#if defined(__APPLE__)
 #include <SDL2/SDL.h>
+#include <SDL2_image/SDL_image.h>
+#elif defined(__linux)
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #else
 #include <SDL_image.h>
 #include <SDL.h>

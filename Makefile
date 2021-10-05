@@ -30,7 +30,14 @@ ifeq ($(OS),Windows_NT)
 	LDFLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -LC:\MINGWdev\lib
 	CPPFLAGS += -IC:\MINGWdev\include\SDL2
 else
-	LDFLAGS = -framework SDL2 -framework SDL2_image -F /Library/Frameworks -I /Library/Frameworks/SDL2.framework/Headers -I /Library/Frameworks/SDL2_image.framework/Headers
+	UNAME_S := $(shell uname -s)
+	ifeq ($(UNAME_S),Linux)
+		# Linux
+		LDFLAGS = -lSDL2 -lSDL2_image
+    else
+		# Apple
+		LDFLAGS = -framework SDL2 -framework SDL2_image -F /Library/Frameworks -I /Library/Frameworks/SDL2.framework/Headers -I /Library/Frameworks/SDL2_image.framework/Headers
+	endif
 endif
 CXXFLAGS = -Wall -Wextra -Wpedantic
 
