@@ -3,6 +3,7 @@
 #include "../inc/Player.hpp"
 #include "../inc/Vector2.hpp"
 #include "../inc/InputHandler.hpp"
+#include "../inc/EntityHandler.hpp"
 #if defined(__APPLE__) || defined(__linux__)
 #include <SDL2/SDL.h>
 #else
@@ -35,25 +36,18 @@ void GameObj::start()
 		{	
 			int input;
 			int quit = 1; // TODO: make a DEFINE.
-			int player1Key = 2; // TODO; make DEFINE
 			
-			Player p1{};
+			EntityHandler entities{};
+			//Player p1{};
 			InputHandler inputHandler{};
-			Vec2 p1Pos;
-			float p1AimDir;
 
 			//While application is running
 			while( input != quit )
 			{
 				input = inputHandler.EventHandler();
+				entities.Update(input);
 				
-				if (input == player1Key)
-				{
-					p1Pos = p1.updatePos();
-				}
-				p1AimDir = p1.updateAimDirection();
-
-				mDisplay.RenderAll(p1Pos, p1AimDir);
+				mDisplay.RenderAll(entities);
 			}
 		}
 	}

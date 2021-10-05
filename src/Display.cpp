@@ -116,7 +116,7 @@ void Display::close()
     IMG_Quit();
 }
 
-void Display::RenderAll(Vec2 playerPos, float angle) // TODO: give angle and pos in some better way to display.
+void Display::RenderAll(EntityHandler entities)
 {
     //Clear screen
     SDL_SetRenderDrawColor( mRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
@@ -126,6 +126,9 @@ void Display::RenderAll(Vec2 playerPos, float angle) // TODO: give angle and pos
     // mHearthTexture.render( 0, 0, mRenderer );
 
     //Render Foo' to the screen
+	Vec2 playerPos = entities.GetP1Pos();
+	float angle = entities.GetP1Aim();
+
     mBallTexture.render( playerPos.x, playerPos.y, mRenderer );
 
 	// Render player1 shooting direction

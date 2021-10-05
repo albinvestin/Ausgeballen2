@@ -7,6 +7,7 @@
 #endif
 #include "Texture.hpp"
 #include "Vector2.hpp"
+#include "EntityHandler.hpp"
 
 class Display
 {
@@ -23,7 +24,7 @@ public:
     bool init();
     bool loadTextures();
     void close();
-    void RenderAll(Vec2 playerPos, float playerAimDir);
+    void RenderAll(EntityHandler);
 };
 
 

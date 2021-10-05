@@ -8,7 +8,7 @@ alias make=mingw32-make.exe
 TODO: 
 [] Add fixed game update time, see https://gamedev.stackexchange.com/questions/19571/how-can-i-process-continuously-held-keys-with-sdl
 
-[] make player model
+[x] make player model
 [] shoot bullet
 [] delete bullets that hit edge
 [] make recoil from shooting

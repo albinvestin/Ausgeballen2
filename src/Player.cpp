@@ -40,3 +40,13 @@ float Player::updateAimDirection()
 	}
     return mAimDirection;
 }
+
+Vec2 Player::GetPos()
+{
+    return mPos;
+}
+
+float Player::GetAim()
+{
+    return mAimDirection;
+}
