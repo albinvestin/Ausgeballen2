@@ -3,7 +3,6 @@
 #include <cmath>
 
 
-
 Bullet::Bullet(float aimDirection, Vec2 playerPos)
 {
     mVelocity.x = mInitialVel * cos(aimDirection);
@@ -34,11 +33,25 @@ EntityHandler::~EntityHandler()
 {
 }
 
+bool isOutOfBounds(Vec2 position)
+{
+    // TODO access defined Map size
+    if (position.x > 600 || position.x < 0)
+    {
+        return true;
+    }
+    else if (position.y > 400 || position.y < 0)
+    {
+        return true;
+    }
+    return false;
+}
+
 void EntityHandler::Update(int inputkeys)
 {
     int player1Key = 2; // TODO; make DEFINE
     int player1Bullet = 3; // TODO; make DEFINE
-    Vec2 p1Pos;
+    Vec2 p1Pos = mP1.GetPos();
     if (inputkeys == player1Key)
     {
         p1Pos = mP1.updatePos();
@@ -47,18 +60,25 @@ void EntityHandler::Update(int inputkeys)
     if (inputkeys == player1Bullet) // TODO: allow multiple keys to be pressed
     {
         // Spawn bullet
-        Bullet newBullet{p1Aim, p1Pos};
+        Bullet newBullet{p1Aim, p1Pos}; // TODO: create object just once and refer by pointer. Remember to delete the pointer and free mem.
         mExistingBullets.push_back(newBullet);
     }
-    if (!mExistingBullets.empty())
+    std::vector<Bullet>::iterator it = mExistingBullets.begin();
+    while (it != mExistingBullets.end())
     {
-        for (int i = 0; i < mExistingBullets.size(); i++)
+        Vec2 bullpos = (*it).UpdatePos();
+        if (isOutOfBounds(bullpos))
         {
-            mExistingBullets.at(i).UpdatePos();
+            it = mExistingBullets.erase(it);
         }
-        
+        else
+        {
+            ++it;
+        }
     }
 }
+
+
 
 Vec2 EntityHandler::GetP1Pos()
 {
@@ -86,4 +106,16 @@ Vec2 EntityHandler::GetBullet1Pos()
     {
         return mExistingBullets.at(0).GetPos();
     }
+}
+
+std::vector<Vec2> EntityHandler::GetAllBulletPos()
+{
+    std::vector<Vec2> result{};
+    std::vector<Bullet>::iterator it = mExistingBullets.begin();
+    while (it != mExistingBullets.end())
+    {
+        result.push_back((*it).GetPos());
+        ++it;
+    }
+    return result;
 }

@@ -126,9 +126,16 @@ void Display::RenderAll(EntityHandler entities)
     // mHearthTexture.render( 0, 0, mRenderer );
 
 	// Render bullets
-	//SDL_SetRenderDrawColor( mRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-	Vec2 bulletPos = entities.GetBullet1Pos();
-	mHearthTexture.render( bulletPos.x, bulletPos.y, mRenderer );
+	std::vector<Vec2> AllBulletPos = entities.GetAllBulletPos();
+	std::vector<Vec2>::iterator it = AllBulletPos.begin();
+    while (it != AllBulletPos.end())
+    {
+		mBallTexture.render( (*it).x, (*it).y, mRenderer );
+        ++it;
+    }
+
+	//Vec2 bulletPos = entities.GetBullet1Pos();
+	//mHearthTexture.render( bulletPos.x, bulletPos.y, mRenderer );
 
     //Render Foo' to the screen
 	Vec2 playerPos = entities.GetP1Pos();

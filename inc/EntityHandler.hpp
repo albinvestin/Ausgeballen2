@@ -28,5 +28,6 @@ public:
     Vec2 GetP1Pos();
 	float GetP1Aim();
     Vec2 GetBullet1Pos();
+    std::vector<Vec2> GetAllBulletPos();
 };
 #endif
