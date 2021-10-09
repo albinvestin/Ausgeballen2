@@ -48,6 +48,7 @@ void GameObj::start()
 				entities.Update(input);
 				
 				mDisplay.RenderAll(entities);
+				SDL_Delay(1000/60);
 			}
 		}
 	}

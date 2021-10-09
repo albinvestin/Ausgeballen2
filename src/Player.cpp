@@ -5,9 +5,11 @@
 #else
 #include <SDL.h>
 #endif
+#include <cmath>
+#include <iostream>
 
 Player::Player()
-    : mPos(Vec2{100,100}), mVel(Vec2{1,1})
+    : mPos(Vec2{100,100}), mVel(Vec2f{0,0})
 {
 }
 
@@ -19,22 +21,62 @@ Vec2 Player::updatePos()
 {
     mPos.x += mVel.x;
     mPos.y += mVel.y;
+    // Boarders handling
     if (mPos.x > 640 || mPos.x < 10)
     {
+        if (mPos.x < 10)
+        {
+            mPos.x += (10 - mPos.x);
+        }
+        else
+        {
+            mPos.x -= (mPos.x - 640);
+        }
         mVel.x = -mVel.x;
     }
     if (mPos.y > 480 || mPos.y < 10)
     {
+        if (mPos.y < 10)
+        {
+            mPos.y += (10 - mPos.y);
+        }
+        else
+        {
+            mPos.y -= (mPos.y - 480);
+        }
         mVel.y = -mVel.y;
     }
+
+    // Decrease velocity
+    if (Vec2Length(mVel) > 0)
+    {
+        printf("Vel (%f,%f), ", mVel.x, mVel.y);
+        printf("VelLength %f\n", Vec2Length(mVel));
+    }
+    if (Vec2Length(mVel) < 1)
+    {
+        mVel.x = 0;
+        mVel.y = 0;
+    }
+    else
+    {
+        mVel *= 0.95;
+    }
+
     return mPos;
+}
+
+void Player::AddRecoil()
+{
+    mVel.x -= cos(mAimDirection) * mRecoilSize;
+    mVel.y -= sin(mAimDirection) * mRecoilSize;
 }
 
 
 float Player::updateAimDirection()
 {
-    mAimDirection += 3.14/3200;
-	if (mAimDirection > 2*3.14)
+    mAimDirection += M_PI/30;
+	if (mAimDirection > 2*M_PI)
 	{
 		mAimDirection = 0;
 	}

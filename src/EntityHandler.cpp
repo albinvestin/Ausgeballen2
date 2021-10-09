@@ -52,16 +52,17 @@ void EntityHandler::Update(int inputkeys)
     int player1Key = 2; // TODO; make DEFINE
     int player1Bullet = 3; // TODO; make DEFINE
     Vec2 p1Pos = mP1.GetPos();
-    if (inputkeys == player1Key)
-    {
+    //if (inputkeys == player1Key)
+    //{
         p1Pos = mP1.updatePos();
-    }
+    //}
     float p1Aim = mP1.updateAimDirection();
     if (inputkeys == player1Bullet) // TODO: allow multiple keys to be pressed
     {
         // Spawn bullet
         Bullet newBullet{p1Aim, p1Pos}; // TODO: create object just once and refer by pointer. Remember to delete the pointer and free mem.
         mExistingBullets.push_back(newBullet);
+        mP1.AddRecoil();
     }
     std::vector<Bullet>::iterator it = mExistingBullets.begin();
     while (it != mExistingBullets.end())
