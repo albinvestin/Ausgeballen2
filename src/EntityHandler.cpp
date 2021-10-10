@@ -3,7 +3,7 @@
 #include <cmath>
 
 
-Bullet::Bullet(float aimDirection, Vec2 playerPos)
+Bullet::Bullet(float aimDirection, Vec2f playerPos)
 {
     mVelocity.x = mInitialVel * cos(aimDirection);
     mVelocity.y = mInitialVel * sin(aimDirection);
@@ -15,7 +15,7 @@ Bullet::~Bullet()
 {
 }
 
-Vec2 Bullet::UpdatePos()
+Vec2f Bullet::UpdatePos()
 {
     mPosition.x += mVelocity.x;
     mPosition.y += mVelocity.y;
@@ -33,7 +33,7 @@ EntityHandler::~EntityHandler()
 {
 }
 
-bool isOutOfBounds(Vec2 position)
+bool isOutOfBounds(Vec2f position)
 {
     // TODO access defined Map size
     if (position.x > 600 || position.x < 0)
@@ -51,7 +51,7 @@ void EntityHandler::Update(int inputkeys)
 {
     int player1Key = 2; // TODO; make DEFINE
     int player1Bullet = 3; // TODO; make DEFINE
-    Vec2 p1Pos = mP1.GetPos();
+    Vec2f p1Pos = mP1.GetPos();
     //if (inputkeys == player1Key)
     //{
         p1Pos = mP1.updatePos();
@@ -67,7 +67,7 @@ void EntityHandler::Update(int inputkeys)
     std::vector<Bullet>::iterator it = mExistingBullets.begin();
     while (it != mExistingBullets.end())
     {
-        Vec2 bullpos = (*it).UpdatePos();
+        Vec2f bullpos = (*it).UpdatePos();
         if (isOutOfBounds(bullpos))
         {
             it = mExistingBullets.erase(it);
@@ -81,7 +81,7 @@ void EntityHandler::Update(int inputkeys)
 
 
 
-Vec2 EntityHandler::GetP1Pos()
+Vec2f EntityHandler::GetP1Pos()
 {
     return mP1.GetPos();
 }
@@ -91,16 +91,16 @@ float EntityHandler::GetP1Aim()
     return mP1.GetAim();
 }
 
-Vec2 Bullet::GetPos()
+Vec2f Bullet::GetPos()
 {
     return mPosition;
 }
 
-Vec2 EntityHandler::GetBullet1Pos()
+Vec2f EntityHandler::GetBullet1Pos()
 {
     if (mExistingBullets.empty())
     {
-        Vec2 outOfBounds{-1000, -1000}; // TODO: make a better solution if no bullet exists
+        Vec2f outOfBounds{-1000, -1000}; // TODO: make a better solution if no bullet exists
         return outOfBounds;
     }
     else
@@ -109,9 +109,9 @@ Vec2 EntityHandler::GetBullet1Pos()
     }
 }
 
-std::vector<Vec2> EntityHandler::GetAllBulletPos()
+std::vector<Vec2f> EntityHandler::GetAllBulletPos()
 {
-    std::vector<Vec2> result{};
+    std::vector<Vec2f> result{};
     std::vector<Bullet>::iterator it = mExistingBullets.begin();
     while (it != mExistingBullets.end())
     {

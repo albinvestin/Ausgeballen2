@@ -9,7 +9,7 @@
 #include <iostream>
 
 Player::Player()
-    : mPos(Vec2{100,100}), mVel(Vec2f{0,0})
+    : mPos(Vec2f{100,100}), mVel(Vec2f{0,0})
 {
 }
 
@@ -17,7 +17,7 @@ Player::~Player()
 {
 }
 
-Vec2 Player::updatePos()
+Vec2f Player::updatePos()
 {
     mPos.x += mVel.x;
     mPos.y += mVel.y;
@@ -60,7 +60,7 @@ Vec2 Player::updatePos()
     }
     else
     {
-        mVel *= 0.95;
+        mVel *= 0.99;
     }
 
     return mPos;
@@ -83,7 +83,7 @@ float Player::updateAimDirection()
     return mAimDirection;
 }
 
-Vec2 Player::GetPos()
+Vec2f Player::GetPos()
 {
     return mPos;
 }

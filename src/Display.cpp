@@ -126,8 +126,8 @@ void Display::RenderAll(EntityHandler entities)
     // mHearthTexture.render( 0, 0, mRenderer );
 
 	// Render bullets
-	std::vector<Vec2> AllBulletPos = entities.GetAllBulletPos();
-	std::vector<Vec2>::iterator it = AllBulletPos.begin();
+	std::vector<Vec2f> AllBulletPos = entities.GetAllBulletPos();
+	std::vector<Vec2f>::iterator it = AllBulletPos.begin();
     while (it != AllBulletPos.end())
     {
 		mBallTexture.render( (*it).x, (*it).y, mRenderer );
@@ -138,7 +138,7 @@ void Display::RenderAll(EntityHandler entities)
 	//mHearthTexture.render( bulletPos.x, bulletPos.y, mRenderer );
 
     //Render Foo' to the screen
-	Vec2 playerPos = entities.GetP1Pos();
+	Vec2f playerPos = entities.GetP1Pos();
 	float angle = entities.GetP1Aim();
 
     mBallTexture.render( playerPos.x, playerPos.y, mRenderer );

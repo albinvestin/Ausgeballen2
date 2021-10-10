@@ -34,7 +34,7 @@ else
 	ifeq ($(UNAME_S),Linux)
 		# Linux
 		LDFLAGS = -lSDL2 -lSDL2_image
-    else
+	else
 		# Apple
 		LDFLAGS = -framework SDL2 -framework SDL2_image -F /Library/Frameworks -I /Library/Frameworks/SDL2.framework/Headers -I /Library/Frameworks/SDL2_image.framework/Headers
 	endif

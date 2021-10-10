@@ -6,14 +6,14 @@
 class Bullet
 {
 private:
-    Vec2 mVelocity;
-    int mInitialVel = 2;
-    Vec2 mPosition;
+    Vec2f mVelocity;
+    int mInitialVel = 20;
+    Vec2f mPosition;
 public:
-    Bullet(float aimDirection, Vec2 playerPos);
+    Bullet(float aimDirection, Vec2f playerPos);
     ~Bullet();
-    Vec2 UpdatePos();
-    Vec2 GetPos();
+    Vec2f UpdatePos();
+    Vec2f GetPos();
 };
 
 class EntityHandler
@@ -25,9 +25,9 @@ public:
     EntityHandler();
     ~EntityHandler();
     void Update(int inputkeys);
-    Vec2 GetP1Pos();
+    Vec2f GetP1Pos();
 	float GetP1Aim();
-    Vec2 GetBullet1Pos();
-    std::vector<Vec2> GetAllBulletPos();
+    Vec2f GetBullet1Pos();
+    std::vector<Vec2f> GetAllBulletPos();
 };
 #endif
