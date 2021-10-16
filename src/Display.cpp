@@ -1,6 +1,7 @@
 #include "../inc/Display.hpp"
 #include "../inc/Texture.hpp"
 #include "../inc/Vector2.hpp"
+#include "../inc/Constants.hpp"
 #if defined(__APPLE__)
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
@@ -46,8 +47,8 @@ bool Display::init()
 		}
 
 		//Create window
-		mWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
-		if( mWindow == NULL )
+		_Window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+		if( _Window == NULL )
 		{
 			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
 			success = false;
@@ -55,8 +56,8 @@ bool Display::init()
 		else
 		{
 			//Create renderer for window
-			mRenderer = SDL_CreateRenderer( mWindow, -1, SDL_RENDERER_ACCELERATED );
-			if( mRenderer == NULL )
+			_Renderer = SDL_CreateRenderer( _Window, -1, SDL_RENDERER_ACCELERATED );
+			if( _Renderer == NULL )
 			{
 				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
 				success = false;
@@ -64,7 +65,7 @@ bool Display::init()
 			else
 			{
 				//Initialize renderer color
-				SDL_SetRenderDrawColor( mRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+				SDL_SetRenderDrawColor( _Renderer, 0xFF, 0xFF, 0xFF, 0xFF );
 
 				//Initialize PNG loading
 				int imgFlags = IMG_INIT_PNG;
@@ -86,14 +87,14 @@ bool Display::loadTextures()
 	bool success = true;
 
 	//Load Foo' texture
-	if( !mBallTexture.loadFromFile( "../res/dot.bmp", mRenderer ) )
+	if( !_BallTexture.loadFromFile( "../res/dot.bmp", _Renderer ) )
 	{
 		printf( "Failed to load Foo' texture image!\n" );
 		success = false;
 	}
 	
 	//Load background texture
-	if( !mHearthTexture.loadFromFile( "../res/heart.png", mRenderer ) )
+	if( !_HearthTexture.loadFromFile( "../res/heart.png", _Renderer ) )
 	{
 		printf( "Failed to load background texture image!\n" );
 		success = false;
@@ -104,13 +105,13 @@ bool Display::loadTextures()
 
 void Display::close()
 {
-    mBallTexture.free();
-	mHearthTexture.free();
+    _BallTexture.free();
+	_HearthTexture.free();
 
-    SDL_DestroyRenderer( mRenderer );
-	mRenderer = NULL;
-    SDL_DestroyWindow( mWindow );
-	mWindow = NULL;
+    SDL_DestroyRenderer( _Renderer );
+	_Renderer = NULL;
+    SDL_DestroyWindow( _Window );
+	_Window = NULL;
 
     // Quit SDL2_image system
     IMG_Quit();
@@ -119,38 +120,38 @@ void Display::close()
 void Display::RenderAll(EntityHandler entities)
 {
     //Clear screen
-    SDL_SetRenderDrawColor( mRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-    SDL_RenderClear( mRenderer );
+    SDL_SetRenderDrawColor( _Renderer, 0xFF, 0xFF, 0xFF, 0xFF );
+    SDL_RenderClear( _Renderer );
 
     //Render background texture to screen
-    // mHearthTexture.render( 0, 0, mRenderer );
+    // _HearthTexture.render( 0, 0, _Renderer );
 
 	// Render bullets
 	std::vector<Vec2f> AllBulletPos = entities.GetAllBulletPos();
 	std::vector<Vec2f>::iterator it = AllBulletPos.begin();
     while (it != AllBulletPos.end())
     {
-		mBallTexture.render( (*it).x, (*it).y, mRenderer );
+		_BallTexture.render( (*it).x, (*it).y, _Renderer );
         ++it;
     }
 
 	//Vec2 bulletPos = entities.GetBullet1Pos();
-	//mHearthTexture.render( bulletPos.x, bulletPos.y, mRenderer );
+	//_HearthTexture.render( bulletPos.x, bulletPos.y, _Renderer );
 
     //Render Foo' to the screen
 	Vec2f playerPos = entities.GetP1Pos();
 	float angle = entities.GetP1Aim();
 
-    mBallTexture.render( playerPos.x, playerPos.y, mRenderer );
+    _BallTexture.render( playerPos.x, playerPos.y, _Renderer );
 
 	// Render player1 shooting direction
-	SDL_SetRenderDrawColor(mRenderer, 0, 0, 255, 150);
+	SDL_SetRenderDrawColor(_Renderer, 0, 0, 255, 150);
 
 	int centerX = playerPos.x+10;
 	int centerY = playerPos.y+10;
 
-	SDL_RenderDrawLine(mRenderer, centerX, centerY, centerX + cos(angle)*20, centerY + sin(angle)*20);
+	SDL_RenderDrawLine(_Renderer, centerX, centerY, centerX + cos(angle)*20, centerY + sin(angle)*20);
 
     //Update screen
-    SDL_RenderPresent( mRenderer );
+    SDL_RenderPresent( _Renderer );
 }

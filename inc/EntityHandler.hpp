@@ -6,9 +6,8 @@
 class Bullet
 {
 private:
-    Vec2f mVelocity;
-    int mInitialVel = 20;
-    Vec2f mPosition;
+    Vec2f _Velocity;
+    Vec2f _Position;
 public:
     Bullet(float aimDirection, Vec2f playerPos);
     ~Bullet();
@@ -19,8 +18,8 @@ public:
 class EntityHandler
 {
 private:
-    Player mP1{};
-    std::vector<Bullet> mExistingBullets;
+    Player _P1{};
+    std::vector<Bullet> _ExistingBullets;
 public:
     EntityHandler();
     ~EntityHandler();

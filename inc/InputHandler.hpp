@@ -15,9 +15,9 @@ It also keep track of which keys are assigned to which player.
 class InputHandler
 {
 private:
-    SDL_Event mEvent;
-    //std::vector<SDL_KeyCode> mPlayerKeys; Should I use a std::map?
-    enum returnValues {noinput = 0, quit = 1, player1Key, player1Bullet}; // TODO: use better camelcase?
+    SDL_Event _Event;
+    //std::vector<SDL_KeyCode> _PlayerKeys; Should I use a std::_ap?
+    
 public:
     InputHandler();
     ~InputHandler();
@@ -30,10 +30,10 @@ public:
 // private:
 //     const int SCREEN_WIDTH = 640;
 //     const int SCREEN_HEIGHT = 480;
-//     SDL_Window* mWindow = NULL;
-//     SDL_Renderer* mRenderer = NULL;
-//     LTexture mBallTexture;
-//     LTexture mHearthTexture;
+//     SDL_Window* _Window = NULL;
+//     SDL_Renderer* _Renderer = NULL;
+//     LTexture _BallTexture;
+//     LTexture _HearthTexture;
 // public:
 //     Display();
 //     ~Display();

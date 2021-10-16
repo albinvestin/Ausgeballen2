@@ -1,4 +1,5 @@
 #include "../inc/InputHandler.hpp"
+#include "../inc/Constants.hpp"
 #if defined(__APPLE__) || defined(__linux__)
 #include <SDL2/SDL.h>
 #else
@@ -17,25 +18,25 @@ InputHandler::~InputHandler()
 // Returns quit bool
 int InputHandler::EventHandler()
 {
-    int returnValue = noinput;
+    int returnValue = INPUT_NONE;
     // Handle single press events
-    while( SDL_PollEvent( &mEvent ) != 0 )
+    while( SDL_PollEvent( &_Event ) != 0 )
     {
         //User requests quit
-        if( mEvent.type == SDL_QUIT )
+        if( _Event.type == SDL_QUIT )
         {
-            returnValue = quit;
+            returnValue = INPUT_QUIT;
         }
-        else if(mEvent.type == SDL_KEYDOWN)
+        else if(_Event.type == SDL_KEYDOWN)
         {
-            if (mEvent.key.keysym.sym == SDLK_b)
+            if (_Event.key.keysym.sym == SDLK_b)
             {
-                returnValue = player1Bullet;
+                returnValue = INPUT_P1SHOOT;
             }
         }
-        // else if(mEvent.type == SDL_KEYDOWN)
+        // else if(_Event.type == SDL_KEYDOWN)
         // {
-        //     switch( mEvent.key.keysym.sym )
+        //     switch( _Event.key.keysym.sym )
         //     {
         //         case SDLK_w:
         //         // Up
@@ -50,7 +51,7 @@ int InputHandler::EventHandler()
     // Uses SCANCODE for key codes.
     if(keystates[SDL_SCANCODE_W])
     {
-        returnValue = player1Key;
+        returnValue = INPUT_P1SHOOT;
     }
 
     return returnValue;

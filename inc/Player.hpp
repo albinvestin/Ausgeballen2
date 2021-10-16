@@ -5,10 +5,9 @@
 class Player
 {
 private:
-    Vec2f mPos;
-    Vec2f mVel;
-    float mAimDirection = 0; // in Radians 
-    float mRecoilSize = 10; // TODO make define
+    Vec2f _Pos;
+    Vec2f _Vel;
+    float _AimDirection = 0; // in Radians 
 public:
     Player();
     ~Player();

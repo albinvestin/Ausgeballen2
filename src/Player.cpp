@@ -1,5 +1,6 @@
 #include "../inc/Player.hpp"
 #include "../inc/Vector2.hpp"
+#include "../inc/Constants.hpp"
 #if defined(__APPLE__) || defined(__linux__)
 #include <SDL2/SDL.h>
 #else
@@ -9,7 +10,7 @@
 #include <iostream>
 
 Player::Player()
-    : mPos(Vec2f{100,100}), mVel(Vec2f{0,0})
+    : _Pos(Vec2f{100,100}), _Vel(Vec2f{0,0})
 {
 }
 
@@ -19,76 +20,76 @@ Player::~Player()
 
 Vec2f Player::updatePos()
 {
-    mPos.x += mVel.x;
-    mPos.y += mVel.y;
+    _Pos.x += _Vel.x;
+    _Pos.y += _Vel.y;
     // Boarders handling
-    if (mPos.x > 640 || mPos.x < 10)
+    if (_Pos.x > MAP_WIDTH || _Pos.x < PLAYER_DIAMETER)
     {
-        if (mPos.x < 10)
+        if (_Pos.x < PLAYER_DIAMETER)
         {
-            mPos.x += (10 - mPos.x);
+            _Pos.x += (PLAYER_DIAMETER - _Pos.x);
         }
         else
         {
-            mPos.x -= (mPos.x - 640);
+            _Pos.x -= (_Pos.x - MAP_WIDTH);
         }
-        mVel.x = -mVel.x;
+        _Vel.x = -_Vel.x;
     }
-    if (mPos.y > 480 || mPos.y < 10)
+    if (_Pos.y > MAP_HEIGHT || _Pos.y < PLAYER_DIAMETER)
     {
-        if (mPos.y < 10)
+        if (_Pos.y < PLAYER_DIAMETER)
         {
-            mPos.y += (10 - mPos.y);
+            _Pos.y += (PLAYER_DIAMETER - _Pos.y);
         }
         else
         {
-            mPos.y -= (mPos.y - 480);
+            _Pos.y -= (_Pos.y - MAP_HEIGHT);
         }
-        mVel.y = -mVel.y;
+        _Vel.y = -_Vel.y;
     }
 
     // Decrease velocity
-    if (Vec2Length(mVel) > 0)
+    if (Vec2Length(_Vel) > 0)
     {
-        printf("Vel (%f,%f), ", mVel.x, mVel.y);
-        printf("VelLength %f\n", Vec2Length(mVel));
+        printf("Vel (%f,%f), ", _Vel.x, _Vel.y);
+        printf("VelLength %f\n", Vec2Length(_Vel));
     }
-    if (Vec2Length(mVel) < 1)
+    if (Vec2Length(_Vel) < 1)
     {
-        mVel.x = 0;
-        mVel.y = 0;
+        _Vel.x = 0;
+        _Vel.y = 0;
     }
     else
     {
-        mVel *= 0.99;
+        _Vel *= PLAYER_FRICTION;
     }
 
-    return mPos;
+    return _Pos;
 }
 
 void Player::AddRecoil()
 {
-    mVel.x -= cos(mAimDirection) * mRecoilSize;
-    mVel.y -= sin(mAimDirection) * mRecoilSize;
+    _Vel.x -= cos(_AimDirection) * PLAYER_RECOIL;
+    _Vel.y -= sin(_AimDirection) * PLAYER_RECOIL;
 }
 
 
 float Player::updateAimDirection()
 {
-    mAimDirection += M_PI/30;
-	if (mAimDirection > 2*M_PI)
+    _AimDirection += M_PI/30;
+	if (_AimDirection > 2*M_PI)
 	{
-		mAimDirection = 0;
+		_AimDirection = 0;
 	}
-    return mAimDirection;
+    return _AimDirection;
 }
 
 Vec2f Player::GetPos()
 {
-    return mPos;
+    return _Pos;
 }
 
 float Player::GetAim()
 {
-    return mAimDirection;
+    return _AimDirection;
 }

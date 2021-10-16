@@ -14,7 +14,7 @@ class LTexture
 		//Initializes variables
 		LTexture();
 
-		//Deallocates memory
+		//Deallocates _emory
 		~LTexture();
 
 		//Loads image at specified path
@@ -32,11 +32,11 @@ class LTexture
 
 	private:
 		//The actual hardware texture
-		SDL_Texture* mTexture;
+		SDL_Texture* _Texture;
 
 		//Image dimensions
-		int mWidth;
-		int mHeight;
+		int _Width;
+		int _Height;
 };
 
 

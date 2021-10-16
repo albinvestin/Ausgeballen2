@@ -12,12 +12,10 @@
 class Display
 {
 private:
-    const int SCREEN_WIDTH = 640;
-    const int SCREEN_HEIGHT = 480;
-    SDL_Window* mWindow = NULL;
-    SDL_Renderer* mRenderer = NULL;
-    LTexture mBallTexture;
-    LTexture mHearthTexture;
+    SDL_Window* _Window = NULL;
+    SDL_Renderer* _Renderer = NULL;
+    LTexture _BallTexture;
+    LTexture _HearthTexture;
 public:
     Display();
     ~Display();

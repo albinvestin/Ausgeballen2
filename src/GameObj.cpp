@@ -21,21 +21,21 @@ GameObj::~GameObj()
 void GameObj::start()
 {
     //Start up SDL and create window
-	if( !mDisplay.init() )
+	if( !_Display.init() )
 	{
 		printf( "Failed to initialize!\n" );
 	}
 	else
 	{
-		//Load media
-		if( !mDisplay.loadTextures() )
+		//Load _edia
+		if( !_Display.loadTextures() )
 		{
-			printf( "Failed to load media!\n" );
+			printf( "Failed to load _edia!\n" );
 		}
 		else
 		{	
 			int input;
-			int quit = 1; // TODO: make a DEFINE.
+			int quit = 1; // TODO: _ake a DEFINE.
 			
 			EntityHandler entities{};
 			//Player p1{};
@@ -47,7 +47,7 @@ void GameObj::start()
 				input = inputHandler.EventHandler();
 				entities.Update(input);
 				
-				mDisplay.RenderAll(entities);
+				_Display.RenderAll(entities);
 				SDL_Delay(1000/60);
 			}
 		}
@@ -56,7 +56,7 @@ void GameObj::start()
 
 void GameObj::close()
 {
-    mDisplay.close();
+    _Display.close();
 
 	//Quit SDL subsystems
 	SDL_Quit();

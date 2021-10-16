@@ -1,14 +1,15 @@
 #include "../inc/EntityHandler.hpp"
 #include "../inc/Player.hpp"
+#include "../inc/Constants.hpp"
 #include <cmath>
 
 
 Bullet::Bullet(float aimDirection, Vec2f playerPos)
 {
-    mVelocity.x = mInitialVel * cos(aimDirection);
-    mVelocity.y = mInitialVel * sin(aimDirection);
-    mPosition.x = playerPos.x;
-    mPosition.y = playerPos.y;
+    _Velocity.x = BULLET_INIT_VEL * cos(aimDirection);
+    _Velocity.y = BULLET_INIT_VEL * sin(aimDirection);
+    _Position.x = playerPos.x;
+    _Position.y = playerPos.y;
 }
 
 Bullet::~Bullet()
@@ -17,9 +18,9 @@ Bullet::~Bullet()
 
 Vec2f Bullet::UpdatePos()
 {
-    mPosition.x += mVelocity.x;
-    mPosition.y += mVelocity.y;
-    return mPosition;
+    _Position.x += _Velocity.x;
+    _Position.y += _Velocity.y;
+    return _Position;
 }
 
 
@@ -35,12 +36,12 @@ EntityHandler::~EntityHandler()
 
 bool isOutOfBounds(Vec2f position)
 {
-    // TODO access defined Map size
-    if (position.x > 600 || position.x < 0)
+    // TODO access defined map size
+    if (position.x > MAP_WIDTH || position.x < 0)
     {
         return true;
     }
-    else if (position.y > 400 || position.y < 0)
+    else if (position.y > MAP_HEIGHT || position.y < 0)
     {
         return true;
     }
@@ -49,28 +50,22 @@ bool isOutOfBounds(Vec2f position)
 
 void EntityHandler::Update(int inputkeys)
 {
-    int player1Key = 2; // TODO; make DEFINE
-    int player1Bullet = 3; // TODO; make DEFINE
-    Vec2f p1Pos = mP1.GetPos();
-    //if (inputkeys == player1Key)
-    //{
-        p1Pos = mP1.updatePos();
-    //}
-    float p1Aim = mP1.updateAimDirection();
-    if (inputkeys == player1Bullet) // TODO: allow multiple keys to be pressed
+    Vec2f p1Pos = _P1.updatePos();
+    float p1Aim = _P1.updateAimDirection();
+    if (inputkeys == INPUT_P1SHOOT) // TODO: allow _ultiple keys to be pressed
     {
         // Spawn bullet
-        Bullet newBullet{p1Aim, p1Pos}; // TODO: create object just once and refer by pointer. Remember to delete the pointer and free mem.
-        mExistingBullets.push_back(newBullet);
-        mP1.AddRecoil();
+        Bullet newBullet{p1Aim, p1Pos}; // TODO: create object just once and refer by pointer. Remember to delete the pointer and free _em.
+        _ExistingBullets.push_back(newBullet);
+        _P1.AddRecoil();
     }
-    std::vector<Bullet>::iterator it = mExistingBullets.begin();
-    while (it != mExistingBullets.end())
+    std::vector<Bullet>::iterator it = _ExistingBullets.begin();
+    while (it != _ExistingBullets.end())
     {
         Vec2f bullpos = (*it).UpdatePos();
         if (isOutOfBounds(bullpos))
         {
-            it = mExistingBullets.erase(it);
+            it = _ExistingBullets.erase(it);
         }
         else
         {
@@ -79,41 +74,39 @@ void EntityHandler::Update(int inputkeys)
     }
 }
 
-
-
 Vec2f EntityHandler::GetP1Pos()
 {
-    return mP1.GetPos();
+    return _P1.GetPos();
 }
 
 float EntityHandler::GetP1Aim()
 {
-    return mP1.GetAim();
+    return _P1.GetAim();
 }
 
 Vec2f Bullet::GetPos()
 {
-    return mPosition;
+    return _Position;
 }
 
 Vec2f EntityHandler::GetBullet1Pos()
 {
-    if (mExistingBullets.empty())
+    if (_ExistingBullets.empty())
     {
-        Vec2f outOfBounds{-1000, -1000}; // TODO: make a better solution if no bullet exists
+        Vec2f outOfBounds{-1000, -1000}; // TODO: _ake a better solution if no bullet exists
         return outOfBounds;
     }
     else
     {
-        return mExistingBullets.at(0).GetPos();
+        return _ExistingBullets.at(0).GetPos();
     }
 }
 
 std::vector<Vec2f> EntityHandler::GetAllBulletPos()
 {
     std::vector<Vec2f> result{};
-    std::vector<Bullet>::iterator it = mExistingBullets.begin();
-    while (it != mExistingBullets.end())
+    std::vector<Bullet>::iterator it = _ExistingBullets.begin();
+    while (it != _ExistingBullets.end())
     {
         result.push_back((*it).GetPos());
         ++it;
