@@ -9,8 +9,8 @@
 #include <cmath>
 #include <iostream>
 
-Player::Player()
-    : _Pos(Vec2f{100,100}), _Vel(Vec2f{0,0})
+Player::Player(Vec2f startPos)
+    : _Pos(startPos), _Vel(Vec2f{0,0})
 {
 }
 
@@ -23,11 +23,11 @@ Vec2f Player::updatePos()
     _Pos.x += _Vel.x;
     _Pos.y += _Vel.y;
     // Boarders handling
-    if (_Pos.x > MAP_WIDTH || _Pos.x < PLAYER_DIAMETER)
+    if (_Pos.x > MAP_WIDTH || _Pos.x < PLAYER_RADIUS)
     {
-        if (_Pos.x < PLAYER_DIAMETER)
+        if (_Pos.x < PLAYER_RADIUS)
         {
-            _Pos.x += (PLAYER_DIAMETER - _Pos.x);
+            _Pos.x += (PLAYER_RADIUS - _Pos.x);
         }
         else
         {
@@ -35,11 +35,11 @@ Vec2f Player::updatePos()
         }
         _Vel.x = -_Vel.x;
     }
-    if (_Pos.y > MAP_HEIGHT || _Pos.y < PLAYER_DIAMETER)
+    if (_Pos.y > MAP_HEIGHT || _Pos.y < PLAYER_RADIUS)
     {
-        if (_Pos.y < PLAYER_DIAMETER)
+        if (_Pos.y < PLAYER_RADIUS)
         {
-            _Pos.y += (PLAYER_DIAMETER - _Pos.y);
+            _Pos.y += (PLAYER_RADIUS - _Pos.y);
         }
         else
         {
@@ -49,11 +49,6 @@ Vec2f Player::updatePos()
     }
 
     // Decrease velocity
-    if (Vec2Length(_Vel) > 0)
-    {
-        printf("Vel (%f,%f), ", _Vel.x, _Vel.y);
-        printf("VelLength %f\n", Vec2Length(_Vel));
-    }
     if (Vec2Length(_Vel) < 1)
     {
         _Vel.x = 0;

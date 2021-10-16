@@ -4,6 +4,7 @@
 #include "../inc/Vector2.hpp"
 #include "../inc/InputHandler.hpp"
 #include "../inc/EntityHandler.hpp"
+#include "../inc/Constants.hpp"
 #if defined(__APPLE__) || defined(__linux__)
 #include <SDL2/SDL.h>
 #else
@@ -27,7 +28,7 @@ void GameObj::start()
 	}
 	else
 	{
-		//Load _edia
+		//Load media
 		if( !_Display.loadTextures() )
 		{
 			printf( "Failed to load _edia!\n" );
@@ -35,14 +36,11 @@ void GameObj::start()
 		else
 		{	
 			int input;
-			int quit = 1; // TODO: _ake a DEFINE.
-			
 			EntityHandler entities{};
-			//Player p1{};
 			InputHandler inputHandler{};
 
 			//While application is running
-			while( input != quit )
+			while( input != INPUT_QUIT )
 			{
 				input = inputHandler.EventHandler();
 				entities.Update(input);

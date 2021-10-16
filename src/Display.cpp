@@ -14,11 +14,6 @@
 #endif
 #include <math.h>
 
-// extern SDL_Renderer* gRenderer;
-// extern SDL_Window* gWindow;
-// extern LTexture gFooTexture;
-// extern LTexture gBackgroundTexture;
-
 Display::Display()
 {
 }
@@ -138,19 +133,21 @@ void Display::RenderAll(EntityHandler entities)
 	//Vec2 bulletPos = entities.GetBullet1Pos();
 	//_HearthTexture.render( bulletPos.x, bulletPos.y, _Renderer );
 
-    //Render Foo' to the screen
-	Vec2f playerPos = entities.GetP1Pos();
-	float angle = entities.GetP1Aim();
-
-    _BallTexture.render( playerPos.x, playerPos.y, _Renderer );
+    //Render Player1 to the screen
+	Vec2f playerPos = entities.GetPlayerPos(1);
+    _BallTexture.render(playerPos.x, playerPos.y, _Renderer);
 
 	// Render player1 shooting direction
-	SDL_SetRenderDrawColor(_Renderer, 0, 0, 255, 150);
+	SDL_SetRenderDrawColor(_Renderer, 0, 0, 255, 150); // BLUE
+	float angle = entities.GetP1Aim();
+	int centerX = playerPos.x+PLAYER_RADIUS;
+	int centerY = playerPos.y+PLAYER_RADIUS;
+	SDL_RenderDrawLine(_Renderer, centerX, centerY, centerX + cos(angle)*(2*PLAYER_RADIUS), centerY + sin(angle)*(2*PLAYER_RADIUS));
 
-	int centerX = playerPos.x+10;
-	int centerY = playerPos.y+10;
-
-	SDL_RenderDrawLine(_Renderer, centerX, centerY, centerX + cos(angle)*20, centerY + sin(angle)*20);
+	//Render Player2 to the screen
+	playerPos = entities.GetPlayerPos(2);
+	// printf("P2: (%f,%f)\n",playerPos.x, playerPos.y);
+    _BallTexture.render(playerPos.x, playerPos.y, _Renderer);
 
     //Update screen
     SDL_RenderPresent( _Renderer );

@@ -9,7 +9,7 @@ private:
     Vec2f _Vel;
     float _AimDirection = 0; // in Radians 
 public:
-    Player();
+    Player(Vec2f startPos);
     ~Player();
     Vec2f updatePos();
     float updateAimDirection();

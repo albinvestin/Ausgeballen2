@@ -2,14 +2,14 @@
 #include "../inc/Player.hpp"
 #include "../inc/Constants.hpp"
 #include <cmath>
+#include <stdio.h>
 
 
 Bullet::Bullet(float aimDirection, Vec2f playerPos)
+    : _Position{playerPos},
+      _Velocity{(float)(BULLET_INIT_VEL * cos(aimDirection)),
+                (float)(BULLET_INIT_VEL * sin(aimDirection))}
 {
-    _Velocity.x = BULLET_INIT_VEL * cos(aimDirection);
-    _Velocity.y = BULLET_INIT_VEL * sin(aimDirection);
-    _Position.x = playerPos.x;
-    _Position.y = playerPos.y;
 }
 
 Bullet::~Bullet()
@@ -27,6 +27,7 @@ Vec2f Bullet::UpdatePos()
 
 // Spawn players?
 EntityHandler::EntityHandler()
+    : _P1{Vec2f(MAP_WIDTH/4, MAP_HEIGHT/4)}, _P2{Vec2f((MAP_WIDTH*3)/4, MAP_HEIGHT/4)}
 {
 }
 
@@ -52,10 +53,10 @@ void EntityHandler::Update(int inputkeys)
 {
     Vec2f p1Pos = _P1.updatePos();
     float p1Aim = _P1.updateAimDirection();
-    if (inputkeys == INPUT_P1SHOOT) // TODO: allow _ultiple keys to be pressed
+    if (inputkeys == INPUT_P1SHOOT) // TODO: allow multiple keys to be pressed
     {
         // Spawn bullet
-        Bullet newBullet{p1Aim, p1Pos}; // TODO: create object just once and refer by pointer. Remember to delete the pointer and free _em.
+        Bullet newBullet{p1Aim, p1Pos}; // TODO: create object just once and refer by pointer. Remember to delete the pointer and free mem.
         _ExistingBullets.push_back(newBullet);
         _P1.AddRecoil();
     }
@@ -74,9 +75,20 @@ void EntityHandler::Update(int inputkeys)
     }
 }
 
-Vec2f EntityHandler::GetP1Pos()
+// index starts at 1
+Vec2f EntityHandler::GetPlayerPos(int index)
 {
-    return _P1.GetPos();
+    switch (index)
+    {
+    case 1:
+        return _P1.GetPos();
+    case 2:
+        return _P2.GetPos();
+    default:
+        printf("No Player Specified\n");
+        return _P1.GetPos();
+        break;
+    }
 }
 
 float EntityHandler::GetP1Aim()
@@ -93,7 +105,7 @@ Vec2f EntityHandler::GetBullet1Pos()
 {
     if (_ExistingBullets.empty())
     {
-        Vec2f outOfBounds{-1000, -1000}; // TODO: _ake a better solution if no bullet exists
+        Vec2f outOfBounds{-1000, -1000}; // TODO: make a better solution if no bullet exists
         return outOfBounds;
     }
     else

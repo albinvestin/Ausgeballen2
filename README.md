@@ -11,5 +11,5 @@ TODO:
 [x] make player model
 [x] shoot bullet
 [x] delete bullets that hit edge
-[] make recoil from shooting
+[x] make recoil from shooting
 [] make bullet collision with other players

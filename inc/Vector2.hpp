@@ -7,6 +7,7 @@ struct Vec2
 struct Vec2f
 {
     float x, y = 0;
+    Vec2f(float x, float y) : x{x}, y{y} {};
     Vec2f operator*=(float multiplier);
 };
 int Vec2Length(Vec2 v);
