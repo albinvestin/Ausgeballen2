@@ -122,6 +122,7 @@ void Display::RenderAll(EntityHandler entities)
     // _HearthTexture.render( 0, 0, _Renderer );
 
 	// Render bullets
+	_BallTexture.ModifyColor(255, 255, 255);
 	std::vector<Vec2f> AllBulletPos = entities.GetAllBulletPos();
 	std::vector<Vec2f>::iterator it = AllBulletPos.begin();
     while (it != AllBulletPos.end())
@@ -135,6 +136,7 @@ void Display::RenderAll(EntityHandler entities)
 
     //Render Player1 to the screen
 	Vec2f playerPos = entities.GetPlayerPos(1);
+	_BallTexture.ModifyColor(50, 255, 255);
     _BallTexture.render(playerPos.x, playerPos.y, _Renderer);
 
 	// Render player1 shooting direction
@@ -147,7 +149,16 @@ void Display::RenderAll(EntityHandler entities)
 	//Render Player2 to the screen
 	playerPos = entities.GetPlayerPos(2);
 	// printf("P2: (%f,%f)\n",playerPos.x, playerPos.y);
+	_BallTexture.ModifyColor(255, 50, 255);
     _BallTexture.render(playerPos.x, playerPos.y, _Renderer);
+
+	//Render map borders
+	SDL_SetRenderDrawColor(_Renderer, 0, 0, 0, 255); // Black
+	SDL_RenderDrawLine(_Renderer, 0, 0, MAP_WIDTH, 0); // Top
+	SDL_RenderDrawLine(_Renderer, 0, MAP_HEIGHT, MAP_WIDTH, MAP_HEIGHT); // Bottom
+	SDL_RenderDrawLine(_Renderer, 0, 0, 0, MAP_HEIGHT); // Left
+	SDL_RenderDrawLine(_Renderer, MAP_WIDTH, 0, MAP_WIDTH, MAP_HEIGHT); // Right
+
 
     //Update screen
     SDL_RenderPresent( _Renderer );

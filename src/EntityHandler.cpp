@@ -38,11 +38,11 @@ EntityHandler::~EntityHandler()
 bool isOutOfBounds(Vec2f position)
 {
     // TODO access defined map size
-    if (position.x > MAP_WIDTH || position.x < 0)
+    if (position.x + 2*BULLET_RADIUS > MAP_WIDTH || position.x < 0)
     {
         return true;
     }
-    else if (position.y > MAP_HEIGHT || position.y < 0)
+    else if (position.y + 2*BULLET_RADIUS  > MAP_HEIGHT || position.y < 0)
     {
         return true;
     }

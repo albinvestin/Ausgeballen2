@@ -23,28 +23,26 @@ Vec2f Player::updatePos()
     _Pos.x += _Vel.x;
     _Pos.y += _Vel.y;
     // Boarders handling
-    if (_Pos.x > MAP_WIDTH || _Pos.x < PLAYER_RADIUS)
+    if (_Pos.x + 2*PLAYER_RADIUS > MAP_WIDTH) // Right side
     {
-        if (_Pos.x < PLAYER_RADIUS)
-        {
-            _Pos.x += (PLAYER_RADIUS - _Pos.x);
-        }
-        else
-        {
-            _Pos.x -= (_Pos.x - MAP_WIDTH);
-        }
+        // Move the amount past the wall back into the map.
+        _Pos.x -= (_Pos.x + 2*PLAYER_RADIUS - MAP_WIDTH);
         _Vel.x = -_Vel.x;
     }
-    if (_Pos.y > MAP_HEIGHT || _Pos.y < PLAYER_RADIUS)
+    else if (_Pos.x < 0) // Left side
     {
-        if (_Pos.y < PLAYER_RADIUS)
-        {
-            _Pos.y += (PLAYER_RADIUS - _Pos.y);
-        }
-        else
-        {
-            _Pos.y -= (_Pos.y - MAP_HEIGHT);
-        }
+        _Pos.x -= _Pos.x;
+        _Vel.x = -_Vel.x;
+    }
+    if (_Pos.y + 2*PLAYER_RADIUS > MAP_HEIGHT) // Bottom side
+    {
+        // Move the amount past the wall back into the map.
+        _Pos.y -= (_Pos.y + 2*PLAYER_RADIUS - MAP_HEIGHT);
+        _Vel.y = -_Vel.y;
+    }
+    else if (_Pos.y < 0) // Top side
+    {
+        _Pos.y -= _Pos.y;
         _Vel.y = -_Vel.y;
     }
 

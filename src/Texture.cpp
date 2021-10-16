@@ -77,6 +77,11 @@ void LTexture::free()
 	}
 }
 
+void LTexture::ModifyColor(Uint8 red, Uint8 green, Uint8 blue)
+{
+    SDL_SetTextureColorMod(_Texture, red, green, blue);
+}
+
 void LTexture::render( int x, int y, SDL_Renderer* gRenderer )
 {
 	//Set rendering space and render to screen
