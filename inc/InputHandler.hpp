@@ -15,7 +15,7 @@ class InputHandler
 {
 private:
     SDL_Event _Event;
-    //std::vector<SDL_KeyCode> _PlayerKeys; Should I use a std::_ap?
+    //std::vector<SDL_KeyCode> _PlayerKeys; Should I use a std::map?
     
 public:
     InputHandler();

@@ -33,6 +33,10 @@ int InputHandler::EventHandler()
             {
                 returnValue = INPUT_P1SHOOT;
             }
+            if (_Event.key.keysym.sym == SDLK_k)
+            {
+                returnValue = INPUT_P2SHOOT;
+            }
         }
         // else if(_Event.type == SDL_KEYDOWN)
         // {

@@ -5,6 +5,7 @@
 #include "../inc/InputHandler.hpp"
 #include "../inc/EntityHandler.hpp"
 #include "../inc/Constants.hpp"
+#include "../inc/CollisionHandler.hpp"
 #if defined(__APPLE__) || defined(__linux__)
 #include <SDL2/SDL.h>
 #else
@@ -38,12 +39,14 @@ void GameObj::start()
 			int input;
 			EntityHandler entities{};
 			InputHandler inputHandler{};
+			CollisionHandler collisionHandler{};
 
 			//While application is running
 			while( input != INPUT_QUIT )
 			{
 				input = inputHandler.EventHandler();
 				entities.Update(input);
+				collisionHandler.CheckCollisons(&entities);
 				
 				_Display.RenderAll(entities);
 				SDL_Delay(1000/60);

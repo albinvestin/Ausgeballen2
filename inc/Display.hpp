@@ -16,10 +16,12 @@ private:
     SDL_Renderer* _Renderer = NULL;
     LTexture _BallTexture;
     LTexture _HearthTexture;
+    LTexture _BulletTexture;
 public:
     Display();
     ~Display();
     bool init();
+    bool LoadFromFile(LTexture* const texture, std::string relPath); // Help function for loadTextures
     bool loadTextures();
     void close();
     void RenderAll(EntityHandler);

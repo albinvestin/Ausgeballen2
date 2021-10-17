@@ -13,3 +13,4 @@ TODO:
 [x] delete bullets that hit edge
 [x] make recoil from shooting
 [] make bullet collision with other players
+[] add score

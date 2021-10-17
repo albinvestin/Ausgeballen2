@@ -9,8 +9,8 @@
 #include <cmath>
 #include <iostream>
 
-Player::Player(Vec2f startPos)
-    : _Pos(startPos), _Vel(Vec2f{0,0})
+Player::Player(Vec2f startPos, int playerIndex)
+    : _Position(startPos), _Velocity(Vec2f{0,0}), _playerIndex{playerIndex}
 {
 }
 
@@ -18,52 +18,52 @@ Player::~Player()
 {
 }
 
-Vec2f Player::updatePos()
+Vec2f Player::UpdatePos()
 {
-    _Pos.x += _Vel.x;
-    _Pos.y += _Vel.y;
+    _Position.x += _Velocity.x;
+    _Position.y += _Velocity.y;
     // Boarders handling
-    if (_Pos.x + 2*PLAYER_RADIUS > MAP_WIDTH) // Right side
+    if (_Position.x + 2*PLAYER_RADIUS > MAP_WIDTH) // Right side
     {
         // Move the amount past the wall back into the map.
-        _Pos.x -= (_Pos.x + 2*PLAYER_RADIUS - MAP_WIDTH);
-        _Vel.x = -_Vel.x;
+        _Position.x -= (_Position.x + 2*PLAYER_RADIUS - MAP_WIDTH);
+        _Velocity.x = -_Velocity.x;
     }
-    else if (_Pos.x < 0) // Left side
+    else if (_Position.x < 0) // Left side
     {
-        _Pos.x -= _Pos.x;
-        _Vel.x = -_Vel.x;
+        _Position.x -= _Position.x;
+        _Velocity.x = -_Velocity.x;
     }
-    if (_Pos.y + 2*PLAYER_RADIUS > MAP_HEIGHT) // Bottom side
+    if (_Position.y + 2*PLAYER_RADIUS > MAP_HEIGHT) // Bottom side
     {
         // Move the amount past the wall back into the map.
-        _Pos.y -= (_Pos.y + 2*PLAYER_RADIUS - MAP_HEIGHT);
-        _Vel.y = -_Vel.y;
+        _Position.y -= (_Position.y + 2*PLAYER_RADIUS - MAP_HEIGHT);
+        _Velocity.y = -_Velocity.y;
     }
-    else if (_Pos.y < 0) // Top side
+    else if (_Position.y < 0) // Top side
     {
-        _Pos.y -= _Pos.y;
-        _Vel.y = -_Vel.y;
+        _Position.y -= _Position.y;
+        _Velocity.y = -_Velocity.y;
     }
 
     // Decrease velocity
-    if (Vec2Length(_Vel) < 1)
+    if (Vec2Length(_Velocity) < 1)
     {
-        _Vel.x = 0;
-        _Vel.y = 0;
+        _Velocity.x = 0;
+        _Velocity.y = 0;
     }
     else
     {
-        _Vel *= PLAYER_FRICTION;
+        _Velocity *= PLAYER_FRICTION;
     }
 
-    return _Pos;
+    return _Position;
 }
 
 void Player::AddRecoil()
 {
-    _Vel.x -= cos(_AimDirection) * PLAYER_RECOIL;
-    _Vel.y -= sin(_AimDirection) * PLAYER_RECOIL;
+    _Velocity.x -= cos(_AimDirection) * PLAYER_RECOIL;
+    _Velocity.y -= sin(_AimDirection) * PLAYER_RECOIL;
 }
 
 
@@ -79,10 +79,21 @@ float Player::updateAimDirection()
 
 Vec2f Player::GetPos()
 {
-    return _Pos;
+    return _Position;
 }
 
 float Player::GetAim()
 {
     return _AimDirection;
+}
+
+int Player::GetPlayerIndex()
+{
+    return _playerIndex;
+}
+
+Vec2f Player::AddVelocity(Vec2f vel)
+{
+    _Velocity += vel;
+    return _Velocity;
 }

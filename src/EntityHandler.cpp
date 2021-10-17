@@ -1,14 +1,16 @@
 #include "../inc/EntityHandler.hpp"
 #include "../inc/Player.hpp"
 #include "../inc/Constants.hpp"
+#include "../inc/InputHandler.hpp"
 #include <cmath>
 #include <stdio.h>
 
 
-Bullet::Bullet(float aimDirection, Vec2f playerPos)
+Bullet::Bullet(float aimDirection, Vec2f playerPos, int playerIndex)
     : _Position{playerPos},
       _Velocity{(float)(BULLET_INIT_VEL * cos(aimDirection)),
-                (float)(BULLET_INIT_VEL * sin(aimDirection))}
+                (float)(BULLET_INIT_VEL * sin(aimDirection))},
+      _playerIndex{playerIndex}
 {
 }
 
@@ -23,12 +25,25 @@ Vec2f Bullet::UpdatePos()
     return _Position;
 }
 
+Vec2f Bullet::GetVelocity()
+{
+    return _Velocity;
+}
+
 
 
 // Spawn players?
 EntityHandler::EntityHandler()
-    : _P1{Vec2f(MAP_WIDTH/4, MAP_HEIGHT/4)}, _P2{Vec2f((MAP_WIDTH*3)/4, MAP_HEIGHT/4)}
+    // : _P1{Vec2f(MAP_WIDTH/4, MAP_HEIGHT/4)}, _P2{Vec2f((MAP_WIDTH*3)/4, MAP_HEIGHT/4)}
 {
+    _Players.reserve(2); // TODO Make number of players variable
+    for (int index = 1; index <= 2; index++)
+    {
+        Vec2f spawningPos{(MAP_WIDTH*index)/4, (MAP_HEIGHT*index)/4};
+        Player NewPlayer{spawningPos, index};
+        _Players.push_back(NewPlayer);
+    }
+
 }
 
 EntityHandler::~EntityHandler()
@@ -51,54 +66,66 @@ bool isOutOfBounds(Vec2f position)
 
 void EntityHandler::Update(int inputkeys)
 {
-    Vec2f p1Pos = _P1.updatePos();
-    float p1Aim = _P1.updateAimDirection();
-    if (inputkeys == INPUT_P1SHOOT) // TODO: allow multiple keys to be pressed
+    std::vector<Player>::iterator itP = _Players.begin();
+    while (itP != _Players.end())
     {
-        // Spawn bullet
-        Bullet newBullet{p1Aim, p1Pos}; // TODO: create object just once and refer by pointer. Remember to delete the pointer and free mem.
-        _ExistingBullets.push_back(newBullet);
-        _P1.AddRecoil();
+        Vec2f playerPos = (*itP).UpdatePos();
+        float playerAimDir = (*itP).updateAimDirection();
+        int playerIndex = (*itP).GetPlayerIndex();
+        if (    (inputkeys == INPUT_P1SHOOT && playerIndex == 1)
+             || (inputkeys == INPUT_P2SHOOT && playerIndex == 2))
+        {
+            // Spawn bullet
+            Bullet newBullet{playerAimDir, playerPos, playerIndex}; // TODO: create object just once and refer by pointer. Remember to delete the pointer and free mem.
+            _ExistingBullets.push_back(newBullet);
+            (*itP).AddRecoil();
+        }
+        ++itP;
     }
-    std::vector<Bullet>::iterator it = _ExistingBullets.begin();
-    while (it != _ExistingBullets.end())
+
+    std::vector<Bullet>::iterator itB = _ExistingBullets.begin();
+    while (itB != _ExistingBullets.end())
     {
-        Vec2f bullpos = (*it).UpdatePos();
+        Vec2f bullpos = (*itB).UpdatePos();
         if (isOutOfBounds(bullpos))
         {
-            it = _ExistingBullets.erase(it);
+            itB = _ExistingBullets.erase(itB);
         }
         else
         {
-            ++it;
+            ++itB;
         }
     }
 }
 
-// index starts at 1
+// index starts at 1, TODO: check length of _Players before getting index
 Vec2f EntityHandler::GetPlayerPos(int index)
 {
-    switch (index)
+    if (_Players[index-1].GetPlayerIndex() != index)
     {
-    case 1:
-        return _P1.GetPos();
-    case 2:
-        return _P2.GetPos();
-    default:
-        printf("No Player Specified\n");
-        return _P1.GetPos();
-        break;
+        printf("EntityHandler::GetPlayerPos(int index) ERROR\n");
     }
+    return _Players[index-1].GetPos(); 
 }
 
-float EntityHandler::GetP1Aim()
+// index starts at 1, TODO: check length of _Players before getting index
+float EntityHandler::GetPlayerAim(int index)
 {
-    return _P1.GetAim();
+    if (_Players[index-1].GetPlayerIndex() != index)
+    {
+        printf("EntityHandler::GetPlayerPos(int index) ERROR\n");
+    }
+    return _Players[index-1].GetAim(); 
 }
 
 Vec2f Bullet::GetPos()
 {
     return _Position;
+}
+
+int Bullet::GetPlayerIndex()
+{
+    return _playerIndex;
 }
 
 Vec2f EntityHandler::GetBullet1Pos()
@@ -124,4 +151,14 @@ std::vector<Vec2f> EntityHandler::GetAllBulletPos()
         ++it;
     }
     return result;
+}
+
+std::vector<Bullet>* EntityHandler::GetAllBullets()
+{
+    return &_ExistingBullets;
+}
+
+std::vector<Player>* EntityHandler::GetAllPlayers()
+{
+    return &_Players;
 }
