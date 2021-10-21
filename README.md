@@ -12,5 +12,12 @@ TODO:
 [x] shoot bullet
 [x] delete bullets that hit edge
 [x] make recoil from shooting
-[] make bullet collision with other players
+[x] make bullet collision with other players
+([] Take care of that the position is top left corner and collision is using radius., No issue when players are the same size?)
+[x] make player-player collision
 [] add score
+[] Read all of this: https://www.cplusplus.com/articles/y8hv0pDG/
+[] Modify members of other classes and passing them by reference is bad practice, either use smart pointers for this or could this be structured in another way?
+
+References:
+https://floating-point-gui.de/errors/comparison/

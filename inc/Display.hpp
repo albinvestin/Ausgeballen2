@@ -21,10 +21,10 @@ public:
     Display();
     ~Display();
     bool init();
-    bool LoadFromFile(LTexture* const texture, std::string relPath); // Help function for loadTextures
+    bool LoadFromFile(LTexture *const texture, std::string relPath); // Help function for loadTextures
     bool loadTextures();
     void close();
-    void RenderAll(EntityHandler);
+    void RenderAll(EntityHandler*);
 };
 
 

@@ -43,7 +43,8 @@ EntityHandler::EntityHandler()
         Player NewPlayer{spawningPos, index};
         _Players.push_back(NewPlayer);
     }
-
+    // printf("Entity player adress: %d\n", &_Players);
+    // printf("Entity player adress: %d\n", &_Players[0] );
 }
 
 EntityHandler::~EntityHandler()

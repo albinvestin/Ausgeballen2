@@ -19,6 +19,9 @@ public:
     void AddRecoil();
     int GetPlayerIndex();
     Vec2f AddVelocity(Vec2f vel);
+    Vec2f GetVelocity();
+    Vec2f SetVelocity(Vec2f v);
+    void AddToPosition(Vec2f v);
 };
 
 

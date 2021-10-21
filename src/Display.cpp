@@ -113,7 +113,7 @@ void Display::close()
     IMG_Quit();
 }
 
-void Display::RenderAll(EntityHandler entities)
+void Display::RenderAll(EntityHandler *entities)
 {
     //Clear screen
     SDL_SetRenderDrawColor( _Renderer, 0xFF, 0xFF, 0xFF, 0xFF );
@@ -123,7 +123,7 @@ void Display::RenderAll(EntityHandler entities)
     // _HearthTexture.render( 0, 0, _Renderer );
 
 	// Render bullets
-	std::vector<Vec2f> AllBulletPos = entities.GetAllBulletPos();
+	std::vector<Vec2f> AllBulletPos = (*entities).GetAllBulletPos();
 	std::vector<Vec2f>::iterator it = AllBulletPos.begin();
     while (it != AllBulletPos.end())
     {
@@ -131,29 +131,29 @@ void Display::RenderAll(EntityHandler entities)
         ++it;
     }
 
-	//Vec2 bulletPos = entities.GetBullet1Pos();
+	//Vec2 bulletPos = (*entities)..GetBullet1Pos();
 	//_HearthTexture.render( bulletPos.x, bulletPos.y, _Renderer );
 
     //Render Player1 to the screen
-	Vec2f playerPos = entities.GetPlayerPos(1);
+	Vec2f playerPos = (*entities).GetPlayerPos(1);
 	_BallTexture.ModifyColor(255, 255, 50);
     _BallTexture.render(playerPos.x, playerPos.y, _Renderer);
 
 	// Render player1 shooting direction
 	SDL_SetRenderDrawColor(_Renderer, 0, 0, 255, 150); // BLUE
-	float angle = entities.GetPlayerAim(1);
+	float angle = (*entities).GetPlayerAim(1);
 	int centerX = playerPos.x+PLAYER_RADIUS;
 	int centerY = playerPos.y+PLAYER_RADIUS;
 	SDL_RenderDrawLine(_Renderer, centerX, centerY, centerX + cos(angle)*(2*PLAYER_RADIUS), centerY + sin(angle)*(2*PLAYER_RADIUS));
 
 	//Render Player2 to the screen
-	playerPos = entities.GetPlayerPos(2);
+	playerPos = (*entities).GetPlayerPos(2);
 	// printf("P2: (%f,%f)\n",playerPos.x, playerPos.y);
 	_BallTexture.ModifyColor(255, 50, 255);
     _BallTexture.render(playerPos.x, playerPos.y, _Renderer);
 
 	// Render player2 shooting direction
-	angle = entities.GetPlayerAim(2);
+	angle = (*entities).GetPlayerAim(2);
 	centerX = playerPos.x+PLAYER_RADIUS;
 	centerY = playerPos.y+PLAYER_RADIUS;
 	SDL_RenderDrawLine(_Renderer, centerX, centerY, centerX + cos(angle)*(2*PLAYER_RADIUS), centerY + sin(angle)*(2*PLAYER_RADIUS));

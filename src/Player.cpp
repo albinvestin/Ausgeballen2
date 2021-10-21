@@ -97,3 +97,19 @@ Vec2f Player::AddVelocity(Vec2f vel)
     _Velocity += vel;
     return _Velocity;
 }
+
+Vec2f Player::GetVelocity()
+{
+    return _Velocity;
+}
+
+Vec2f Player::SetVelocity(Vec2f v)
+{
+    _Velocity = v;
+    return _Velocity;
+}
+
+void Player::AddToPosition(Vec2f v)
+{
+    _Position += v;
+}

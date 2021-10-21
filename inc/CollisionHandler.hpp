@@ -1,17 +1,18 @@
 #ifndef COLLISIONHANDLER_HPP
 #define COLLISIONHANDLER_HPP
 #include "../inc/EntityHandler.hpp"
+#include "Vector2.hpp"
 
 class CollisionHandler
 {
-private:
-    bool CollisionTwoCircles(Vec2f pos1, int radius1, Vec2f pos2, int radius2);
 public:
     CollisionHandler();
     ~CollisionHandler();
-    bool CheckCollisons(EntityHandler *entities);
+    void HandleCollisons(EntityHandler *entities);
 };
 
+float Squaredf(float x);
+Vec2f ElasticCollision(Vec2f playerPos1, Vec2f playerPos2, Vec2f p1Vel, Vec2f p2Vel);
 
 
 

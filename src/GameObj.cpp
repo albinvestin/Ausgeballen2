@@ -46,9 +46,9 @@ void GameObj::start()
 			{
 				input = inputHandler.EventHandler();
 				entities.Update(input);
-				collisionHandler.CheckCollisons(&entities);
+				collisionHandler.HandleCollisons(&entities);
 				
-				_Display.RenderAll(entities);
+				_Display.RenderAll(&entities);
 				SDL_Delay(1000/60);
 			}
 		}
