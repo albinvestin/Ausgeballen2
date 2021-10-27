@@ -50,6 +50,7 @@ void HandlePlayerOnBulletCollisions(EntityHandler *entities)
                 {
                     printf("HIT!\n");
                     // TODO add Score to playerIndexOfBullet
+                    (*AllPlayers).at(playerIndexOfBullet-1).AddOneToScore();
                     // Add impact energy to the hit player
                     (*itP).AddVelocity((*itB).GetVelocity());
                     itB = (*AllBullets).erase(itB);

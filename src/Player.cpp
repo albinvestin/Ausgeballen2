@@ -113,3 +113,14 @@ void Player::AddToPosition(Vec2f v)
 {
     _Position += v;
 }
+
+void Player::AddOneToScore()
+{
+    _score += 1;
+    printf("%d\n", _score);
+}
+
+unsigned char Player::GetScore()
+{
+    return _score;
+}
