@@ -15,10 +15,10 @@ public:
     ~Player();
     Vec2f UpdatePos();
     float updateAimDirection();
-    Vec2f GetPos();
-    float GetAim();
+    Vec2f GetPos() const;
+    float GetAim() const;
     void AddRecoil();
-    int GetPlayerIndex();
+    int GetPlayerIndex() const;
     Vec2f AddVelocity(Vec2f vel);
     Vec2f GetVelocity();
     Vec2f SetVelocity(Vec2f v);

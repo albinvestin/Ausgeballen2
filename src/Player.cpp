@@ -77,17 +77,17 @@ float Player::updateAimDirection()
     return _AimDirection;
 }
 
-Vec2f Player::GetPos()
+Vec2f Player::GetPos() const
 {
     return _Position;
 }
 
-float Player::GetAim()
+float Player::GetAim() const
 {
     return _AimDirection;
 }
 
-int Player::GetPlayerIndex()
+int Player::GetPlayerIndex() const
 {
     return _playerIndex;
 }

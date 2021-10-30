@@ -100,7 +100,7 @@ void EntityHandler::Update(int inputkeys)
 }
 
 // index starts at 1, TODO: check length of _Players before getting index
-Vec2f EntityHandler::GetPlayerPos(int index)
+Vec2f EntityHandler::GetPlayerPos(int index) const
 {
     if (_Players[index-1].GetPlayerIndex() != index)
     {
@@ -110,7 +110,7 @@ Vec2f EntityHandler::GetPlayerPos(int index)
 }
 
 // index starts at 1, TODO: check length of _Players before getting index
-float EntityHandler::GetPlayerAim(int index)
+float EntityHandler::GetPlayerAim(int index) const
 {
     if (_Players[index-1].GetPlayerIndex() != index)
     {
@@ -119,7 +119,7 @@ float EntityHandler::GetPlayerAim(int index)
     return _Players[index-1].GetAim(); 
 }
 
-Vec2f Bullet::GetPos()
+Vec2f Bullet::GetPos() const
 {
     return _Position;
 }
@@ -142,10 +142,10 @@ Vec2f EntityHandler::GetBullet1Pos()
     }
 }
 
-std::vector<Vec2f> EntityHandler::GetAllBulletPos()
+std::vector<Vec2f> EntityHandler::GetAllBulletPos() const
 {
     std::vector<Vec2f> result{};
-    std::vector<Bullet>::iterator it = _ExistingBullets.begin();
+    std::vector<Bullet>::const_iterator it = _ExistingBullets.begin();
     while (it != _ExistingBullets.end())
     {
         result.push_back((*it).GetPos());

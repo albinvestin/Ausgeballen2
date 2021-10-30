@@ -20,6 +20,9 @@ TODO:
 [] Modify members of other classes and passing them by reference is bad practice, either use smart pointers for this or could this be structured in another way?
 [] Add check so that players are moving from eachother so that they do not get stuck in eachother. Or is this a feature? >:D
 [] offset the map to middle of screen
+[] Make bullets and players as data structures
+[] Make a movement handler
 
 References:
 https://floating-point-gui.de/errors/comparison/
+https://en.wikipedia.org/wiki/Law_of_Demeter

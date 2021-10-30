@@ -113,7 +113,7 @@ void Display::close()
     IMG_Quit();
 }
 
-void Display::RenderAll(EntityHandler *entities)
+void Display::RenderAll(EntityHandler const* entities)
 {
     //Clear screen
     SDL_SetRenderDrawColor( _Renderer, 0xFF, 0xFF, 0xFF, 0xFF );

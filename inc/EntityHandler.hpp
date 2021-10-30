@@ -13,7 +13,7 @@ public:
     Bullet(float aimDirection, Vec2f playerPos, int playerIndex);
     ~Bullet();
     Vec2f UpdatePos();
-    Vec2f GetPos();
+    Vec2f GetPos() const;
     int GetPlayerIndex();
     Vec2f GetVelocity();
 };
@@ -29,10 +29,10 @@ public:
     EntityHandler();
     ~EntityHandler();
     void Update(int inputkeys);
-    Vec2f GetPlayerPos(int index); // Index starts at 1
-    float GetPlayerAim(int index);
+    Vec2f GetPlayerPos(int index) const; // Index starts at 1
+    float GetPlayerAim(int index) const;
     Vec2f GetBullet1Pos();
-    std::vector<Vec2f> GetAllBulletPos();
+    std::vector<Vec2f> GetAllBulletPos() const;
     std::vector<Bullet>* GetAllBullets();
     std::vector<Player>* GetAllPlayers();
 };

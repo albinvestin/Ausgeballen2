@@ -24,7 +24,7 @@ public:
     bool LoadFromFile(LTexture *const texture, std::string relPath); // Help function for loadTextures
     bool loadTextures();
     void close();
-    void RenderAll(EntityHandler*);
+    void RenderAll(EntityHandler const*);
 };
 
 
