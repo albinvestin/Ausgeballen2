@@ -36,13 +36,13 @@ void HandlePlayerOnBulletCollisions(EntityHandler *entities)
     itP = (*AllPlayers).begin();
     while (itP != (*AllPlayers).end())
     {
-        playerPos = (*itP).GetPos();
-        playerIndex = (*itP).GetPlayerIndex();
+        playerPos = (*itP).position;
+        playerIndex = (*itP).playerIndex;
         itB = (*AllBullets).begin();
         while (itB != (*AllBullets).end())
         {
-            playerIndexOfBullet = (*itB).GetPlayerIndex();
-            bulletPos = (*itB).GetPos();
+            playerIndexOfBullet = (*itB).playerIndex;
+            bulletPos = (*itB).position;
             
             if (CollisionTwoCircles(playerPos, PLAYER_RADIUS, bulletPos, BULLET_RADIUS))
             {
@@ -50,9 +50,10 @@ void HandlePlayerOnBulletCollisions(EntityHandler *entities)
                 {
                     printf("HIT!\n");
                     // TODO add Score to playerIndexOfBullet
-                    (*AllPlayers).at(playerIndexOfBullet-1).AddOneToScore();
+                    (*AllPlayers).at(playerIndexOfBullet-1).score++;
                     // Add impact energy to the hit player
-                    (*itP).AddVelocity((*itB).GetVelocity());
+                    (*itP).velocity += (*itB).velocity;
+                    // (*itP).AddVelocity((*itB).GetVelocity());
                     itB = (*AllBullets).erase(itB);
                     continue; // Skip increase of iterator
                 }
@@ -89,7 +90,6 @@ void HandlePlayerOnPlayerCollisions(EntityHandler *entities)
     std::vector<Player>::iterator itP1;
     std::vector<Player>::iterator itP2;
     Vec2f playerPos1, playerPos2;
-    int playerIndex1, playerIndex2 ;
 
     Vec2f bulletPos;
     AllPlayers = (*entities).GetAllPlayers();
@@ -99,27 +99,29 @@ void HandlePlayerOnPlayerCollisions(EntityHandler *entities)
     itP1 = (*AllPlayers).begin();
     while (itP1 != (*AllPlayers).end())
     {
-        playerPos1 = (*itP1).GetPos();
+        playerPos1 = (*itP1).position;
         // playerIndex1 = (*itP1).GetPlayerIndex();
         itP2 = (*AllPlayers).begin();
         while (itP2 != (*AllPlayers).end())
         {
             // printf("Iterator adress: %d\n", itP1);
-            playerPos2 = (*itP2).GetPos();
+            playerPos2 = (*itP2).position;
             // playerIndex2 = (*itP2).GetPlayerIndex();
             if (CollisionTwoCircles(playerPos1, PLAYER_RADIUS, playerPos2, PLAYER_RADIUS))
             {
                 if (itP1 != itP2) // Can not hit self
                 {
                     // printf("Player bump!\n");
-                    Vec2f p1Vel = (*itP1).GetVelocity();
-                    Vec2f p2Vel = (*itP2).GetVelocity();
+                    Vec2f p1Vel = (*itP1).velocity;
+                    Vec2f p2Vel = (*itP2).velocity;
 
                     Vec2f p1NewVel = ElasticCollision(playerPos1, playerPos2, p1Vel, p2Vel);
                     Vec2f p2NewVel = ElasticCollision(playerPos2, playerPos1, p2Vel, p1Vel);
                     
-                    (*itP1).SetVelocity(p1NewVel); 
-                    (*itP2).SetVelocity(p2NewVel);
+                    // (*itP1).SetVelocity(p1NewVel);
+                    (*itP1).velocity = p1NewVel;
+                    // (*itP2).SetVelocity(p2NewVel);
+                    (*itP2).velocity = p2NewVel;
                     return; // TODO handle this for more players, should mark the current two players as handled and continue with unhandled ones.
 
                 }

@@ -1,22 +1,23 @@
 #ifndef ENTITYHANDLER_HPP
 #define ENTITYHANDLER_HPP
-#include "Player.hpp"
+// #include "Player.hpp"
+#include "Entities.hpp"
 #include <vector>
 
-class Bullet
-{
-private:
-    Vec2f _Position;
-    Vec2f _Velocity;
-    int _playerIndex; // starts at 1
-public:
-    Bullet(float aimDirection, Vec2f playerPos, int playerIndex);
-    ~Bullet();
-    Vec2f UpdatePos();
-    Vec2f GetPos() const;
-    int GetPlayerIndex();
-    Vec2f GetVelocity();
-};
+// class Bullet
+// {
+// private:
+//     Vec2f _Position;
+//     Vec2f _Velocity;
+//     int _playerIndex; // starts at 1
+// public:
+//     Bullet(float aimDirection, Vec2f playerPos, int playerIndex);
+//     ~Bullet();
+//     Vec2f UpdatePos();
+//     Vec2f GetPos() const;
+//     int GetPlayerIndex();
+//     Vec2f GetVelocity();
+// };
 
 class EntityHandler
 {
@@ -35,5 +36,9 @@ public:
     std::vector<Vec2f> GetAllBulletPos() const;
     std::vector<Bullet>* GetAllBullets();
     std::vector<Player>* GetAllPlayers();
+    Vec2f UpdatePlayerPos(unsigned char playerIndex);
+    void AddRecoil(unsigned char playerIndex);
+    float UpdateAimDirection(unsigned char playerIndex);
+    Vec2f UpdateBulletPos(std::vector<Bullet>::iterator bullet);
 };
-#endif
+#endif /* ENTITYHANDLER_HPP */
