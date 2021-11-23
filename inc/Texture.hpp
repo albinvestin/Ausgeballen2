@@ -26,7 +26,7 @@ class LTexture
 		void ModifyColor( Uint8 red, Uint8 green, Uint8 blue );
 
 		//Renders texture at given point
-		void render( int x, int y, SDL_Renderer* gRenderer );
+		void render(int x, int y, SDL_Renderer* renderer, SDL_Rect* clip);
 
 		//Gets image dimensions
 		int getWidth();

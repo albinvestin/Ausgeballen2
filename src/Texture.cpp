@@ -82,11 +82,18 @@ void LTexture::ModifyColor(Uint8 red, Uint8 green, Uint8 blue)
     SDL_SetTextureColorMod(_Texture, red, green, blue);
 }
 
-void LTexture::render( int x, int y, SDL_Renderer* gRenderer )
+void LTexture::render( int x, int y, SDL_Renderer* gRenderer, SDL_Rect* clip )
 {
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, _Width, _Height };
-	SDL_RenderCopy( gRenderer, _Texture, NULL, &renderQuad );
+	//Set clip rendering dimensions
+    if( clip != NULL )
+    {
+        renderQuad.w = clip->w;
+        renderQuad.h = clip->h;
+    }
+
+	SDL_RenderCopy( gRenderer, _Texture, clip, &renderQuad );
 }
 
 int LTexture::getWidth()

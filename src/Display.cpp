@@ -73,6 +73,15 @@ bool Display::init()
 		}
 	}
 
+	for (unsigned char i = 0; i < ALPHABET_LENGTH; i++)
+	{
+		_AlphabethClippingRect[i].x = ALPHABET_CHAR_WIDTH * i;
+		_AlphabethClippingRect[i].y = 0;
+		_AlphabethClippingRect[i].w = ALPHABET_CHAR_WIDTH;
+		_AlphabethClippingRect[i].h = ALPHABET_CHAR_HEIGHT;
+	}
+	
+
 	return success;
 }
 
@@ -94,6 +103,7 @@ bool Display::loadTextures()
 	success &= LoadFromFile(&_BallTexture, "../res/Image_Ball.png");
 	success &= LoadFromFile(&_BulletTexture, "../res/dot.bmp");
 	success &= LoadFromFile(&_HearthTexture, "../res/heart.png");
+	success &= LoadFromFile(&_Alphabeth, "../res/alphabet.png");
 
 	return success;
 }
@@ -103,6 +113,7 @@ void Display::close()
     _BallTexture.free();
 	_BulletTexture.free();
 	_HearthTexture.free();
+	_Alphabeth.free();
 
     SDL_DestroyRenderer( _Renderer );
 	_Renderer = NULL;
@@ -127,7 +138,7 @@ void Display::RenderAll(EntityHandler const* entities)
 	std::vector<Vec2f>::iterator it = AllBulletPos.begin();
     while (it != AllBulletPos.end())
     {
-		_BulletTexture.render( (*it).x, (*it).y, _Renderer );
+		_BulletTexture.render( (*it).x, (*it).y, _Renderer, NULL );
         ++it;
     }
 
@@ -137,7 +148,7 @@ void Display::RenderAll(EntityHandler const* entities)
     //Render Player1 to the screen
 	Vec2f playerPos = (*entities).GetPlayerPos(1);
 	_BallTexture.ModifyColor(255, 255, 50);
-    _BallTexture.render(playerPos.x, playerPos.y, _Renderer);
+    _BallTexture.render(playerPos.x, playerPos.y, _Renderer, NULL);
 
 	// Render player1 shooting direction
 	SDL_SetRenderDrawColor(_Renderer, 0, 0, 255, 150); // BLUE
@@ -150,7 +161,7 @@ void Display::RenderAll(EntityHandler const* entities)
 	playerPos = (*entities).GetPlayerPos(2);
 	// printf("P2: (%f,%f)\n",playerPos.x, playerPos.y);
 	_BallTexture.ModifyColor(255, 50, 255);
-    _BallTexture.render(playerPos.x, playerPos.y, _Renderer);
+    _BallTexture.render(playerPos.x, playerPos.y, _Renderer, NULL);
 
 	// Render player2 shooting direction
 	angle = (*entities).GetPlayerAim(2);
@@ -165,7 +176,30 @@ void Display::RenderAll(EntityHandler const* entities)
 	SDL_RenderDrawLine(_Renderer, 0, 0, 0, MAP_HEIGHT); // Left
 	SDL_RenderDrawLine(_Renderer, MAP_WIDTH, 0, MAP_WIDTH, MAP_HEIGHT); // Right
 
+	// _Alphabeth.render(50,50, _Renderer, NULL);
+	RenderString("TEST", 50, 60);
 
     //Update screen
     SDL_RenderPresent( _Renderer );
+}
+
+std::vector<unsigned char> Display::StringToAlphabetKeys(std::string input)
+{
+	std::vector<unsigned char> result;
+	for (std::string::iterator it = input.begin(); it != input.end(); ++it)
+	{
+		result.push_back(ALPHABET_KEYS[*it]);
+	}
+	return result;	
+}
+
+void Display::RenderString(std::string input, int x, int y)
+{
+	std::vector<unsigned char> clippingIndex = StringToAlphabetKeys(input);
+	int i = 0;
+	for (std::vector<unsigned char>::iterator it = clippingIndex.begin(); it != clippingIndex.end(); ++it)
+	{
+		_Alphabeth.render(x + i * (ALPHABET_CHAR_WIDTH ), y, _Renderer, &_AlphabethClippingRect[clippingIndex[i]]);
+		++i;
+	}
 }

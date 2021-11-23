@@ -13,5 +13,8 @@ const float PLAYER_RECOIL = 10;
 const int PLAYER_RADIUS = 15;
 const int BULLET_RADIUS = 10;
 enum INPUTKEY {INPUT_NONE = 0, INPUT_QUIT, INPUT_P1SHOOT, INPUT_P2SHOOT};
+const unsigned char ALPHABET_CHAR_WIDTH = 24;
+const unsigned char ALPHABET_CHAR_HEIGHT = 30;
+const unsigned char ALPHABET_LENGTH = 26;
 
 #endif /* CONSTANTS_HPP */

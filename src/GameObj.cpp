@@ -32,7 +32,7 @@ void GameObj::start()
 		//Load media
 		if( !_Display.loadTextures() )
 		{
-			printf( "Failed to load _edia!\n" );
+			printf( "Failed to load media!\n" );
 		}
 		else
 		{	
