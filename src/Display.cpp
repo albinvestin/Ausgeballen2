@@ -103,7 +103,7 @@ bool Display::loadTextures()
 	success &= LoadFromFile(&_BallTexture, "../res/Image_Ball.png");
 	success &= LoadFromFile(&_BulletTexture, "../res/dot.bmp");
 	success &= LoadFromFile(&_HearthTexture, "../res/heart.png");
-	success &= LoadFromFile(&_Alphabeth, "../res/alphabet.png");
+	success &= LoadFromFile(&_Alphabeth, "../res/alphabet2.png");
 
 	return success;
 }
@@ -177,7 +177,7 @@ void Display::RenderAll(EntityHandler const* entities)
 	SDL_RenderDrawLine(_Renderer, MAP_WIDTH, 0, MAP_WIDTH, MAP_HEIGHT); // Right
 
 	// _Alphabeth.render(50,50, _Renderer, NULL);
-	RenderString("TEST", 50, 60);
+	RenderString("TEST!?", 50, 60);
 
     //Update screen
     SDL_RenderPresent( _Renderer );
