@@ -1,4 +1,5 @@
 #include "../inc/NetworkHandler.hpp"
+#include "../inc/Constants.hpp"
 
 NetworkHandler::NetworkHandler()
 {
@@ -53,66 +54,65 @@ void NetworkHandler::PollAllServerEvents()
     {
         return;
     }
-    ENetEvent event;
     /* Wait up to 1000 milliseconds for an event. */
-    while (enet_host_service (_server, &event, 5) > 0)
+    while (enet_host_service (_server, &_event, 5) > 0)
     {
         printf("Got an event\n");
-        switch (event.type)
+        switch (_event.type)
         {
             case ENET_EVENT_TYPE_CONNECT:
-                event.peer->data = (void*)"FirstConnection";
+                _event.peer->data = (void*)"FirstConnection";
                 printf("A new client connected from %x:%u. Giving it name \"%s\"\n",
-                    event.peer->address.host,
-                    event.peer->address.port,
-                    (char*)event.peer->data);
+                    _event.peer->address.host,
+                    _event.peer->address.port,
+                    (char*)_event.peer->data);
                 break;
 
-            // case ENET_EVENT_TYPE_RECEIVE:
-            //     if (_event.packet->dataLength > 0)
-            //     {
-            //         std::stringstream ss((char*)_event.packet->data); // Use std::ios::binary if filestream
-            //         cereal::PortableBinaryInputArchive inArchive(ss);
-            //         char header;
-            //         inArchive(header); // DeSerialize
-            //         printf("Got header: %u\n", header);
+            case ENET_EVENT_TYPE_RECEIVE:
+                if (_event.packet->dataLength > 0)
+                {
+                    std::stringstream ss((char*)_event.packet->data); // Use std::ios::binary if filestream
+                    cereal::PortableBinaryInputArchive inArchive(ss);
+                    uint8_t header;
+                    inArchive(header); // DeSerialize
+                    printf("Got header: %u\n", header);
                     
-            //         switch (header)
-            //         {
-            //         case ENET_UINT16:
-            //             UINT16 result;
-            //             inArchive(result); // DeSerialize
+                    switch (header)
+                    {
+                    case NETWORK_TYPE_UINT16:
+                        uint16_t result;
+                        inArchive(result); // DeSerialize
 
-            //             printf ("A packet of length %u containing \"%#X\" was received from %s on channel %u.\n",
-            //                 event.packet->dataLength,
-            //                 result,
-            //                 event.peer->data,
-            //                 event.channelID);
+                        printf ("A packet of length %u containing \"%#X\" was received from %s on channel %u.\n",
+                            _event.packet->dataLength,
+                            result,
+                            _event.peer->data,
+                            _event.channelID);
                             
-            //             break;
+                        break;
 
-            //         case ENET_FLOAT:
-            //             float inputdata;
-            //             inArchive(inputdata); // DeSerialize
-            //             printf("Got float: %f\n", inputdata);
+                    case NETWORK_TYPE_FLOAT:
+                        float inputdata;
+                        inArchive(inputdata); // DeSerialize
+                        printf("Got float: %f\n", inputdata);
 
-            //         default:
-            //             break;
-            //         }
+                    default:
+                        break;
+                    }
 
-            //         /* Clean up the packet now that we're done using it. */
-            //         enet_packet_destroy (_event.packet);
-            //     }
+                    /* Clean up the packet now that we're done using it. */
+                    enet_packet_destroy (_event.packet);
+                }
 
-            //     // SEND A REPLY! :D
-            //     // SendPacket(_event.peer, "HELLO!"); // This adds the packet to a queue
+                // SEND A REPLY! :D
+                // SendPacket(_event.peer, "HELLO!"); // This adds the packet to a queue
 
-            // break;
+            break;
 
             case ENET_EVENT_TYPE_DISCONNECT:
-                printf ("%s disconnected.\n", event.peer -> data);
+                printf ("%s disconnected.\n", _event.peer -> data);
                 /* Reset the peer's client information. */
-                event.peer -> data = NULL;
+                _event.peer -> data = NULL;
                 break;
         }
     }
@@ -152,7 +152,6 @@ void NetworkHandler::Join()
         enet_peer_reset(_peer);
         printf("Connection to 127.0.0.1 Port %u failed.\n", _address.port);
     }
-
 }
 
 void NetworkHandler::Disconnect()
@@ -178,6 +177,7 @@ void NetworkHandler::Disconnect()
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
                 printf("Disconnection succeeded.");
+                return;
                 break;
         }
     }

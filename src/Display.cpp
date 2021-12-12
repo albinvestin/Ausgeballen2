@@ -73,7 +73,7 @@ bool Display::init()
 		}
 	}
 
-	for (unsigned char i = 0; i < ALPHABET_LENGTH; i++)
+	for (uint8_t i = 0; i < ALPHABET_LENGTH; i++)
 	{
 		_AlphabethClippingRect[i].x = ALPHABET_CHAR_WIDTH * i;
 		_AlphabethClippingRect[i].y = 0;
@@ -183,9 +183,9 @@ void Display::RenderAll(EntityHandler const* entities)
     SDL_RenderPresent( _Renderer );
 }
 
-std::vector<unsigned char> Display::StringToAlphabetKeys(std::string input)
+std::vector<uint8_t> Display::StringToAlphabetKeys(std::string input)
 {
-	std::vector<unsigned char> result;
+	std::vector<uint8_t> result;
 	for (std::string::iterator it = input.begin(); it != input.end(); ++it)
 	{
 		result.push_back(ALPHABET_KEYS[*it]);
@@ -195,9 +195,9 @@ std::vector<unsigned char> Display::StringToAlphabetKeys(std::string input)
 
 void Display::RenderString(std::string input, int x, int y)
 {
-	std::vector<unsigned char> clippingIndex = StringToAlphabetKeys(input);
+	std::vector<uint8_t> clippingIndex = StringToAlphabetKeys(input);
 	int i = 0;
-	for (std::vector<unsigned char>::iterator it = clippingIndex.begin(); it != clippingIndex.end(); ++it)
+	for (std::vector<uint8_t>::iterator it = clippingIndex.begin(); it != clippingIndex.end(); ++it)
 	{
 		_Alphabeth.render(x + i * (ALPHABET_CHAR_WIDTH ), y, _Renderer, &_AlphabethClippingRect[clippingIndex[i]]);
 		++i;

@@ -63,7 +63,7 @@ int InputHandler::EventHandler()
     }
 
     // Handle continuous press
-    const Uint8* keystates = SDL_GetKeyboardState(NULL);
+    const uint8_t* keystates = SDL_GetKeyboardState(NULL);
     // Uses SCANCODE for key codes.
     if(keystates[SDL_SCANCODE_W])
     {

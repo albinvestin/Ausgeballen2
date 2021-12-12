@@ -36,9 +36,9 @@ public:
     std::vector<Vec2f> GetAllBulletPos() const;
     std::vector<Bullet>* GetAllBullets();
     std::vector<Player>* GetAllPlayers();
-    Vec2f UpdatePlayerPos(unsigned char playerIndex);
-    void AddRecoil(unsigned char playerIndex);
-    float UpdateAimDirection(unsigned char playerIndex);
+    Vec2f UpdatePlayerPos(uint8_t playerIndex);
+    void AddRecoil(uint8_t playerIndex);
+    float UpdateAimDirection(uint8_t playerIndex);
     Vec2f UpdateBulletPos(std::vector<Bullet>::iterator bullet);
 };
 #endif /* ENTITYHANDLER_HPP */

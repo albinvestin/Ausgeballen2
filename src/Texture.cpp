@@ -77,7 +77,7 @@ void LTexture::free()
 	}
 }
 
-void LTexture::ModifyColor(Uint8 red, Uint8 green, Uint8 blue)
+void LTexture::ModifyColor(uint8_t red, uint8_t green, uint8_t blue)
 {
     SDL_SetTextureColorMod(_Texture, red, green, blue);
 }

@@ -38,7 +38,7 @@ EntityHandler::EntityHandler()
     // : _P1{Vec2f(MAP_WIDTH/4, MAP_HEIGHT/4)}, _P2{Vec2f((MAP_WIDTH*3)/4, MAP_HEIGHT/4)}
 {
     _Players.reserve(2); // TODO Make number of players variable
-    for (unsigned char index = 1; index <= 2; index++)
+    for (uint8_t index = 1; index <= 2; index++)
     {
         Vec2f spawningPos{(MAP_WIDTH*index)/4, (MAP_HEIGHT*index)/4};
         Player NewPlayer{spawningPos, index};
@@ -73,7 +73,7 @@ void EntityHandler::Update(int inputkeys)
     {
         Vec2f playerPos = UpdatePlayerPos((*itP).playerIndex);
         float playerAimDir = UpdateAimDirection((*itP).playerIndex);
-        unsigned char playerIndex = (*itP).playerIndex;
+        uint8_t playerIndex = (*itP).playerIndex;
         if (    (inputkeys == INPUT_P1SHOOT && playerIndex == 1)
              || (inputkeys == INPUT_P2SHOOT && playerIndex == 2))
         {
@@ -165,7 +165,7 @@ std::vector<Player>* EntityHandler::GetAllPlayers()
     return &_Players;
 }
 
-Vec2f EntityHandler::UpdatePlayerPos(unsigned char playerIndex) // TODO take an iterator
+Vec2f EntityHandler::UpdatePlayerPos(uint8_t playerIndex) // TODO take an iterator
 {
     Vec2f _Position = _Players[playerIndex-1].position;
     Vec2f _Velocity = _Players[playerIndex-1].velocity;
@@ -213,7 +213,7 @@ Vec2f EntityHandler::UpdatePlayerPos(unsigned char playerIndex) // TODO take an 
     return _Position;
 }
 
-void EntityHandler::AddRecoil(unsigned char playerIndex) // TODO take an iterator
+void EntityHandler::AddRecoil(uint8_t playerIndex) // TODO take an iterator
 {
     Vec2f _Velocity = _Players[playerIndex-1].velocity;
     float _AimDirection = _Players[playerIndex-1].aimDirection;
@@ -223,7 +223,7 @@ void EntityHandler::AddRecoil(unsigned char playerIndex) // TODO take an iterato
 }
 
 
-float EntityHandler::UpdateAimDirection(unsigned char playerIndex) // TODO take an iterator
+float EntityHandler::UpdateAimDirection(uint8_t playerIndex) // TODO take an iterator
 {
     float _AimDirection = _Players[playerIndex-1].aimDirection;
     _AimDirection += M_PI/30;

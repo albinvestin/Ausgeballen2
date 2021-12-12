@@ -9,9 +9,9 @@ struct Bullet
     // Data
     Vec2f position;
     Vec2f velocity;
-    unsigned char playerIndex;
+    uint8_t playerIndex;
     // Constructor
-    Bullet(float aimDirection, Vec2f playerPos, unsigned char playerIndex)
+    Bullet(float aimDirection, Vec2f playerPos, uint8_t playerIndex)
     : position{playerPos},
       velocity{(float)(BULLET_INIT_VEL * cos(aimDirection)),
                 (float)(BULLET_INIT_VEL * sin(aimDirection))},
@@ -24,11 +24,11 @@ struct Player
     // Data
     Vec2f position;
     Vec2f velocity;
-    unsigned char playerIndex;
+    uint8_t playerIndex;
     float aimDirection = 0; // in Radians
-    unsigned char score = 0;
+    uint8_t score = 0;
     // Constructor
-    Player(Vec2f startPos, unsigned char playerIndex)
+    Player(Vec2f startPos, uint8_t playerIndex)
     : position{startPos}, playerIndex{playerIndex}
     {};
 };

@@ -8,6 +8,7 @@
 #endif
 #include <cmath>
 #include <iostream>
+ #include <stdint.h>
 
 Player::Player(Vec2f startPos, int playerIndex)
     : _Position(startPos), _Velocity(Vec2f{0,0}), _playerIndex{playerIndex}
@@ -120,7 +121,7 @@ void Player::AddOneToScore()
     printf("%d\n", _score);
 }
 
-unsigned char Player::GetScore()
+uint8_t Player::GetScore()
 {
     return _score;
 }

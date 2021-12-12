@@ -20,9 +20,9 @@ private:
     LTexture _BulletTexture;
     LTexture _Alphabeth;
     SDL_Rect _AlphabethClippingRect[ALPHABET_LENGTH];
-    std::vector<unsigned char> StringToAlphabetKeys(std::string input);
+    std::vector<uint8_t> StringToAlphabetKeys(std::string input);
     void RenderString(std::string input, int x, int y);
-    std::map<char, unsigned char> ALPHABET_KEYS 
+    std::map<char, uint8_t> ALPHABET_KEYS 
     {{'A', 0},
     {'B', 1},
     {'C', 2},

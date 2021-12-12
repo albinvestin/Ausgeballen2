@@ -23,7 +23,7 @@ class LTexture
 		//Deallocates texture
 		void free();
 
-		void ModifyColor( Uint8 red, Uint8 green, Uint8 blue );
+		void ModifyColor( uint8_t red, uint8_t green, uint8_t blue );
 
 		//Renders texture at given point
 		void render(int x, int y, SDL_Renderer* renderer, SDL_Rect* clip);
