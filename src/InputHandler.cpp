@@ -49,6 +49,10 @@ int InputHandler::EventHandler()
             {
                 returnValue = INPUT_DISCONNECT;
             }
+            if (_Event.key.keysym.sym == SDLK_y)
+            {
+                returnValue = INPUT_SEND_P2SHOOT;
+            }
         }
         // else if(_Event.type == SDL_KEYDOWN)
         // {

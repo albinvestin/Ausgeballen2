@@ -7,6 +7,7 @@
 #include <cereal/archives/portable_binary.hpp>
 #endif
 #include <sstream>
+#include <stdint.h>
 
 class NetworkHandler
 {
@@ -16,15 +17,17 @@ private:
     ENetHost* _server = NULL;
     ENetHost* _client = NULL;
     ENetPeer* _peer = NULL;
-
+    
     std::string GetIPFromAdress(ENetAddress address);
+    void SendPacket(std::stringstream* data);
 public:
-    void PollAllServerEvents();
+    std::vector<uint8_t> PollAllServerEvents();
     NetworkHandler();
     ~NetworkHandler();
     void Host();
     void Join();
     void Disconnect();
+    void Shoot();
 };
 
 

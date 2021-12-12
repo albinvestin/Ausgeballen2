@@ -59,12 +59,25 @@ void GameObj::start()
                 {
                     networkHandler.Disconnect();
                 }
-                networkHandler.PollAllServerEvents();
+                else if (input == INPUT_SEND_P2SHOOT)
+                {
+                    networkHandler.Shoot();
+                }
+                
+                std::vector<uint8_t> recivedActions = networkHandler.PollAllServerEvents();
+                for (std::vector<uint8_t>::iterator it = recivedActions.begin(); it != recivedActions.end(); ++it)
+                {
+                    if (*it == INPUT_P1SHOOT || *it == INPUT_P2SHOOT) // TODO this needs to be moved somewhere else
+                    {
+                        entities.Update(*it);
+                    }
+                }
+
                 entities.Update(input);
                 collisionHandler.HandleCollisons(&entities);
                 
                 _Display.RenderAll(&entities);
-                SDL_Delay(1000/60);
+                SDL_Delay(1000/60); // TODO: Add fixed game update time
             }
         }
     }

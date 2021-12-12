@@ -8,7 +8,7 @@
 #endif
 #include <cmath>
 #include <iostream>
- #include <stdint.h>
+#include <stdint.h>
 
 Player::Player(Vec2f startPos, int playerIndex)
     : _Position(startPos), _Velocity(Vec2f{0,0}), _playerIndex{playerIndex}

@@ -48,29 +48,36 @@ void NetworkHandler::Host()
     PollAllServerEvents();
 }
 
-void NetworkHandler::PollAllServerEvents()
+std::vector<uint8_t> NetworkHandler::PollAllServerEvents()
 {
+    std::vector<uint8_t> recivedActions;
     if (_server == NULL)
     {
-        return;
+        return recivedActions;
     }
+
     /* Wait up to 1000 milliseconds for an event. */
-    while (enet_host_service (_server, &_event, 5) > 0)
+    while (enet_host_service (_server, &_event, 5) > 0) // This adds a variable delta time, TODO sleep so that we have constant 60 Hz.
     {
         printf("Got an event\n");
         switch (_event.type)
         {
             case ENET_EVENT_TYPE_CONNECT:
+            {
                 _event.peer->data = (void*)"FirstConnection";
                 printf("A new client connected from %x:%u. Giving it name \"%s\"\n",
                     _event.peer->address.host,
                     _event.peer->address.port,
                     (char*)_event.peer->data);
                 break;
+            }
 
             case ENET_EVENT_TYPE_RECEIVE:
+            {
+                printf("Recived data\n");
                 if (_event.packet->dataLength > 0)
                 {
+                    printf("Recived data longer than 0\n");
                     std::stringstream ss((char*)_event.packet->data); // Use std::ios::binary if filestream
                     cereal::PortableBinaryInputArchive inArchive(ss);
                     uint8_t header;
@@ -80,6 +87,7 @@ void NetworkHandler::PollAllServerEvents()
                     switch (header)
                     {
                     case NETWORK_TYPE_UINT16:
+                    {
                         uint16_t result;
                         inArchive(result); // DeSerialize
 
@@ -90,11 +98,25 @@ void NetworkHandler::PollAllServerEvents()
                             _event.channelID);
                             
                         break;
+                    }
 
                     case NETWORK_TYPE_FLOAT:
+                    {
                         float inputdata;
                         inArchive(inputdata); // DeSerialize
                         printf("Got float: %f\n", inputdata);
+                        break;
+                    }
+
+                    case NETWORK_TYPE_UINT8:
+                    {
+                        uint8_t inputdata;
+                        inArchive(inputdata); // DeSerialize
+                        printf("Got uint8_t: %u\n", inputdata);
+                        recivedActions.push_back(inputdata);
+                        break;
+                    }
+                        
 
                     default:
                         break;
@@ -108,15 +130,19 @@ void NetworkHandler::PollAllServerEvents()
                 // SendPacket(_event.peer, "HELLO!"); // This adds the packet to a queue
 
             break;
+            }
 
             case ENET_EVENT_TYPE_DISCONNECT:
+            {
                 printf ("%s disconnected.\n", _event.peer -> data);
                 /* Reset the peer's client information. */
                 _event.peer -> data = NULL;
                 break;
+            }
         }
     }
 
+    return recivedActions;
 }
 
 void NetworkHandler::Join()
@@ -198,4 +224,32 @@ std::string NetworkHandler::GetIPFromAdress(ENetAddress address)
     address.host >>= 8;
     IP[6] = address.host & 0xff;
     return IP;
+}
+
+void NetworkHandler::Shoot()
+{
+    printf("Sending shoot\n");
+    char header = NETWORK_TYPE_UINT8;
+    uint8_t player = INPUT_P2SHOOT;
+    std::stringstream ss; // Use std::ios::binary if filestream
+    cereal::PortableBinaryOutputArchive outArchive(ss);
+
+    outArchive(header, player); // Serialize
+    SendPacket(&ss);
+
+}
+
+void NetworkHandler::SendPacket(std::stringstream* data)
+{
+    ENetPacket* packet;
+    int dataLength = data->tellp();
+    if (dataLength > 0)
+    {
+        packet = enet_packet_create(data->str().c_str(), dataLength, ENET_PACKET_FLAG_RELIABLE);
+    }
+    // enet_packet_create takes a const void * for data to be sent.
+    
+    // Second arg is channel:
+    enet_peer_send(_peer, 0, packet);
+    enet_host_service(_client, &_event, 10);
 }
