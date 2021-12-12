@@ -1,6 +1,6 @@
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
- #include <stdint.h>
+#include <stdint.h>
 const uint16_t SCREEN_WIDTH = 640;
 const uint16_t SCREEN_HEIGHT = 480;
 const uint16_t MAP_OFFSET_HORI = 20;
