@@ -16,7 +16,7 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:\\MINGWdev\\include\\SDL2"
+                "C:\\MINGWdev\\include\\"
             ],
             "defines": [
                 "_DEBUG",

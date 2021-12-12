@@ -3,7 +3,7 @@
 #if defined(__APPLE__) || defined(__linux__)
 #include <SDL2/SDL.h>
 #else
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #endif
 #include <vector>
 
@@ -36,6 +36,18 @@ int InputHandler::EventHandler()
             if (_Event.key.keysym.sym == SDLK_k)
             {
                 returnValue = INPUT_P2SHOOT;
+            }
+            if (_Event.key.keysym.sym == SDLK_h)
+            {
+                returnValue = INPUT_HOST;
+            }
+            if (_Event.key.keysym.sym == SDLK_j)
+            {
+                returnValue = INPUT_JOIN;
+            }
+            if (_Event.key.keysym.sym == SDLK_d)
+            {
+                returnValue = INPUT_DISCONNECT;
             }
         }
         // else if(_Event.type == SDL_KEYDOWN)

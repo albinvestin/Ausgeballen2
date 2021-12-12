@@ -27,8 +27,8 @@ CPPFLAGS := $(INC_FLAGS) -MMD -MP
 
 ifeq ($(OS),Windows_NT)
 	# is Windows_NT on XP, 2000, 7, Vista, 10...
-	LDFLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -LC:\MINGWdev\lib
-	CPPFLAGS += -IC:\MINGWdev\include\SDL2
+	LDFLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lenet -LC:\MINGWdev\lib
+	CPPFLAGS += -IC:\MINGWdev\include
 else
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),Linux)
