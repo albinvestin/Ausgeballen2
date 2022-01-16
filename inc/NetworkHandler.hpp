@@ -25,7 +25,7 @@ private:
     EntityHandler* _entities = NULL;
     
     std::string GetIPFromAdress(ENetAddress address);
-    void SendPacket(std::ostringstream* data);
+    void SendPacket(std::ostringstream& data);
 public:
     std::vector<uint8_t> PollAllServerEvents();
     void PollAllClientEvents();

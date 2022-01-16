@@ -43,7 +43,7 @@ void HandlePlayerOnBulletCollisions(EntityHandler &entities)
         {
             playerIndexOfBullet = itB->playerIndex;
             bulletPos = itB->position;
-            printf("Bullet Pos: %f, %f \n Player%uPos: %f, %f \n", bulletPos.x, bulletPos.y, playerIndex, playerPos.x, playerPos.y);
+            // printf("Bullet Pos: %f, %f \n Player%uPos: %f, %f \n", bulletPos.x, bulletPos.y, playerIndex, playerPos.x, playerPos.y);
             
             if (CollisionTwoCircles(playerPos, PLAYER_RADIUS, bulletPos, BULLET_RADIUS))
             {
