@@ -1,5 +1,9 @@
 #include "../inc/NetworkHandler.hpp"
 #include "../inc/Constants.hpp"
+// #include "../inc/SerializeBaseData.hpp"
+#include "../inc/Vector2.hpp"
+#include "../inc/Entities.hpp"
+#include <cereal/archives/portable_binary.hpp>
 
 NetworkHandler::NetworkHandler()
 {
@@ -48,6 +52,11 @@ void NetworkHandler::Host()
     PollAllServerEvents();
 }
 
+void NetworkHandler::setEntetiesHandler(EntityHandler* entities)
+{
+    _entities = entities;
+}
+
 std::vector<uint8_t> NetworkHandler::PollAllServerEvents()
 {
     std::vector<uint8_t> recivedActions;
@@ -69,6 +78,7 @@ std::vector<uint8_t> NetworkHandler::PollAllServerEvents()
                     _event.peer->address.host,
                     _event.peer->address.port,
                     (char*)_event.peer->data);
+                _peer = _event.peer; // Set first connected as _peer
                 break;
             }
 
@@ -78,56 +88,73 @@ std::vector<uint8_t> NetworkHandler::PollAllServerEvents()
                 if (_event.packet->dataLength > 0)
                 {
                     printf("Recived data longer than 0\n");
-                    std::stringstream ss((char*)_event.packet->data); // Use std::ios::binary if filestream
-                    cereal::PortableBinaryInputArchive inArchive(ss);
-                    uint8_t header;
-                    inArchive(header); // DeSerialize
+                    std::istringstream iss((char*)_event.packet->data, std::ios_base::in|std::ios_base::binary);
+                    uint8_t header = 0;
+                    // std::shared_ptr<SerializeBaseData> unpackedData;
+                    {
+                        // Encapsulate archive to make sure all content is flused
+                        cereal::PortableBinaryInputArchive inArchive(iss);
+                        // inArchive(header, unpackedData); // DeSerialize
+                        inArchive(header); // DeSerialize
+                    }
+                    iss.seekg(0, iss.beg); // Reset read position
+                    
                     printf("Got header: %u\n", header);
                     
                     switch (header)
                     {
                     case NETWORK_TYPE_UINT16:
                     {
-                        uint16_t result;
-                        inArchive(result); // DeSerialize
-
-                        printf ("A packet of length %u containing \"%#X\" was received from %s on channel %u.\n",
-                            _event.packet->dataLength,
-                            result,
-                            _event.peer->data,
-                            _event.channelID);
-                            
+                        // TODO make a template?
+                        uint16_t inputdata;
+                        {
+                            // Encapsulate archive to make sure all content is flused
+                            cereal::PortableBinaryInputArchive inArchive(iss);
+                            inArchive(header, inputdata); // DeSerialize
+                        }
                         break;
+                        // printf ("A packet of length %u containing \"%#X\" was received from %s on channel %u.\n",
+                        //     _event.packet->dataLength,
+                        //     result,
+                        //     _event.peer->data,
+                        //     _event.channelID);
                     }
 
                     case NETWORK_TYPE_FLOAT:
                     {
                         float inputdata;
-                        inArchive(inputdata); // DeSerialize
-                        printf("Got float: %f\n", inputdata);
+                        {
+                            // Encapsulate archive to make sure all content is flused
+                            cereal::PortableBinaryInputArchive inArchive(iss);
+                            inArchive(header, inputdata); // DeSerialize
+                        }
                         break;
+                        // printf("Got float: %f\n", inputdata);
                     }
 
                     case NETWORK_TYPE_UINT8:
                     {
                         uint8_t inputdata;
-                        inArchive(inputdata); // DeSerialize
+                        {
+                            // Encapsulate archive to make sure all content is flused
+                            cereal::PortableBinaryInputArchive inArchive(iss);
+                            inArchive(header, inputdata); // DeSerialize
+                        }
+                        // TODO WHAT SHOULD I DO WITH THE RECIVED ACTIONS??
                         printf("Got uint8_t: %u\n", inputdata);
                         recivedActions.push_back(inputdata);
                         break;
-                    }
                         
+                        // inArchive(inputdata); // DeSerialize
+                    }
 
                     default:
                         break;
                     }
 
-                    /* Clean up the packet now that we're done using it. */
-                    enet_packet_destroy (_event.packet);
                 }
-
-                // SEND A REPLY! :D
-                // SendPacket(_event.peer, "HELLO!"); // This adds the packet to a queue
+                /* Clean up the packet now that we're done using it. */
+                enet_packet_destroy (_event.packet);
 
             break;
             }
@@ -180,6 +207,114 @@ void NetworkHandler::Join()
     }
 }
 
+void NetworkHandler::PollAllClientEvents()
+{
+    if (_client == NULL)
+    {
+        return;
+    }
+    while(enet_host_service(_client, &_event, 5) > 0)
+    {
+        switch(_event.type)
+        {
+            case ENET_EVENT_TYPE_RECEIVE:
+                printf("Recived data\n");
+                if (_event.packet->dataLength > 0)
+                {
+                    printf("Recived data longer than 0\n");
+                    std::istringstream iss((char*)_event.packet->data, std::ios_base::in|std::ios_base::binary);
+                    uint8_t header = 0;
+                    // std::shared_ptr<SerializeBaseData> unpackedData;
+                    {
+                        // Encapsulate archive to make sure all content is flused
+                        cereal::PortableBinaryInputArchive inArchive(iss);
+                        inArchive(header); // DeSerialize header only
+                    }
+                    iss.seekg(0, iss.beg); // Reset read position
+                    printf("Got header: %u\n", header);
+                    
+                    switch (header)
+                    {
+                    case NETWORK_TYPE_UINT16:
+                    {
+                        uint16_t inputdata;
+                        {
+                            // Encapsulate archive to make sure all content is flused
+                            cereal::PortableBinaryInputArchive inArchive(iss);
+                            inArchive(header, inputdata);
+                        }
+
+                        printf ("A packet of length %u containing \"%#X\" was received from %s on channel %u.\n",
+                            _event.packet->dataLength,
+                            inputdata,
+                            _event.peer->data,
+                            _event.channelID);
+                            
+                        break;
+                    }
+                    case NETWORK_TYPE_FLOAT:
+                    {
+                        float inputdata;
+                        {
+                            // Encapsulate archive to make sure all content is flused
+                            cereal::PortableBinaryInputArchive inArchive(iss);
+                            inArchive(header, inputdata);
+                        }
+                        printf("Got float: %f\n", inputdata);
+                        break;
+                    }
+                    case NETWORK_TYPE_BulletRecoilPlayerIndex:
+                    {
+                        Bullet b;
+                        Vec2f v;
+                        uint8_t playerIndex;
+                        {
+                            // Encapsulate archive to make sure all content is flused
+                            cereal::PortableBinaryInputArchive inArchive(iss);
+                            inArchive(header);
+                            printf("Second time header ok\n");
+                            inArchive(b);
+                            printf("bullet ok\n");
+                            inArchive(v);
+                            printf("vel ok\n");
+                            inArchive(playerIndex);
+                            printf("playerindex ok\n");
+                        }
+
+                        printf("Got BulletRecoilPlayerIndex\n");
+                        // TODO make the EntityHandle handle these calls.
+                        _entities->AddNewBullet(b);
+                        _entities->SetRecoilOfPlayer(v, playerIndex);
+                        break;
+                    }
+                    case NETWORK_TYPE_UINT8:
+                    {
+                        uint8_t inputdata;
+                        {
+                            // Encapsulate archive to make sure all content is flused
+                            cereal::PortableBinaryInputArchive inArchive(iss);
+                            inArchive(header, inputdata);
+                        }
+                        printf("Got uint8_t: %u\n", inputdata);
+
+                        break;
+                    }
+
+                    default:
+                        break;
+                    }
+
+                }
+                /* Clean up the packet now that we're done using it. */
+                enet_packet_destroy (_event.packet);
+                break;
+            case ENET_EVENT_TYPE_DISCONNECT:
+                printf("Got Disconnected!.");
+                break;
+        }
+    }
+}
+
 void NetworkHandler::Disconnect()
 {
     if (_client == NULL)
@@ -228,18 +363,35 @@ std::string NetworkHandler::GetIPFromAdress(ENetAddress address)
 
 void NetworkHandler::Shoot()
 {
-    printf("Sending shoot\n");
     char header = NETWORK_TYPE_UINT8;
-    uint8_t player = INPUT_P2SHOOT;
-    std::stringstream ss; // Use std::ios::binary if filestream
-    cereal::PortableBinaryOutputArchive outArchive(ss);
+    uint8_t action = NETWORK_ACTION_SHOOT_P2;
+    printf("Sending shoot: uint32_t = %u\n", action);
+    std::ostringstream oss(std::ios_base::out|std::ios_base::binary);
+    {
+        // Encapsulate archive to make sure all content is flused
+        cereal::PortableBinaryOutputArchive outArchive(oss);
+        outArchive(header, action); // Serialize
+    }
 
-    outArchive(header, player); // Serialize
-    SendPacket(&ss);
-
+    SendPacket(&oss);
 }
 
-void NetworkHandler::SendPacket(std::stringstream* data)
+void NetworkHandler::S2CBulletRecoilPlayerIndex(const Bullet& newBullet, const Vec2f& newVel, uint8_t playerIndex)
+{
+    printf("Server to Client: BulletRecoilPlayerIndex\n");
+    char header = NETWORK_TYPE_BulletRecoilPlayerIndex;
+
+    std::ostringstream oss(std::ios_base::out|std::ios::binary);
+    {
+        // Encapsulate archive to make sure all content is flused
+        cereal::PortableBinaryOutputArchive outArchive(oss);
+        outArchive(header, newBullet, newVel, playerIndex); // Serialize
+    }
+
+    SendPacket(&oss);
+}
+
+void NetworkHandler::SendPacket(std::ostringstream* data)
 {
     ENetPacket* packet;
     int dataLength = data->tellp();
@@ -250,6 +402,18 @@ void NetworkHandler::SendPacket(std::stringstream* data)
     // enet_packet_create takes a const void * for data to be sent.
     
     // Second arg is channel:
+    if (_peer == NULL)
+    {
+        printf("Peer not initialized! at SendPacket");
+        return;
+    }
     enet_peer_send(_peer, 0, packet);
-    enet_host_service(_client, &_event, 10);
+    if (_client != NULL)
+    {
+        enet_host_service(_client, &_event, 10);
+    }
+    else if (_server != NULL)
+    {
+        enet_host_service(_server, &_event, 10);
+    }
 }

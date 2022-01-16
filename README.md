@@ -27,3 +27,15 @@ TODO:
 References:
 https://floating-point-gui.de/errors/comparison/
 https://en.wikipedia.org/wiki/Law_of_Demeter
+Copy constructor: https://www.cplusplus.com/articles/y8hv0pDG/
+
+
+
+cereal failed to read 4 bytes from inputsteam
+https://github.com/USCiLab/cereal/issues/452
+When to use smart pointers:
+https://stackoverflow.com/questions/7657718/when-to-use-shared-ptr-and-when-to-use-raw-pointers
+
+Herb Sutter: https://herbsutter.com/2013/06/05/gotw-91-solution-smart-pointer-parameters/
+Guideline: Don’t pass a smart pointer as a function parameter unless you want to use or manipulate the smart pointer itself, such as to share or transfer ownership.
+Guideline: Prefer passing objects by value, *, or &, not by smart pointer.

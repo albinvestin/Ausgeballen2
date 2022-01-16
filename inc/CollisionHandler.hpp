@@ -8,7 +8,7 @@ class CollisionHandler
 public:
     CollisionHandler();
     ~CollisionHandler();
-    void HandleCollisons(EntityHandler *entities);
+    void HandleCollisons(EntityHandler & entities);
 };
 
 float Squaredf(float x);

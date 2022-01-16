@@ -38,10 +38,11 @@ void GameObj::start()
         else
         {	
             int input;
-            EntityHandler entities{};
+            NetworkHandler networkHandler{};
+            EntityHandler entities{&networkHandler};
+            networkHandler.setEntetiesHandler(&entities); // TODO: these are tightly coupled, could this be avoided?
             InputHandler inputHandler{};
             CollisionHandler collisionHandler{};
-            NetworkHandler networkHandler{};
 
             //While application is running
             while( input != INPUT_QUIT )
@@ -64,17 +65,20 @@ void GameObj::start()
                     networkHandler.Shoot();
                 }
                 
+                // TODO add check if is server or not.
                 std::vector<uint8_t> recivedActions = networkHandler.PollAllServerEvents();
                 for (std::vector<uint8_t>::iterator it = recivedActions.begin(); it != recivedActions.end(); ++it)
                 {
-                    if (*it == INPUT_P1SHOOT || *it == INPUT_P2SHOOT) // TODO this needs to be moved somewhere else
+                    if (*it == NETWORK_ACTION_SHOOT_P2) // TODO this needs to be moved somewhere else
                     {
-                        entities.Update(*it);
+                        entities.ServerUpdate(*it);
                     }
                 }
 
-                entities.Update(input);
-                collisionHandler.HandleCollisons(&entities);
+                // Player point of view update
+                entities.ServerUpdate(input);
+                networkHandler.PollAllClientEvents();
+                collisionHandler.HandleCollisons(entities);
                 
                 _Display.RenderAll(&entities);
                 SDL_Delay(1000/60); // TODO: Add fixed game update time

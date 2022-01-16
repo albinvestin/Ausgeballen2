@@ -53,6 +53,8 @@
         "ratio": "cpp",
         "mutex": "cpp",
         "thread": "cpp",
-        "typeindex": "cpp"
+        "typeindex": "cpp",
+        "cstring": "cpp",
+        "set": "cpp"
     }
 }

@@ -19,30 +19,31 @@ bool CollisionTwoCircles(Vec2f pos1, int radius1, Vec2f pos2, int radius2)
     return (Vec2Length(difference) <= radius1 + radius2);
 }
 
-void HandlePlayerOnBulletCollisions(EntityHandler *entities)
+void HandlePlayerOnBulletCollisions(EntityHandler &entities)
 {
     // Check player-bullet collisions
-    std::vector<Player> *AllPlayers;
+    auto& AllPlayers = entities.GetAllPlayers();
     std::vector<Player>::iterator itP;
     Vec2f playerPos;
     int playerIndex;
-    std::vector<Bullet> *AllBullets;
-    std::vector<Bullet>::iterator itB;
+    auto& AllBullets = entities.GetAllBullets();
+    auto itB = AllBullets.begin();
     Vec2f bulletPos;
     int playerIndexOfBullet;
-    AllPlayers = (*entities).GetAllPlayers();
-    AllBullets = (*entities).GetAllBullets();
+    
+    // AllBullets = (*entities).GetAllBullets();
 
-    itP = (*AllPlayers).begin();
-    while (itP != (*AllPlayers).end())
+    itP = AllPlayers.begin();
+    while (itP != AllPlayers.end())
     {
-        playerPos = (*itP).position;
-        playerIndex = (*itP).playerIndex;
-        itB = (*AllBullets).begin();
-        while (itB != (*AllBullets).end())
+        playerPos = itP->position;
+        playerIndex = itP->playerIndex;
+        itB = AllBullets.begin();
+        while (itB != AllBullets.end())
         {
-            playerIndexOfBullet = (*itB).playerIndex;
-            bulletPos = (*itB).position;
+            playerIndexOfBullet = itB->playerIndex;
+            bulletPos = itB->position;
+            printf("Bullet Pos: %f, %f \n Player%uPos: %f, %f \n", bulletPos.x, bulletPos.y, playerIndex, playerPos.x, playerPos.y);
             
             if (CollisionTwoCircles(playerPos, PLAYER_RADIUS, bulletPos, BULLET_RADIUS))
             {
@@ -50,11 +51,12 @@ void HandlePlayerOnBulletCollisions(EntityHandler *entities)
                 {
                     printf("HIT!\n");
                     // TODO add Score to playerIndexOfBullet
-                    (*AllPlayers).at(playerIndexOfBullet-1).score++;
+                    AllPlayers.at(playerIndexOfBullet-1).score++;
                     // Add impact energy to the hit player
-                    (*itP).velocity += (*itB).velocity;
+                    (*itP).velocity += itB->velocity;
                     // (*itP).AddVelocity((*itB).GetVelocity());
-                    itB = (*AllBullets).erase(itB);
+                    itB = entities.RemoveBulletFromIt(itB); // TODO We are using shared pointer so this could be updated
+                    // itB = AllBullets.erase(itB);
                     continue; // Skip increase of iterator
                 }
             }
@@ -82,27 +84,27 @@ Vec2f ElasticCollision(Vec2f playerPos1, Vec2f playerPos2, Vec2f p1Vel, Vec2f p2
     return p1NewVel;
 }
 
-void HandlePlayerOnPlayerCollisions(EntityHandler *entities)
+void HandlePlayerOnPlayerCollisions(EntityHandler &entities)
 {
     // printf("Collision adress: %d\n", &(*(*entities).GetAllPlayers())[0] );
     // Check player-bullet collisions
-    std::vector<Player> *AllPlayers;
+    auto& AllPlayers = entities.GetAllPlayers();
     std::vector<Player>::iterator itP1;
     std::vector<Player>::iterator itP2;
     Vec2f playerPos1, playerPos2;
 
     Vec2f bulletPos;
-    AllPlayers = (*entities).GetAllPlayers();
+    
     // printf("AllPlayers adress: %d\n", AllPlayers);
 
 
-    itP1 = (*AllPlayers).begin();
-    while (itP1 != (*AllPlayers).end())
+    itP1 = AllPlayers.begin();
+    while (itP1 != AllPlayers.end())
     {
         playerPos1 = (*itP1).position;
         // playerIndex1 = (*itP1).GetPlayerIndex();
-        itP2 = (*AllPlayers).begin();
-        while (itP2 != (*AllPlayers).end())
+        itP2 = AllPlayers.begin();
+        while (itP2 != AllPlayers.end())
         {
             // printf("Iterator adress: %d\n", itP1);
             playerPos2 = (*itP2).position;
@@ -132,7 +134,7 @@ void HandlePlayerOnPlayerCollisions(EntityHandler *entities)
     }
 }
 
-void CollisionHandler::HandleCollisons(EntityHandler *entities)
+void CollisionHandler::HandleCollisons(EntityHandler & entities)
 {
     HandlePlayerOnBulletCollisions(entities);
     HandlePlayerOnPlayerCollisions(entities);

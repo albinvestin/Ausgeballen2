@@ -8,6 +8,11 @@
 #endif
 #include <sstream>
 #include <stdint.h>
+#include "Entities.hpp"
+#include "EntityHandler.hpp"
+
+// Forward declaration
+class EntityHandler;
 
 class NetworkHandler
 {
@@ -17,17 +22,21 @@ private:
     ENetHost* _server = NULL;
     ENetHost* _client = NULL;
     ENetPeer* _peer = NULL;
+    EntityHandler* _entities = NULL;
     
     std::string GetIPFromAdress(ENetAddress address);
-    void SendPacket(std::stringstream* data);
+    void SendPacket(std::ostringstream* data);
 public:
     std::vector<uint8_t> PollAllServerEvents();
+    void PollAllClientEvents();
+    void setEntetiesHandler(EntityHandler* entities);
     NetworkHandler();
     ~NetworkHandler();
     void Host();
     void Join();
     void Disconnect();
     void Shoot();
+    void S2CBulletRecoilPlayerIndex(const Bullet& newBullet, const Vec2f& newVel, uint8_t playerIndex); 
 };
 
 

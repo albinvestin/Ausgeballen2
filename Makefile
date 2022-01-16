@@ -23,7 +23,8 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 # The -MMD and -MP flags together generate Makefiles for us!
 # These files will have .d instead of .o as the output.
-CPPFLAGS := $(INC_FLAGS) -MMD -MP
+# -g flag is for debug information
+CPPFLAGS := $(INC_FLAGS) -MMD -MP -g
 
 ifeq ($(OS),Windows_NT)
 	# is Windows_NT on XP, 2000, 7, Vista, 10...
@@ -41,9 +42,9 @@ else
 endif
 CXXFLAGS = -Wall -Wextra -Wpedantic
 
-# The final build step.
+# The final build step. -g flag is for debug information
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
-	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
+	$(CXX) $(OBJS) -g -o $@ $(LDFLAGS)
 
 # Build step for C++ source
 $(BUILD_DIR)/%.cpp.o: %.cpp
