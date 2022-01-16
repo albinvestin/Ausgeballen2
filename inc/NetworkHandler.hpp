@@ -5,6 +5,7 @@
 #else
 #include <enet/enet.h>
 #include <cereal/archives/portable_binary.hpp>
+#include <cereal/types/vector.hpp>
 #endif
 #include <sstream>
 #include <stdint.h>
@@ -36,11 +37,7 @@ public:
     void Join();
     void Disconnect();
     void Shoot();
-    void S2CBulletRecoilPlayerIndex(const Bullet& newBullet, const Vec2f& newVel, uint8_t playerIndex); 
+    void S2CGameSnapshot(const GameSnapshot& gs);
 };
-
-
-
-
 
 #endif /* NETWORKHANDLER_HPP */

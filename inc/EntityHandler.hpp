@@ -18,6 +18,7 @@ private:
     std::vector<Player> _Players; // Make references to players instead of pass by value.
     std::vector<Bullet> _ExistingBullets;
     NetworkHandler* _networkHandler = NULL;
+    uint16_t _nextBulletID = 0;
 public:
     EntityHandler(NetworkHandler* networkHandler);
     ~EntityHandler();
@@ -32,9 +33,11 @@ public:
     Vec2f AddRecoil(uint8_t playerIndex);
     void SetRecoilOfPlayer(Vec2f vel, uint8_t playerIndex);
     // const Bullet& RegisterNewBullet(const Bullet& bullet);
-    void AddNewBullet(const Bullet& b);
+    // void AddNetworkBullet(Bullet& b);
     float UpdateAimDirection(uint8_t playerIndex);
     Vec2f UpdateBulletPos(std::vector<Bullet>::iterator bullet);
     std::vector<Bullet>::const_iterator RemoveBulletFromIt(std::vector<Bullet>::const_iterator itB);
+    void HandleNetworkShoot(Bullet& b, Vec2f& v, uint8_t playerIndex, Vec2f& playerPos);
+    void HandleNetworkGameSnapshot(const GameSnapshot& gs);
 };
 #endif /* ENTITYHANDLER_HPP */

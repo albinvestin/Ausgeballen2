@@ -3,7 +3,7 @@
 // #include "../inc/SerializeBaseData.hpp"
 #include "../inc/Vector2.hpp"
 #include "../inc/Entities.hpp"
-#include <cereal/archives/binary.hpp>
+#include <cereal/archives/portable_binary.hpp>
 
 NetworkHandler::NetworkHandler()
 {
@@ -93,7 +93,7 @@ std::vector<uint8_t> NetworkHandler::PollAllServerEvents()
                     uint8_t header = 0;
                     {
                         // Encapsulate archive to make sure all content is flused
-                        cereal::BinaryInputArchive inArchive(iss);
+                        cereal::PortableBinaryInputArchive inArchive(iss);
                         inArchive(header); // DeSerialize header only
                     }
                     iss.seekg(0, iss.beg); // Reset read position
@@ -108,7 +108,7 @@ std::vector<uint8_t> NetworkHandler::PollAllServerEvents()
                         uint16_t inputdata;
                         {
                             // Encapsulate archive to make sure all content is flused
-                            cereal::BinaryInputArchive inArchive(iss);
+                            cereal::PortableBinaryInputArchive inArchive(iss);
                             inArchive(header, inputdata); // DeSerialize
                         }
                         break;
@@ -124,7 +124,7 @@ std::vector<uint8_t> NetworkHandler::PollAllServerEvents()
                         float inputdata;
                         {
                             // Encapsulate archive to make sure all content is flused
-                            cereal::BinaryInputArchive inArchive(iss);
+                            cereal::PortableBinaryInputArchive inArchive(iss);
                             inArchive(header, inputdata); // DeSerialize
                         }
                         break;
@@ -136,10 +136,9 @@ std::vector<uint8_t> NetworkHandler::PollAllServerEvents()
                         uint8_t inputdata;
                         {
                             // Encapsulate archive to make sure all content is flused
-                            cereal::BinaryInputArchive inArchive(iss);
+                            cereal::PortableBinaryInputArchive inArchive(iss);
                             inArchive(header, inputdata); // DeSerialize
                         }
-                        // TODO WHAT SHOULD I DO WITH THE RECIVED ACTIONS??
                         printf("Got uint8_t: %u\n", inputdata);
                         recivedActions.push_back(inputdata);
                         break;
@@ -220,12 +219,13 @@ void NetworkHandler::PollAllClientEvents()
                 printf("Recived data\n");
                 if (_event.packet->dataLength > 0)
                 {
+                    printf("Data length %u\n", (unsigned int)_event.packet->dataLength);
                     std::string input((unsigned char*)_event.packet->data, _event.packet->data + _event.packet->dataLength);
                     std::istringstream iss(input, std::ios_base::in|std::ios_base::binary);
                     uint8_t header = 0;
                     {
                         // Encapsulate archive to make sure all content is flused
-                        cereal::BinaryInputArchive inArchive(iss);
+                        cereal::PortableBinaryInputArchive inArchive(iss);
                         inArchive(header); // DeSerialize header only
                     }
                     iss.seekg(0, iss.beg); // Reset read position
@@ -238,7 +238,7 @@ void NetworkHandler::PollAllClientEvents()
                         uint16_t inputdata;
                         {
                             // Encapsulate archive to make sure all content is flused
-                            cereal::BinaryInputArchive inArchive(iss);
+                            cereal::PortableBinaryInputArchive inArchive(iss);
                             inArchive(header, inputdata);
                         }
 
@@ -255,35 +255,24 @@ void NetworkHandler::PollAllClientEvents()
                         float inputdata;
                         {
                             // Encapsulate archive to make sure all content is flused
-                            cereal::BinaryInputArchive inArchive(iss);
+                            cereal::PortableBinaryInputArchive inArchive(iss);
                             inArchive(header, inputdata);
                         }
                         printf("Got float: %f\n", inputdata);
                         break;
                     }
-                    case NETWORK_TYPE_BulletRecoilPlayerIndex:
+                    case NETWORK_TYPE_GAMESNAPSHOT:
                     {
-                        printf("Recived data length %u\n", _event.packet->dataLength);
-                        Bullet b;
-                        Vec2f v;
-                        uint8_t playerIndex;
+                        GameSnapshot gs;
                         {
                             // Encapsulate archive to make sure all content is flused
-                            cereal::BinaryInputArchive inArchive(iss);
-                            inArchive(header);
-                            printf("Second time header ok\n");
-                            inArchive(b);
-                            printf("bullet ok\n");
-                            inArchive(v);
-                            printf("vel ok\n");
-                            inArchive(playerIndex);
-                            printf("playerindex ok\n");
+                            cereal::PortableBinaryInputArchive inArchive(iss);
+                            inArchive(header, gs);
                         }
 
                         printf("Got BulletRecoilPlayerIndex\n");
                         // TODO make the EntityHandle handle these calls.
-                        _entities->AddNewBullet(b);
-                        _entities->SetRecoilOfPlayer(v, playerIndex);
+                        _entities->HandleNetworkGameSnapshot(gs);
                         break;
                     }
                     case NETWORK_TYPE_UINT8:
@@ -291,7 +280,7 @@ void NetworkHandler::PollAllClientEvents()
                         uint8_t inputdata;
                         {
                             // Encapsulate archive to make sure all content is flused
-                            cereal::BinaryInputArchive inArchive(iss);
+                            cereal::PortableBinaryInputArchive inArchive(iss);
                             inArchive(header, inputdata);
                         }
                         printf("Got uint8_t: %u\n", inputdata);
@@ -368,26 +357,22 @@ void NetworkHandler::Shoot()
     std::ostringstream oss(std::ios_base::out|std::ios_base::binary);
     {
         // Encapsulate archive to make sure all content is flused
-        cereal::BinaryOutputArchive outArchive(oss);
+        cereal::PortableBinaryOutputArchive outArchive(oss);
         outArchive(header, action); // Serialize
     }
 
     SendPacket(oss);
 }
 
-void NetworkHandler::S2CBulletRecoilPlayerIndex(const Bullet& newBullet, const Vec2f& newVel, uint8_t playerIndex)
-{
-    printf("Server to Client: BulletRecoilPlayerIndex\n");
-    printf("Bullet: %f, %f, %f, %f, %u\n", newBullet.position.x, newBullet.position.y, newBullet.velocity.x, newBullet.velocity.y, newBullet.playerIndex);
-    printf("Vel: %f, %f\n", newVel.x, newVel.y);
-    printf("PlayerIndex: %u\n", playerIndex);
-    uint8_t header = NETWORK_TYPE_BulletRecoilPlayerIndex;
 
+void NetworkHandler::S2CGameSnapshot(const GameSnapshot& gs)
+{
+    uint8_t header = NETWORK_TYPE_GAMESNAPSHOT;
     std::ostringstream oss(std::ios_base::out|std::ios::binary);
     {
         // Encapsulate archive to make sure all content is flused
-        cereal::BinaryOutputArchive outArchive(oss);
-        outArchive(header, newBullet, newVel, playerIndex); // Serialize
+        cereal::PortableBinaryOutputArchive outArchive(oss);
+        outArchive(header, gs); // Serialize
     }
 
     SendPacket(oss);

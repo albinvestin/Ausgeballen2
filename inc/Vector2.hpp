@@ -1,12 +1,8 @@
 #ifndef VECTOR2_HPP
 #define VECTOR2_HPP
-// #include "SerializeBaseData.hpp"
 #include "Constants.hpp"
-// #include <cereal/archives/portable_binary.hpp>
-// #include <cereal/types/polymorphic.hpp>
-// #include <cereal/access.hpp> // For LoadAndConstruct
 
-struct Vec2f //: public SerializeBaseData
+struct Vec2f
 {
     float x, y = 0;
     Vec2f(float x, float y) : x{x}, y{y} {}
@@ -24,20 +20,7 @@ struct Vec2f //: public SerializeBaseData
     {
         ar(x, y);
     }
-    // void SerializeBase() {};
-    // template<class Archive> void serialize(Archive &ar)
-    // {
-    //     ar(x, y);
-    // }
-    // template <class Archive> static void load_and_construct(Archive &ar, cereal::construct<Vec2f> &construct)
-    // {
-    //     float x, y;
-    //     ar(x, y);
-    //     construct(x, y);
-    // }
 };
-// CEREAL_REGISTER_TYPE(Vec2f)
-// CEREAL_REGISTER_POLYMORPHIC_RELATION(SerializeBaseData, Vec2f)
 
 Vec2f operator-(const Vec2f &lhs, const Vec2f &rhs);
 Vec2f operator*(float multiplier, const Vec2f &v);

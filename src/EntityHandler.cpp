@@ -55,14 +55,15 @@ void EntityHandler::ServerUpdate(int inputkeys)
              || (inputkeys == INPUT_P1SHOOT && playerIndex == 1))
         {
             // Spawn bullet
-            // std::shared_ptr<Bullet> newBullet{new Bullet{playerAimDir, playerPos, playerIndex}};
-            // Bullet newBullet{playerAimDir, playerPos, playerIndex}; // TODO: create object just once and refer by pointer. Remember to delete the pointer and free mem.
-            Bullet b = {playerAimDir, playerPos, playerIndex};
+            Bullet b = {playerAimDir, playerPos, playerIndex, _nextBulletID};
+            _nextBulletID++; // Overflow allowed
             _ExistingBullets.push_back(b);
             Vec2f v = {AddRecoil((*itP).playerIndex)};
-            // std::shared_ptr<Vec2f> newVel{new Vec2f(AddRecoil((*itP).playerIndex))};
-            // Send reply to client of new bullet and recoil
-            _networkHandler->S2CBulletRecoilPlayerIndex(b, v, playerIndex);
+
+            //Send snapshot of game to all clients
+            GameSnapshot gs{_Players, _ExistingBullets};
+            _networkHandler->S2CGameSnapshot(gs);
+            // _networkHandler->S2CBulletRecoilPlayerIndex(b, v, playerIndex, playerPos);
         }
         ++itP;
     }
@@ -95,14 +96,6 @@ void EntityHandler::SetRecoilOfPlayer(Vec2f vel, uint8_t playerIndex)
         _Players[playerIndex-1].velocity = vel;
     }
 }
-
-// Registers new bullet with unique pointer and returns that reference 
-// const Bullet& EntityHandler::RegisterNewBullet(const Bullet& bullet) // TODO bad practice to share ref to unique pointer
-// {
-//     std::shared_ptr<Bullet> newBullet = std::make_shared<Bullet>(bullet);
-//     _ExistingBullets.push_back(newBullet);
-//     return *(_ExistingBullets.back());
-// }
 
 // index starts at 1, TODO: check length of _Players before getting index
 Vec2f EntityHandler::GetPlayerPos(int index) const
@@ -242,7 +235,16 @@ std::vector<Bullet>::const_iterator EntityHandler::RemoveBulletFromIt(std::vecto
     return _ExistingBullets.erase(itB);
 }
 
-void EntityHandler::AddNewBullet(const Bullet& b)
+void EntityHandler::HandleNetworkShoot(Bullet& b, Vec2f& newVel, uint8_t playerIndex, Vec2f& playerPos)
 {
+
     _ExistingBullets.push_back(b);
+    _Players[playerIndex-1].position = playerPos;
+    SetRecoilOfPlayer(newVel, playerIndex);
+}
+
+void EntityHandler::HandleNetworkGameSnapshot(const GameSnapshot& gs)
+{
+    _Players = gs.players;
+    _ExistingBullets = gs.bullets;
 }
