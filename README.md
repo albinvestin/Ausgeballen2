@@ -24,6 +24,7 @@ TODO:
 [] Make a movement handler
 [] Fix naming of playerindex (= 0, 1, 2, 3) vs player numbering (1, 2, 3 , 4) convention
 [] Make own serializing framework.
+[] Fix so that host can send input shooting to client
 
 References:
 https://floating-point-gui.de/errors/comparison/

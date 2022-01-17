@@ -38,6 +38,9 @@ void GameObj::start()
         else
         {	
             int input;
+            int8_t isServer = -1;
+            bool clientUpdateNeeded = false;
+            uint8_t countSinceLastClientUpdate = 0;
             NetworkHandler networkHandler{};
             EntityHandler entities{&networkHandler};
             networkHandler.setEntetiesHandler(&entities); // TODO: these are tightly coupled, could this be avoided?
@@ -50,11 +53,11 @@ void GameObj::start()
                 input = inputHandler.EventHandler();
                 if (input == INPUT_HOST)
                 {
-                    networkHandler.Host();
+                    isServer = networkHandler.Host();
                 }
                 else if (input == INPUT_JOIN)
                 {
-                    networkHandler.Join();
+                    isServer = !(networkHandler.Join());
                 }
                 else if (input == INPUT_DISCONNECT)
                 {
@@ -62,23 +65,50 @@ void GameObj::start()
                 }
                 else if (input == INPUT_SEND_P2SHOOT)
                 {
-                    networkHandler.Shoot();
+                    networkHandler.Shoot(2);
                 }
-                
-                // TODO add check if is server or not.
-                std::vector<uint8_t> recivedActions = networkHandler.PollAllServerEvents();
-                for (std::vector<uint8_t>::iterator it = recivedActions.begin(); it != recivedActions.end(); ++it)
+
+                // Move all objects first.
+                entities.MoveAllObjects();
+
+                if (isServer == 1)
                 {
-                    if (*it == NETWORK_ACTION_SHOOT_P2) // TODO this needs to be moved somewhere else
+                    std::vector<uint8_t> recivedActions = networkHandler.PollAllServerEvents();
+                    for (std::vector<uint8_t>::iterator it = recivedActions.begin(); it != recivedActions.end(); ++it)
                     {
-                        entities.ServerUpdate(*it);
+                        // TODO These ifs are unnecessary since both cases are tested inside ServerCheckAndHandleShoot.
+                        if (*it == NETWORK_ACTION_SHOOT_P2) // TODO this needs to be moved somewhere else
+                        {
+                            entities.ServerCheckAndHandleShoot(*it);
+                            clientUpdateNeeded = true;
+                        }
+                    }
+                    // TODO These ifs are unnecessary since both cases are tested inside ServerCheckAndHandleShoot.
+                    if (input == INPUT_P1SHOOT) // TODO this needs to be moved somewhere else
+                    {
+                        entities.ServerCheckAndHandleShoot(input);
+                        clientUpdateNeeded = true;
                     }
                 }
 
-                // Player point of view update
-                entities.ServerUpdate(input);
-                networkHandler.PollAllClientEvents();
                 collisionHandler.HandleCollisons(entities);
+
+                
+                if (isServer == 1
+                    && (clientUpdateNeeded || countSinceLastClientUpdate > 10))
+                {
+                    entities.UpdateClients();
+                    clientUpdateNeeded = false;
+                    countSinceLastClientUpdate = 0;
+                }
+                else
+                {
+                    countSinceLastClientUpdate++;
+                }
+                if (isServer == 0)
+                {
+                    networkHandler.PollAllClientEvents();
+                }
                 
                 _Display.RenderAll(&entities);
                 SDL_Delay(1000/60); // TODO: Add fixed game update time

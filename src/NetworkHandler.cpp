@@ -26,7 +26,8 @@ NetworkHandler::~NetworkHandler()
     }
 }
 
-void NetworkHandler::Host()
+// Return true if successful
+bool NetworkHandler::Host()
 {
     /* Bind the server to the default localhost.     */
     /* A specific host address can be specified by   */
@@ -44,12 +45,52 @@ void NetworkHandler::Host()
     if (_server == NULL)
     {
         printf("An error occurred while trying to create an ENet server host.");
+        return false;
     }
     else
     {
         printf("Host is running at 127.0.0.1 Port %u\n", _address.port);
+        return true;
     }
-    PollAllServerEvents();
+    // PollAllServerEvents();
+}
+
+// Return true if successful
+bool NetworkHandler::Join()
+{
+    _client = enet_host_create(NULL, 1, 1, 0, 0);
+
+    if(_client == NULL)
+    {
+        fprintf(stderr, "An error occurred while trying to create an ENet client host!\n");
+    }
+
+    enet_address_set_host(&_address, "127.0.0.1");
+    _address.port = 7777;
+
+    _peer = enet_host_connect(_client, &_address, 1, 0);
+    if(_peer == NULL)
+    {
+        fprintf(stderr, "No available peers for initiating an ENet connection!\n");
+    }
+
+    if(enet_host_service(_client, &_event, 5000) > 0
+        && _event.type == ENET_EVENT_TYPE_CONNECT)
+    {
+        printf("Connection to 127.0.0.1 Port %u succeeded.\n", _address.port);
+        /* Enet bufferers protocol messages to reduce traffic. 
+        This means it may not send the connection event until you send the first packet. 
+        If you call enet_host_flush in the client after is accepts the connection it 
+        will force enet to send the connection message to the server. */
+        enet_host_flush(_client);
+        return true;
+    }
+    else
+    {
+        enet_peer_reset(_peer);
+        printf("Connection to 127.0.0.1 Port %u failed.\n", _address.port);
+        return false;
+    }
 }
 
 void NetworkHandler::setEntetiesHandler(EntityHandler* entities)
@@ -170,40 +211,7 @@ std::vector<uint8_t> NetworkHandler::PollAllServerEvents()
     return recivedActions;
 }
 
-void NetworkHandler::Join()
-{
-    _client = enet_host_create(NULL, 1, 1, 0, 0);
 
-    if(_client == NULL)
-    {
-        fprintf(stderr, "An error occurred while trying to create an ENet client host!\n");
-    }
-
-    enet_address_set_host(&_address, "127.0.0.1");
-    _address.port = 7777;
-
-    _peer = enet_host_connect(_client, &_address, 1, 0);
-    if(_peer == NULL)
-    {
-        fprintf(stderr, "No available peers for initiating an ENet connection!\n");
-    }
-
-    if(enet_host_service(_client, &_event, 5000) > 0
-        && _event.type == ENET_EVENT_TYPE_CONNECT)
-    {
-        printf("Connection to 127.0.0.1 Port %u succeeded.\n", _address.port);
-        /* Enet bufferers protocol messages to reduce traffic. 
-        This means it may not send the connection event until you send the first packet. 
-        If you call enet_host_flush in the client after is accepts the connection it 
-        will force enet to send the connection message to the server. */
-        enet_host_flush(_client);
-    }
-    else
-    {
-        enet_peer_reset(_peer);
-        printf("Connection to 127.0.0.1 Port %u failed.\n", _address.port);
-    }
-}
 
 void NetworkHandler::PollAllClientEvents()
 {
@@ -271,7 +279,7 @@ void NetworkHandler::PollAllClientEvents()
                         }
 
                         printf("Got BulletRecoilPlayerIndex\n");
-                        // TODO make the EntityHandle handle these calls.
+                        // TODO Handle the recived actions after the network loop?
                         _entities->HandleNetworkGameSnapshot(gs);
                         break;
                     }
@@ -349,11 +357,22 @@ std::string NetworkHandler::GetIPFromAdress(ENetAddress address)
     return IP;
 }
 
-void NetworkHandler::Shoot()
+void NetworkHandler::Shoot(uint8_t playerIndex)
 {
     uint8_t header = NETWORK_TYPE_UINT8;
-    uint8_t action = NETWORK_ACTION_SHOOT_P2;
-    printf("Sending shoot: uint32_t = %u\n", action);
+    uint8_t action = NETWORK_TYPE_NOTHING;
+    switch (playerIndex)
+    {
+    case 1:
+        action = NETWORK_ACTION_SHOOT_P1;
+        break;
+    case 2:
+        action = NETWORK_ACTION_SHOOT_P2;
+        break;
+    default:
+        printf("ERROR Shoot has incorrect playerIndex!\n");
+        return; // Terminate function
+    }
     std::ostringstream oss(std::ios_base::out|std::ios_base::binary);
     {
         // Encapsulate archive to make sure all content is flused

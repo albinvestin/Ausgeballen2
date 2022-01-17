@@ -42,33 +42,18 @@ bool isOutOfBounds(Vec2f position)
     return false;
 }
 
-void EntityHandler::ServerUpdate(int inputkeys)
+void EntityHandler::MoveAllObjects()
 {
     std::vector<Player>::iterator itP = _Players.begin();
     while (itP != _Players.end())
     {
-        Vec2f playerPos = UpdatePlayerPos((*itP).playerIndex);
-        float playerAimDir = UpdateAimDirection((*itP).playerIndex);
-        uint8_t playerIndex = (*itP).playerIndex;
-        if (    (inputkeys == NETWORK_ACTION_SHOOT_P1 && playerIndex == 1)
-             || (inputkeys == NETWORK_ACTION_SHOOT_P2 && playerIndex == 2)
-             || (inputkeys == INPUT_P1SHOOT && playerIndex == 1))
-        {
-            // Spawn bullet
-            Bullet b = {playerAimDir, playerPos, playerIndex, _nextBulletID};
-            _nextBulletID++; // Overflow allowed
-            _ExistingBullets.push_back(b);
-            Vec2f v = {AddRecoil((*itP).playerIndex)};
-
-            //Send snapshot of game to all clients
-            GameSnapshot gs{_Players, _ExistingBullets};
-            _networkHandler->S2CGameSnapshot(gs);
-            // _networkHandler->S2CBulletRecoilPlayerIndex(b, v, playerIndex, playerPos);
-        }
+        UpdatePlayerPos((*itP).playerIndex);
+        UpdateAimDirection((*itP).playerIndex);
         ++itP;
     }
+
     // Update position and remove out of bounds bullets
-    // TODO Handle bullet removal sent to clients
+    // TODO Handle bullet removal sent to clients = Should this be handled by server only?
     auto itB = _ExistingBullets.begin();
     while (itB != _ExistingBullets.end())
     {
@@ -82,6 +67,40 @@ void EntityHandler::ServerUpdate(int inputkeys)
             ++itB;
         }
     }
+}
+
+// Handle shoot inputs and spawns bullets
+void EntityHandler::ServerCheckAndHandleShoot(int inputkeys)
+{
+    if (inputkeys != INPUT_P1SHOOT && inputkeys != NETWORK_ACTION_SHOOT_P2)
+    {
+        return;
+    }
+    Player* player;
+    if (inputkeys == INPUT_P1SHOOT)
+    {
+        player = &_Players[0];
+    }
+    else if (inputkeys == NETWORK_ACTION_SHOOT_P2)
+    {
+        player = &_Players[1];
+    }
+    else
+    {
+        return; // Unnecessary?
+    }
+    // Spawn bullet
+    Bullet b = {player->aimDirection, player->position, player->playerIndex, _nextBulletID};
+    _nextBulletID++; // Overflow allowed
+    _ExistingBullets.push_back(b);
+    Vec2f v = {AddRecoil(player->playerIndex)};
+}
+
+void EntityHandler::UpdateClients()
+{
+    //Send snapshot of game to all clients
+    GameSnapshot gs{_Players, _ExistingBullets};
+    _networkHandler->S2CGameSnapshot(gs);
 }
 
 // index starts at 1, TODO: check length of _Players before getting index

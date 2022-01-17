@@ -22,7 +22,7 @@ private:
 public:
     EntityHandler(NetworkHandler* networkHandler);
     ~EntityHandler();
-    void ServerUpdate(int inputkeys);
+    void ServerCheckAndHandleShoot(int inputkeys);
     Vec2f GetPlayerPos(int index) const; // Index starts at 1
     float GetPlayerAim(int index) const;
     Vec2f GetBullet1Pos();
@@ -39,5 +39,7 @@ public:
     std::vector<Bullet>::const_iterator RemoveBulletFromIt(std::vector<Bullet>::const_iterator itB);
     void HandleNetworkShoot(Bullet& b, Vec2f& v, uint8_t playerIndex, Vec2f& playerPos);
     void HandleNetworkGameSnapshot(const GameSnapshot& gs);
+    void MoveAllObjects();
+    void UpdateClients();
 };
 #endif /* ENTITYHANDLER_HPP */

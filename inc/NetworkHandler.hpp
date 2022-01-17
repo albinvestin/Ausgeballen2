@@ -33,10 +33,10 @@ public:
     void setEntetiesHandler(EntityHandler* entities);
     NetworkHandler();
     ~NetworkHandler();
-    void Host();
-    void Join();
+    bool Host();
+    bool Join();
     void Disconnect();
-    void Shoot();
+    void Shoot(uint8_t playerIndex);
     void S2CGameSnapshot(const GameSnapshot& gs);
 };
 
