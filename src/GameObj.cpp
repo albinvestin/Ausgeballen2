@@ -11,8 +11,9 @@
 #include <SDL2/SDL.h>
 #else
 #include <SDL2/SDL.h>
+#include <windows.h>
 #endif
-
+#include <inttypes.h>
 GameObj::GameObj()
 {
 }
@@ -36,7 +37,8 @@ void GameObj::start()
             printf( "Failed to load media!\n" );
         }
         else
-        {	
+        {
+            
             int input;
             int8_t isServer = -1;
             bool clientUpdateNeeded = false;
@@ -46,10 +48,22 @@ void GameObj::start()
             networkHandler.setEntetiesHandler(&entities); // TODO: these are tightly coupled, could this be avoided?
             InputHandler inputHandler{};
             CollisionHandler collisionHandler{};
+            std::vector<uint8_t> recivedActions;
+// #if defined(_WIN32)
+//             // Set timer resolution to 1ms for Sleep.
+//             timeBeginPeriod(1);
+// #endif
+
+
+            Uint64 currentTime = SDL_GetPerformanceCounter();
+            Uint64 lastUpdateTime = currentTime;
+            uint8_t gameUpdatesCount = 0;
 
             //While application is running
             while( input != INPUT_QUIT )
             {
+                
+                currentTime = SDL_GetPerformanceCounter();
                 input = inputHandler.EventHandler();
                 if (input == INPUT_HOST)
                 {
@@ -68,40 +82,73 @@ void GameObj::start()
                     networkHandler.Shoot(2);
                 }
 
-                // Move all objects first.
-                entities.MoveAllObjects();
-
-                if (isServer == 1)
+                // ONLY FOR SERVER: See if new network inputs have occured
+                std::vector<uint8_t> newActions = networkHandler.PollAllServerEvents();
+                if (input == INPUT_P1SHOOT)
                 {
-                    std::vector<uint8_t> recivedActions = networkHandler.PollAllServerEvents();
-                    for (std::vector<uint8_t>::iterator it = recivedActions.begin(); it != recivedActions.end(); ++it)
-                    {
-                        // TODO These ifs are unnecessary since both cases are tested inside ServerCheckAndHandleShoot.
-                        if (*it == NETWORK_ACTION_SHOOT_P2) // TODO this needs to be moved somewhere else
-                        {
-                            entities.ServerCheckAndHandleShoot(*it);
-                            clientUpdateNeeded = true;
-                        }
-                    }
-                    // TODO These ifs are unnecessary since both cases are tested inside ServerCheckAndHandleShoot.
-                    if (input == INPUT_P1SHOOT) // TODO this needs to be moved somewhere else
-                    {
-                        entities.ServerCheckAndHandleShoot(input);
-                        clientUpdateNeeded = true;
-                    }
+                    newActions.push_back(INPUT_P1SHOOT);
                 }
 
-                collisionHandler.HandleCollisons(entities);
+                // Append new actions to end of recived actions.
+                if (!newActions.empty())
+                {
+                    printf("NewActions length: %i\n", newActions.size());
+                    recivedActions.insert(recivedActions.end(), newActions.begin(), newActions.end());
+                    printf("RecivedActions length: %i\n", recivedActions.size());
+                }
 
-                
+                // Fixed rate updates:
+                gameUpdatesCount = 0;
+                while ((currentTime - lastUpdateTime) >= GAME_UPDATE_TIME)
+                {
+                    gameUpdatesCount++;
+                    if (gameUpdatesCount > 5)
+                    {
+                        printf("Clamping!\n");
+                        // Clamp the max allowed iterations per frame to not fall behind on spikes in framerate.
+                        gameUpdatesCount = 0;
+                        break;
+                    }
+                    // Fixed time update
+                    lastUpdateTime += GAME_UPDATE_TIME;
+
+                    // Move all objects
+                    // printf("Moving all objects.\n");
+                    entities.MoveAllObjects();
+
+                    // Handle queued actions
+                    if (isServer == 1)
+                    {
+                        for (std::vector<uint8_t>::iterator it = recivedActions.begin(); it != recivedActions.end(); ++it)
+                        {
+                            // TODO These ifs are unnecessary since both cases are tested inside ServerCheckAndHandleShoot.
+                            if (*it == NETWORK_ACTION_SHOOT_P2 || *it == INPUT_P1SHOOT) // TODO this needs to be moved somewhere else
+                            {
+                                entities.ServerCheckAndHandleShoot(*it);
+                                clientUpdateNeeded = true;
+                            }
+                        }
+                        recivedActions.clear();
+                        // TODO These ifs are unnecessary since both cases are tested inside ServerCheckAndHandleShoot.
+                        // if (input == INPUT_P1SHOOT) // TODO this needs to be moved somewhere else
+                        // {
+                        //     entities.ServerCheckAndHandleShoot(input);
+                        //     clientUpdateNeeded = true;
+                        // }
+                    }
+
+                    collisionHandler.HandleCollisons(entities);
+                }
+
+                // Manage Network
                 if (isServer == 1
-                    && (clientUpdateNeeded || countSinceLastClientUpdate > 10))
+                    && (clientUpdateNeeded || countSinceLastClientUpdate > 250))
                 {
                     entities.UpdateClients();
                     clientUpdateNeeded = false;
                     countSinceLastClientUpdate = 0;
                 }
-                else
+                else if (isServer == 1)
                 {
                     countSinceLastClientUpdate++;
                 }
@@ -109,10 +156,33 @@ void GameObj::start()
                 {
                     networkHandler.PollAllClientEvents();
                 }
+                // if (isServer == 1)
+                // {
+                //     networkHandler.PollAllServerEvents();
+                // }
                 
                 _Display.RenderAll(&entities);
-                SDL_Delay(1000/60); // TODO: Add fixed game update time
+                // uint64_t timeTilNextFrame = lastUpdateTime + GAME_UPDATE_TIME - currentTime;
+                // SDL_Delay(1);
+                
+                // return;
+                // if (timeTilNextFrame*1000/SDL_GetPerformanceFrequency() > 4)
+                // {
+                //     SDL_Delay(timeTilNextFrame*1000/SDL_GetPerformanceFrequency());
+                // }
+                // else
+                // {
+                //     SDL_Delay(1);
+                // }
+                // SDL_Delay(1000/60); // TODO: Add fixed game update time
+                // SDL_Delay(1);
+                // printf("%f ms/frame\n", (double)((SDL_GetPerformanceCounter() - currentTime)*1000) / SDL_GetPerformanceFrequency());
+                
             }
+// #if defined(_WIN32)
+//             // Free timer
+//             timeEndPeriod(1);
+// #endif
         }
     }
 }
@@ -124,3 +194,4 @@ void GameObj::close()
     //Quit SDL subsystems
     SDL_Quit();
 }
+ 

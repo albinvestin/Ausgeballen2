@@ -1,6 +1,7 @@
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
 #include <stdint.h>
+#include <SDL2/SDL.h>
 const uint16_t SCREEN_WIDTH = 640;
 const uint16_t SCREEN_HEIGHT = 480;
 const uint16_t MAP_OFFSET_HORI = 20;
@@ -12,6 +13,7 @@ const float PLAYER_FRICTION = 0.99;
 const float PLAYER_RECOIL = 10;
 const uint16_t PLAYER_RADIUS = 15;
 const uint16_t BULLET_RADIUS = 10;
+const Uint64 GAME_UPDATE_TIME = 16 * SDL_GetPerformanceFrequency() / 1000;
 enum INPUT_KEYS {
     INPUT_NONE,
     INPUT_QUIT,

@@ -6,7 +6,7 @@ alias make=mingw32-make.exe
 
 
 TODO: 
-[] Add fixed game update time, see https://gamedev.stackexchange.com/questions/19571/how-can-i-process-continuously-held-keys-with-sdl
+[x] Add fixed game update time, see https://gamedev.stackexchange.com/questions/19571/how-can-i-process-continuously-held-keys-with-sdl or https://fabiensanglard.net/timer_and_framerate/index.php or https://gafferongames.com/post/fix_your_timestep/
 
 [x] make player model
 [x] shoot bullet
@@ -24,7 +24,8 @@ TODO:
 [] Make a movement handler
 [] Fix naming of playerindex (= 0, 1, 2, 3) vs player numbering (1, 2, 3 , 4) convention
 [] Make own serializing framework.
-[] Fix so that host can send input shooting to client
+[x] Fix so that host can send input shooting to client
+[x] Handle framerate spikes (grabbing window)
 
 References:
 https://floating-point-gui.de/errors/comparison/

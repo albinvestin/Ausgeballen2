@@ -44,7 +44,7 @@ bool NetworkHandler::Host()
 
     if (_server == NULL)
     {
-        printf("An error occurred while trying to create an ENet server host.");
+        printf("An error occurred while trying to create an ENet server host.\n");
         return false;
     }
     else
@@ -109,7 +109,7 @@ std::vector<uint8_t> NetworkHandler::PollAllServerEvents()
     /* Wait up to 1000 milliseconds for an event. */
     while (enet_host_service (_server, &_event, 5) > 0) // This adds a variable delta time, TODO sleep so that we have constant 60 Hz.
     {
-        printf("Got an event\n");
+        // printf("Got an event\n");
         switch (_event.type)
         {
             case ENET_EVENT_TYPE_CONNECT:
@@ -125,10 +125,10 @@ std::vector<uint8_t> NetworkHandler::PollAllServerEvents()
 
             case ENET_EVENT_TYPE_RECEIVE:
             {
-                printf("Recived data\n");
+                // printf("Recived data\n");
                 if (_event.packet->dataLength > 0)
                 {
-                    printf("Recived data longer than 0\n");
+                    // printf("Recived data longer than 0\n");
                     std::string input((unsigned char*)_event.packet->data, _event.packet->data + _event.packet->dataLength);
                     std::istringstream iss(input, std::ios_base::in|std::ios_base::binary);
                     uint8_t header = 0;
@@ -139,7 +139,7 @@ std::vector<uint8_t> NetworkHandler::PollAllServerEvents()
                     }
                     iss.seekg(0, iss.beg); // Reset read position
                     
-                    printf("Got header: %u\n", header);
+                    // printf("Got header: %u\n", header);
                     
                     switch (header)
                     {
@@ -224,10 +224,10 @@ void NetworkHandler::PollAllClientEvents()
         switch(_event.type)
         {
             case ENET_EVENT_TYPE_RECEIVE:
-                printf("Recived data\n");
+                // printf("Recived data\n");
                 if (_event.packet->dataLength > 0)
                 {
-                    printf("Data length %u\n", (unsigned int)_event.packet->dataLength);
+                    // printf("Data length %u\n", (unsigned int)_event.packet->dataLength);
                     std::string input((unsigned char*)_event.packet->data, _event.packet->data + _event.packet->dataLength);
                     std::istringstream iss(input, std::ios_base::in|std::ios_base::binary);
                     uint8_t header = 0;
@@ -237,7 +237,7 @@ void NetworkHandler::PollAllClientEvents()
                         inArchive(header); // DeSerialize header only
                     }
                     iss.seekg(0, iss.beg); // Reset read position
-                    printf("Got header: %u\n", header);
+                    // printf("Got header: %u\n", header);
                     
                     switch (header)
                     {
@@ -250,11 +250,11 @@ void NetworkHandler::PollAllClientEvents()
                             inArchive(header, inputdata);
                         }
 
-                        printf ("A packet of length %u containing \"%#X\" was received from %s on channel %u.\n",
-                            _event.packet->dataLength,
-                            inputdata,
-                            _event.peer->data,
-                            _event.channelID);
+                        // printf ("A packet of length %u containing \"%#X\" was received from %s on channel %u.\n",
+                        //     _event.packet->dataLength,
+                        //     inputdata,
+                        //     _event.peer->data,
+                        //     _event.channelID);
                             
                         break;
                     }
@@ -266,7 +266,7 @@ void NetworkHandler::PollAllClientEvents()
                             cereal::PortableBinaryInputArchive inArchive(iss);
                             inArchive(header, inputdata);
                         }
-                        printf("Got float: %f\n", inputdata);
+                        // printf("Got float: %f\n", inputdata);
                         break;
                     }
                     case NETWORK_TYPE_GAMESNAPSHOT:
@@ -278,7 +278,6 @@ void NetworkHandler::PollAllClientEvents()
                             inArchive(header, gs);
                         }
 
-                        printf("Got BulletRecoilPlayerIndex\n");
                         // TODO Handle the recived actions after the network loop?
                         _entities->HandleNetworkGameSnapshot(gs);
                         break;
@@ -305,7 +304,7 @@ void NetworkHandler::PollAllClientEvents()
                 enet_packet_destroy (_event.packet);
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
-                printf("Got Disconnected!.");
+                printf("Got Disconnect event!.\n");
                 break;
         }
     }
@@ -317,7 +316,7 @@ void NetworkHandler::Disconnect()
     {
         return;
     }
-    printf("Trying to disconnect...");
+    printf("Trying to disconnect...\n");
     enet_peer_disconnect(_peer, 0);
     /* Enet bufferers protocol messages to reduce traffic. 
     This means it may not send the connection event until you send the first packet. 
@@ -333,7 +332,7 @@ void NetworkHandler::Disconnect()
                 enet_packet_destroy(_event.packet);
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
-                printf("Disconnection succeeded.");
+                printf("Disconnection succeeded.\n");
                 return;
                 break;
         }
@@ -399,6 +398,11 @@ void NetworkHandler::S2CGameSnapshot(const GameSnapshot& gs)
 
 void NetworkHandler::SendPacket(std::ostringstream& data)
 {
+    if (_peer == NULL)
+    {
+        printf("Peer not initialized! at SendPacket\n");
+        return;
+    }
     ENetPacket* packet;
     int dataLength = data.tellp();
     if (dataLength > 0)
@@ -408,18 +412,22 @@ void NetworkHandler::SendPacket(std::ostringstream& data)
     // enet_packet_create takes a const void * for data to be sent.
     
     // Second arg is channel:
-    if (_peer == NULL)
-    {
-        printf("Peer not initialized! at SendPacket");
-        return;
-    }
     enet_peer_send(_peer, 0, packet);
-    if (_client != NULL)
-    {
-        enet_host_service(_client, &_event, 10);
-    }
-    else if (_server != NULL)
-    {
-        enet_host_service(_server, &_event, 10);
-    }
+    // int success = -1;
+    // if (_client != NULL)
+    // {
+    //     success = enet_host_service(_client, &_event, 10);
+    // }
+    // else if (_server != NULL)
+    // {
+    //      success = enet_host_service(_server, &_event, 10);
+    // }
+    // if (success == 0)
+    // {
+    //     printf("no event occured!\n");
+    // }
+    // else if (success < 0)
+    // {
+    //     printf("Failure!\n");
+    // }
 }
