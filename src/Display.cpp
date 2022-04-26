@@ -188,7 +188,7 @@ std::vector<uint8_t> Display::StringToAlphabetKeys(std::string input)
     std::vector<uint8_t> result;
     for (std::string::iterator it = input.begin(); it != input.end(); ++it)
     {
-        result.push_back(ALPHABET_KEYS[*it]);
+        result.push_back(ALPHABET_KEYS.at(*it));
     }
     return result;
 }

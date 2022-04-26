@@ -14,7 +14,7 @@ It also keep track of which keys are assigned to which player.
 class InputHandler
 {
 private:
-    SDL_Event _Event;
+    SDL_Event _event;
     //std::vector<SDL_KeyCode> _PlayerKeys; Should I use a std::map?
     
 public:

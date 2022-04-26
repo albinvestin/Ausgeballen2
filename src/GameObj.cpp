@@ -25,14 +25,14 @@ GameObj::~GameObj()
 void GameObj::start()
 {
     //Start up SDL and create window
-    if( !_Display.init() )
+    if( !_display.init() )
     {
         printf( "Failed to initialize!\n" );
         return;
     }
 
     //Load media
-    if( !_Display.loadTextures() )
+    if( !_display.loadTextures() )
     {
         printf( "Failed to load media!\n" );
         return;
@@ -157,7 +157,7 @@ void GameObj::start()
         }
 
         
-        _Display.RenderAll(&entities);
+        _display.RenderAll(&entities);
         // uint64_t timeTilNextFrame = lastUpdateTime + GAME_UPDATE_TIME - currentTime;
         // SDL_Delay(1);
         
@@ -185,7 +185,7 @@ void GameObj::start()
 
 void GameObj::close()
 {
-    _Display.close();
+    _display.close();
 
     //Quit SDL subsystems
     SDL_Quit();

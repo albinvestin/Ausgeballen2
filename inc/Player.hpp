@@ -6,7 +6,7 @@
 class Player
 {
 private:
-    Vec2f _Position;
+    Vec2f _position;
     Vec2f _Velocity;
     float _AimDirection = 0; // in Radians
     int _playerIndex;

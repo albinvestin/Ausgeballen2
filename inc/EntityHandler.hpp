@@ -15,8 +15,8 @@ class EntityHandler
 private:
     // Player _P1;
     // Player _P2;
-    std::vector<Player> _Players; // Make references to players instead of pass by value.
-    std::vector<Bullet> _ExistingBullets;
+    std::vector<Player> _players; // Make references to players instead of pass by value.
+    std::vector<Bullet> _existingBullets;
     NetworkHandler* _networkHandler = NULL;
     uint16_t _nextBulletID = 0;
 public:

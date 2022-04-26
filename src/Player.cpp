@@ -11,7 +11,7 @@
 #include <stdint.h>
 
 Player::Player(Vec2f startPos, int playerIndex)
-    : _Position(startPos), _Velocity(Vec2f{0,0}), _playerIndex{playerIndex}
+    : _position(startPos), _Velocity(Vec2f{0,0}), _playerIndex{playerIndex}
 {
 }
 
@@ -21,29 +21,29 @@ Player::~Player()
 
 Vec2f Player::UpdatePos()
 {
-    _Position.x += _Velocity.x;
-    _Position.y += _Velocity.y;
+    _position.x += _Velocity.x;
+    _position.y += _Velocity.y;
     // Boarders handling
-    if (_Position.x + 2*PLAYER_RADIUS > MAP_WIDTH) // Right side
+    if (_position.x + 2*PLAYER_RADIUS > MAP_WIDTH) // Right side
     {
         // Move the amount past the wall back into the map.
-        _Position.x -= (_Position.x + 2*PLAYER_RADIUS - MAP_WIDTH);
+        _position.x -= (_position.x + 2*PLAYER_RADIUS - MAP_WIDTH);
         _Velocity.x = -_Velocity.x;
     }
-    else if (_Position.x < 0) // Left side
+    else if (_position.x < 0) // Left side
     {
-        _Position.x -= _Position.x;
+        _position.x -= _position.x;
         _Velocity.x = -_Velocity.x;
     }
-    if (_Position.y + 2*PLAYER_RADIUS > MAP_HEIGHT) // Bottom side
+    if (_position.y + 2*PLAYER_RADIUS > MAP_HEIGHT) // Bottom side
     {
         // Move the amount past the wall back into the map.
-        _Position.y -= (_Position.y + 2*PLAYER_RADIUS - MAP_HEIGHT);
+        _position.y -= (_position.y + 2*PLAYER_RADIUS - MAP_HEIGHT);
         _Velocity.y = -_Velocity.y;
     }
-    else if (_Position.y < 0) // Top side
+    else if (_position.y < 0) // Top side
     {
-        _Position.y -= _Position.y;
+        _position.y -= _position.y;
         _Velocity.y = -_Velocity.y;
     }
 
@@ -58,7 +58,7 @@ Vec2f Player::UpdatePos()
         _Velocity *= PLAYER_FRICTION;
     }
 
-    return _Position;
+    return _position;
 }
 
 void Player::AddRecoil()
@@ -80,7 +80,7 @@ float Player::updateAimDirection()
 
 Vec2f Player::GetPos() const
 {
-    return _Position;
+    return _position;
 }
 
 float Player::GetAim() const
@@ -112,7 +112,7 @@ Vec2f Player::SetVelocity(Vec2f v)
 
 void Player::AddToPosition(Vec2f v)
 {
-    _Position += v;
+    _position += v;
 }
 
 void Player::AddOneToScore()

@@ -20,36 +20,36 @@ int InputHandler::EventHandler()
 {
     int returnValue = INPUT_NONE;
     // Handle single press events
-    while( SDL_PollEvent( &_Event ) != 0 )
+    while( SDL_PollEvent( &_event ) != 0 )
     {
         //User requests quit
-        if( _Event.type == SDL_QUIT )
+        if( _event.type == SDL_QUIT )
         {
             returnValue = INPUT_QUIT;
         }
-        else if(_Event.type == SDL_KEYDOWN)
+        else if(_event.type == SDL_KEYDOWN)
         {
-            if (_Event.key.keysym.sym == SDLK_b)
+            if (_event.key.keysym.sym == SDLK_b)
             {
                 returnValue = INPUT_P1SHOOT;
             }
-            if (_Event.key.keysym.sym == SDLK_k)
+            if (_event.key.keysym.sym == SDLK_k)
             {
                 returnValue = INPUT_P2SHOOT;
             }
-            if (_Event.key.keysym.sym == SDLK_h)
+            if (_event.key.keysym.sym == SDLK_h)
             {
                 returnValue = INPUT_HOST;
             }
-            if (_Event.key.keysym.sym == SDLK_j)
+            if (_event.key.keysym.sym == SDLK_j)
             {
                 returnValue = INPUT_JOIN;
             }
-            if (_Event.key.keysym.sym == SDLK_d)
+            if (_event.key.keysym.sym == SDLK_d)
             {
                 returnValue = INPUT_DISCONNECT;
             }
-            if (_Event.key.keysym.sym == SDLK_y)
+            if (_event.key.keysym.sym == SDLK_y)
             {
                 returnValue = INPUT_SEND_P2SHOOT;
             }
