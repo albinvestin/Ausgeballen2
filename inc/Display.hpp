@@ -13,13 +13,13 @@
 class Display
 {
 private:
-    SDL_Window* _Window = NULL;
-    SDL_Renderer* _Renderer = NULL;
-    LTexture _BallTexture;
-    LTexture _HearthTexture;
-    LTexture _BulletTexture;
-    LTexture _Alphabeth;
-    SDL_Rect _AlphabethClippingRect[ALPHABET_LENGTH];
+    SDL_Window* _window = NULL;
+    SDL_Renderer* _renderer = NULL;
+    Texture _ballTexture;
+    Texture _hearthTexture;
+    Texture _bulletTexture;
+    Texture _alphabeth;
+    SDL_Rect _alphabethClippingRect[ALPHABET_LENGTH];
     std::vector<uint8_t> StringToAlphabetKeys(std::string input);
     void RenderString(std::string input, int x, int y);
     std::map<char, uint8_t> ALPHABET_KEYS 
@@ -67,7 +67,7 @@ public:
     Display();
     ~Display();
     bool init();
-    bool LoadFromFile(LTexture *const texture, std::string relPath); // Help function for loadTextures
+    bool LoadFromFile(Texture *const texture, std::string relPath); // Help function for loadTextures
     bool loadTextures();
     void close();
     void RenderAll(EntityHandler const*);
