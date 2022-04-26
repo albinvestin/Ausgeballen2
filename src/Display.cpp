@@ -24,101 +24,101 @@ Display::~Display()
 
 bool Display::init()
 {
-	//Initialization flag
-	bool success = true;
+    //Initialization flag
+    bool success = true;
 
-	//Initialize SDL
-	if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
-	{
-		printf( "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
-		success = false;
-	}
-	else
-	{
-		//Set texture filtering to linear
-		if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
-		{
-			printf( "Warning: Linear texture filtering not enabled!" );
-		}
+    //Initialize SDL
+    if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
+    {
+        printf( "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
+        success = false;
+    }
+    else
+    {
+        //Set texture filtering to linear
+        if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
+        {
+            printf( "Warning: Linear texture filtering not enabled!" );
+        }
 
-		//Create window
-		_Window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
-		if( _Window == NULL )
-		{
-			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
-			success = false;
-		}
-		else
-		{
-			//Create renderer for window
-			_Renderer = SDL_CreateRenderer( _Window, -1, SDL_RENDERER_ACCELERATED );
-			if( _Renderer == NULL )
-			{
-				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
-				success = false;
-			}
-			else
-			{
-				//Initialize renderer color
-				SDL_SetRenderDrawColor( _Renderer, 0xFF, 0xFF, 0xFF, 0xFF );
+        //Create window
+        _Window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+        if( _Window == NULL )
+        {
+            printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
+            success = false;
+        }
+        else
+        {
+            //Create renderer for window
+            _Renderer = SDL_CreateRenderer( _Window, -1, SDL_RENDERER_ACCELERATED );
+            if( _Renderer == NULL )
+            {
+                printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
+                success = false;
+            }
+            else
+            {
+                //Initialize renderer color
+                SDL_SetRenderDrawColor( _Renderer, 0xFF, 0xFF, 0xFF, 0xFF );
 
-				//Initialize PNG loading
-				int imgFlags = IMG_INIT_PNG;
-				if( !( IMG_Init( imgFlags ) & imgFlags ) )
-				{
-					printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
-					success = false;
-				}
-			}
-		}
-	}
+                //Initialize PNG loading
+                int imgFlags = IMG_INIT_PNG;
+                if( !( IMG_Init( imgFlags ) & imgFlags ) )
+                {
+                    printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
+                    success = false;
+                }
+            }
+        }
+    }
 
-	for (uint8_t i = 0; i < ALPHABET_LENGTH; i++)
-	{
-		_AlphabethClippingRect[i].x = ALPHABET_CHAR_WIDTH * i;
-		_AlphabethClippingRect[i].y = 0;
-		_AlphabethClippingRect[i].w = ALPHABET_CHAR_WIDTH;
-		_AlphabethClippingRect[i].h = ALPHABET_CHAR_HEIGHT;
-	}
-	
+    for (uint8_t i = 0; i < ALPHABET_LENGTH; i++)
+    {
+        _AlphabethClippingRect[i].x = ALPHABET_CHAR_WIDTH * i;
+        _AlphabethClippingRect[i].y = 0;
+        _AlphabethClippingRect[i].w = ALPHABET_CHAR_WIDTH;
+        _AlphabethClippingRect[i].h = ALPHABET_CHAR_HEIGHT;
+    }
+    
 
-	return success;
+    return success;
 }
 
 bool Display::LoadFromFile(LTexture* const texture, std::string relPath)
 {
-	if( !(*texture).loadFromFile(relPath, _Renderer) )
-	{
-		printf("Failed to load %s texture image!\n", relPath.c_str());
-		return false;
-	}
-	return true;
+    if( !(*texture).loadFromFile(relPath, _Renderer) )
+    {
+        printf("Failed to load %s texture image!\n", relPath.c_str());
+        return false;
+    }
+    return true;
 }
 
 bool Display::loadTextures()
 {
-	//Loading success flag
-	bool success = true;
+    //Loading success flag
+    bool success = true;
 
-	success &= LoadFromFile(&_BallTexture, "../res/Image_Ball.png");
-	success &= LoadFromFile(&_BulletTexture, "../res/dot.bmp");
-	success &= LoadFromFile(&_HearthTexture, "../res/heart.png");
-	success &= LoadFromFile(&_Alphabeth, "../res/alphabet2.png");
+    success &= LoadFromFile(&_BallTexture, "../res/Image_Ball.png");
+    success &= LoadFromFile(&_BulletTexture, "../res/dot.bmp");
+    success &= LoadFromFile(&_HearthTexture, "../res/heart.png");
+    success &= LoadFromFile(&_Alphabeth, "../res/alphabet2.png");
 
-	return success;
+    return success;
 }
 
 void Display::close()
 {
     _BallTexture.free();
-	_BulletTexture.free();
-	_HearthTexture.free();
-	_Alphabeth.free();
+    _BulletTexture.free();
+    _HearthTexture.free();
+    _Alphabeth.free();
 
     SDL_DestroyRenderer( _Renderer );
-	_Renderer = NULL;
+    _Renderer = NULL;
     SDL_DestroyWindow( _Window );
-	_Window = NULL;
+    _Window = NULL;
 
     // Quit SDL2_image system
     IMG_Quit();
@@ -133,51 +133,51 @@ void Display::RenderAll(EntityHandler const* entities)
     //Render background texture to screen
     // _HearthTexture.render( 0, 0, _Renderer );
 
-	// Render bullets
-	std::vector<Vec2f> AllBulletPos = (*entities).GetAllBulletPos();
-	std::vector<Vec2f>::iterator it = AllBulletPos.begin();
+    // Render bullets
+    std::vector<Vec2f> AllBulletPos = (*entities).GetAllBulletPos();
+    std::vector<Vec2f>::iterator it = AllBulletPos.begin();
     while (it != AllBulletPos.end())
     {
-		_BulletTexture.render( (*it).x, (*it).y, _Renderer, NULL );
+        _BulletTexture.render( (*it).x, (*it).y, _Renderer, NULL );
         ++it;
     }
 
-	//Vec2 bulletPos = (*entities)..GetBullet1Pos();
-	//_HearthTexture.render( bulletPos.x, bulletPos.y, _Renderer );
+    //Vec2 bulletPos = (*entities)..GetBullet1Pos();
+    //_HearthTexture.render( bulletPos.x, bulletPos.y, _Renderer );
 
     //Render Player1 to the screen
-	Vec2f playerPos = (*entities).GetPlayerPos(1);
-	_BallTexture.ModifyColor(255, 255, 50);
+    Vec2f playerPos = (*entities).GetPlayerPos(1);
+    _BallTexture.ModifyColor(255, 255, 50);
     _BallTexture.render(playerPos.x, playerPos.y, _Renderer, NULL);
 
-	// Render player1 shooting direction
-	SDL_SetRenderDrawColor(_Renderer, 0, 0, 255, 150); // BLUE
-	float angle = (*entities).GetPlayerAim(1);
-	int centerX = playerPos.x+PLAYER_RADIUS;
-	int centerY = playerPos.y+PLAYER_RADIUS;
-	SDL_RenderDrawLine(_Renderer, centerX, centerY, centerX + cos(angle)*(2*PLAYER_RADIUS), centerY + sin(angle)*(2*PLAYER_RADIUS));
+    // Render player1 shooting direction
+    SDL_SetRenderDrawColor(_Renderer, 0, 0, 255, 150); // BLUE
+    float angle = (*entities).GetPlayerAim(1);
+    int centerX = playerPos.x+PLAYER_RADIUS;
+    int centerY = playerPos.y+PLAYER_RADIUS;
+    SDL_RenderDrawLine(_Renderer, centerX, centerY, centerX + cos(angle)*(2*PLAYER_RADIUS), centerY + sin(angle)*(2*PLAYER_RADIUS));
 
-	//Render Player2 to the screen
-	playerPos = (*entities).GetPlayerPos(2);
-	// printf("P2: (%f,%f)\n",playerPos.x, playerPos.y);
-	_BallTexture.ModifyColor(255, 50, 255);
+    //Render Player2 to the screen
+    playerPos = (*entities).GetPlayerPos(2);
+    // printf("P2: (%f,%f)\n",playerPos.x, playerPos.y);
+    _BallTexture.ModifyColor(255, 50, 255);
     _BallTexture.render(playerPos.x, playerPos.y, _Renderer, NULL);
 
-	// Render player2 shooting direction
-	angle = (*entities).GetPlayerAim(2);
-	centerX = playerPos.x+PLAYER_RADIUS;
-	centerY = playerPos.y+PLAYER_RADIUS;
-	SDL_RenderDrawLine(_Renderer, centerX, centerY, centerX + cos(angle)*(2*PLAYER_RADIUS), centerY + sin(angle)*(2*PLAYER_RADIUS));
+    // Render player2 shooting direction
+    angle = (*entities).GetPlayerAim(2);
+    centerX = playerPos.x+PLAYER_RADIUS;
+    centerY = playerPos.y+PLAYER_RADIUS;
+    SDL_RenderDrawLine(_Renderer, centerX, centerY, centerX + cos(angle)*(2*PLAYER_RADIUS), centerY + sin(angle)*(2*PLAYER_RADIUS));
 
-	//Render map borders
-	SDL_SetRenderDrawColor(_Renderer, 0, 0, 0, 255); // Black
-	SDL_RenderDrawLine(_Renderer, 0, 0, MAP_WIDTH, 0); // Top
-	SDL_RenderDrawLine(_Renderer, 0, MAP_HEIGHT, MAP_WIDTH, MAP_HEIGHT); // Bottom
-	SDL_RenderDrawLine(_Renderer, 0, 0, 0, MAP_HEIGHT); // Left
-	SDL_RenderDrawLine(_Renderer, MAP_WIDTH, 0, MAP_WIDTH, MAP_HEIGHT); // Right
+    //Render map borders
+    SDL_SetRenderDrawColor(_Renderer, 0, 0, 0, 255); // Black
+    SDL_RenderDrawLine(_Renderer, 0, 0, MAP_WIDTH, 0); // Top
+    SDL_RenderDrawLine(_Renderer, 0, MAP_HEIGHT, MAP_WIDTH, MAP_HEIGHT); // Bottom
+    SDL_RenderDrawLine(_Renderer, 0, 0, 0, MAP_HEIGHT); // Left
+    SDL_RenderDrawLine(_Renderer, MAP_WIDTH, 0, MAP_WIDTH, MAP_HEIGHT); // Right
 
-	// _Alphabeth.render(50,50, _Renderer, NULL);
-	RenderString("TEST!?", 50, 60);
+    // _Alphabeth.render(50,50, _Renderer, NULL);
+    RenderString("TEST!?", 50, 60);
 
     //Update screen
     SDL_RenderPresent( _Renderer );
@@ -185,21 +185,21 @@ void Display::RenderAll(EntityHandler const* entities)
 
 std::vector<uint8_t> Display::StringToAlphabetKeys(std::string input)
 {
-	std::vector<uint8_t> result;
-	for (std::string::iterator it = input.begin(); it != input.end(); ++it)
-	{
-		result.push_back(ALPHABET_KEYS[*it]);
-	}
-	return result;	
+    std::vector<uint8_t> result;
+    for (std::string::iterator it = input.begin(); it != input.end(); ++it)
+    {
+        result.push_back(ALPHABET_KEYS[*it]);
+    }
+    return result;	
 }
 
 void Display::RenderString(std::string input, int x, int y)
 {
-	std::vector<uint8_t> clippingIndex = StringToAlphabetKeys(input);
-	int i = 0;
-	for (std::vector<uint8_t>::iterator it = clippingIndex.begin(); it != clippingIndex.end(); ++it)
-	{
-		_Alphabeth.render(x + i * (ALPHABET_CHAR_WIDTH ), y, _Renderer, &_AlphabethClippingRect[clippingIndex[i]]);
-		++i;
-	}
+    std::vector<uint8_t> clippingIndex = StringToAlphabetKeys(input);
+    int i = 0;
+    for (std::vector<uint8_t>::iterator it = clippingIndex.begin(); it != clippingIndex.end(); ++it)
+    {
+        _Alphabeth.render(x + i * (ALPHABET_CHAR_WIDTH ), y, _Renderer, &_AlphabethClippingRect[clippingIndex[i]]);
+        ++i;
+    }
 }

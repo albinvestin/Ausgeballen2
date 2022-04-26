@@ -234,10 +234,10 @@ float EntityHandler::UpdateAimDirection(uint8_t playerIndex) // TODO take an ite
 {
     float _AimDirection = _Players[playerIndex-1].aimDirection;
     _AimDirection += M_PI/30;
-	if (_AimDirection > 2*M_PI)
-	{
-		_AimDirection = 0;
-	}
+    if (_AimDirection > 2*M_PI)
+    {
+        _AimDirection = 0;
+    }
     _Players[playerIndex-1].aimDirection = _AimDirection;
     return _AimDirection;
 }

@@ -71,10 +71,10 @@ void Player::AddRecoil()
 float Player::updateAimDirection()
 {
     _AimDirection += M_PI/30;
-	if (_AimDirection > 2*M_PI)
-	{
-		_AimDirection = 0;
-	}
+    if (_AimDirection > 2*M_PI)
+    {
+        _AimDirection = 0;
+    }
     return _AimDirection;
 }
 

@@ -2,11 +2,11 @@
 
 int main( int argc, char* args[] )
 {
-	GameObj game{};
-	game.start();
-	
-	//Free resources and close SDL
-	game.close();
+    GameObj game{};
+    game.start();
+    
+    //Free resources and close SDL
+    game.close();
 
-	return 0;
+    return 0;
 }
