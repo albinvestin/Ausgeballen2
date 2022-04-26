@@ -136,6 +136,15 @@ float EntityHandler::GetPlayerAim(int index) const
     return _players[index-1].aimDirection; 
 }
 
+int EntityHandler::GetPlayerScore(int index) const
+{
+    if (_players[index-1].playerIndex != index)
+    {
+        printf("EntityHandler::GetPlayerPos(int index) ERROR\n");
+    }
+    return _players[index-1].score; 
+}
+
 Vec2f EntityHandler::GetBullet1Pos()
 {
     if (_existingBullets.empty())

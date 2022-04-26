@@ -22,6 +22,7 @@ private:
     SDL_Rect _alphabethClippingRect[ALPHABET_LENGTH];
     std::vector<uint8_t> StringToAlphabetKeys(std::string input);
     void RenderString(std::string input, int x, int y);
+    Vec2f TranslatePosToRenderSpace(const Vec2f pos);
     const std::map<char, uint8_t> ALPHABET_KEYS 
     {{'A', 0},
     {'B', 1},

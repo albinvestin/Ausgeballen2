@@ -21,13 +21,13 @@ Texture::Texture()
 Texture::~Texture()
 {
     //Deallocate
-    free();
+    Free();
 }
 
-bool Texture::loadFromFile( std::string path, SDL_Renderer* gRenderer )
+bool Texture::LoadFromFile( std::string path, SDL_Renderer* gRenderer )
 {
     //Get rid of preexisting texture
-    free();
+    Free();
 
     //The final texture
     SDL_Texture* newTexture = NULL;
@@ -65,7 +65,7 @@ bool Texture::loadFromFile( std::string path, SDL_Renderer* gRenderer )
     return _texture != NULL;
 }
 
-void Texture::free()
+void Texture::Free()
 {
     //Free texture if it exists
     if( _texture != NULL )
@@ -82,7 +82,7 @@ void Texture::ModifyColor(uint8_t red, uint8_t green, uint8_t blue)
     SDL_SetTextureColorMod(_texture, red, green, blue);
 }
 
-void Texture::render( int x, int y, SDL_Renderer* gRenderer, SDL_Rect* clip )
+void Texture::Render( int x, int y, SDL_Renderer* gRenderer, SDL_Rect* clip )
 {
     //Set rendering space and render to screen
     SDL_Rect renderQuad = { x, y, _width, _height };
@@ -96,12 +96,12 @@ void Texture::render( int x, int y, SDL_Renderer* gRenderer, SDL_Rect* clip )
     SDL_RenderCopy( gRenderer, _texture, clip, &renderQuad );
 }
 
-int Texture::getWidth()
+int Texture::GetWidth()
 {
     return _width;
 }
 
-int Texture::getHeight()
+int Texture::GetHeight()
 {
     return _height;
 }

@@ -24,19 +24,19 @@ public:
     ~Texture();
 
     //Loads image at specified path
-    bool loadFromFile( std::string path, SDL_Renderer* gRenderer );
+    bool LoadFromFile( std::string path, SDL_Renderer* gRenderer );
 
     //Deallocates texture
-    void free();
+    void Free();
 
     void ModifyColor( uint8_t red, uint8_t green, uint8_t blue );
 
     //Renders texture at given point
-    void render(int x, int y, SDL_Renderer* renderer, SDL_Rect* clip);
+    void Render(int x, int y, SDL_Renderer* renderer, SDL_Rect* clip);
 
     //Gets image dimensions
-    int getWidth();
-    int getHeight();
+    int GetWidth();
+    int GetHeight();
 };
 
 #endif /* TEXTURE_HPP */
