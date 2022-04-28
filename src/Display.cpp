@@ -92,7 +92,7 @@ bool Display::loadTextures()
     success &= LoadFromFile(&_ballTexture, "../res/Image_Ball.png");
     success &= LoadFromFile(&_bulletTexture, "../res/dot.bmp");
     success &= LoadFromFile(&_hearthTexture, "../res/heart.png");
-    success &= LoadFromFile(&_alphabeth, "../res/alphabet2.png");
+    success &= LoadFromFile(&_alphabeth, "../res/alphabet3.png");
 
     return success;
 }
@@ -175,13 +175,11 @@ void Display::RenderAll(EntityHandler const* entities)
     SDL_RenderDrawLine(_renderer, 0+MAP_OFFSET_HORI,         0+MAP_OFFSET_VERT,          0+MAP_OFFSET_HORI,         MAP_HEIGHT+MAP_OFFSET_VERT); // Left
     SDL_RenderDrawLine(_renderer, MAP_WIDTH+MAP_OFFSET_HORI, 0+MAP_OFFSET_VERT,          MAP_WIDTH+MAP_OFFSET_HORI, MAP_HEIGHT+MAP_OFFSET_VERT); // Right
 
-    // Render score under map
-    std::string score = "SCORE.P1:" + std::to_string((*entities).GetPlayerScore(1)) + ".P2:" + std::to_string((*entities).GetPlayerScore(2));
-    //printf(score.c_str());
-    RenderString(score, MAP_OFFSET_HORI, MAP_HEIGHT+MAP_OFFSET_VERT+10);
-
-    // _Alphabeth.render(50,50, _Renderer, NULL);
-    // RenderString("TEST!?", 50, 60);
+    // Render score
+    std::string scoreP1 = "P1:" + std::to_string((*entities).GetPlayerScore(1));
+    std::string scoreP2 = "P2:" + std::to_string((*entities).GetPlayerScore(2));
+    RenderString(scoreP1, 10, MAP_OFFSET_VERT); // Top left
+    RenderString(scoreP2, MAP_OFFSET_HORI + MAP_WIDTH + 10, MAP_OFFSET_VERT); // Top right
 
     //Update screen
     SDL_RenderPresent( _renderer );

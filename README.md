@@ -19,13 +19,19 @@ TODO:
 - [] Read all of this: https://www.cplusplus.com/articles/y8hv0pDG/
 - [] Modify members of other classes and passing them by reference is bad practice, either use smart pointers for this or could this be structured in another way?
 - [] Add check so that players are moving from eachother so that they do not get stuck in eachother. Or is this a feature? >:D
-- [] offset the map to middle of screen
+- [x] offset the map to middle of screen
 - [x] Make bullets and players as data structures
 - [] Make a movement handler
 - [] Fix naming of playerindex (= 0, 1, 2, 3) vs player numbering (1, 2, 3 , 4) convention
-- [] Make own serializing framework.
+(- [] Make own serializing framework.)
 - [x] Fix so that host can send input shooting to client
 - [x] Handle framerate spikes (grabbing window)
+- [] Make main menu screen
+    - [] Add host and join functionality to main menu
+    - [] Add local functionality to main menu
+    - [] Add "button" selection before entering game
+- [] Make end game screen with result
+
 
 References:
 https://floating-point-gui.de/errors/comparison/
