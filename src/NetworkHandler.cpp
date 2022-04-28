@@ -106,8 +106,7 @@ std::vector<uint8_t> NetworkHandler::PollAllServerEvents()
         return recivedActions;
     }
 
-    /* Wait up to 1000 milliseconds for an event. */
-    while (enet_host_service (_server, &_event, 5) > 0) // This adds a variable delta time, TODO sleep so that we have constant 60 Hz.
+    while (enet_host_service (_server, &_event, 0) > 0)
     {
         // printf("Got an event\n");
         switch (_event.type)
@@ -219,7 +218,7 @@ void NetworkHandler::PollAllClientEvents()
     {
         return;
     }
-    while(enet_host_service(_client, &_event, 5) > 0)
+    while(enet_host_service(_client, &_event, 0) > 0)
     {
         switch(_event.type)
         {

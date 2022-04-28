@@ -115,7 +115,6 @@ void GameObj::start()
             lastUpdateTime += GAME_UPDATE_TIME;
 
             // Move all objects
-            // printf("Moving all objects.\n");
             entities.MoveAllObjects();
 
             // Handle queued actions
@@ -131,12 +130,6 @@ void GameObj::start()
                     }
                 }
                 recivedActions.clear();
-                // TODO These ifs are unnecessary since both cases are tested inside ServerCheckAndHandleShoot.
-                // if (input == INPUT_P1SHOOT) // TODO this needs to be moved somewhere else
-                // {
-                //     entities.ServerCheckAndHandleShoot(input);
-                //     clientUpdateNeeded = true;
-                // }
             }
 
             collisionHandler.HandleCollisons(entities);
@@ -166,7 +159,7 @@ void GameObj::start()
         double timeDuration = ((timeTilNextFrame)*1000) / SDL_GetPerformanceFrequency();
         if (timeDuration > 16)
         {
-            printf("Should wait %f ms\n", timeDuration);
+            printf("Should wait %f ms\n", timeDuration); // TODO when grabbing the window this time get set to a very large number?
         }
 
         timerStart = SDL_GetPerformanceCounter();
