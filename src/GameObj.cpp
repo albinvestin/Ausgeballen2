@@ -55,6 +55,9 @@ void GameObj::start()
 
 
     Uint64 currentTime = SDL_GetPerformanceCounter();
+    Uint64 timerStart;
+    Uint64 timerEnd;
+    Uint64 timeTilNextFrame;
     Uint64 lastUpdateTime = currentTime;
     uint8_t gameUpdatesCount = 0;
 
@@ -156,10 +159,32 @@ void GameObj::start()
             networkHandler.PollAllClientEvents();
         }
 
-        
         _display.RenderAll(&entities);
-        // uint64_t timeTilNextFrame = lastUpdateTime + GAME_UPDATE_TIME - currentTime;
-        // SDL_Delay(1);
+
+        // Sleep until roughly next frame
+        timeTilNextFrame = lastUpdateTime + GAME_UPDATE_TIME - currentTime;
+        double timeDuration = ((timeTilNextFrame)*1000) / SDL_GetPerformanceFrequency();
+        if (timeDuration > 16)
+        {
+            printf("Should wait %f ms\n", timeDuration);
+        }
+
+        timerStart = SDL_GetPerformanceCounter();
+        if (timeDuration > 3 && timeDuration < 16)
+        {
+            SDL_Delay((Uint32)timeDuration);
+        }
+        timerEnd = SDL_GetPerformanceCounter();
+        double timerDuration = ((timerEnd - timerStart)*1000) / SDL_GetPerformanceFrequency();
+        if (timerDuration - timeDuration > 1)
+        {
+            printf("Overshoot with %f ms\n", timerDuration - timeDuration);
+        }
+            
+        
+        
+        
+
         
         // return;
         // if (timeTilNextFrame*1000/SDL_GetPerformanceFrequency() > 4)

@@ -93,7 +93,7 @@ void EntityHandler::ServerCheckAndHandleShoot(int inputkeys)
     Bullet b = {player->aimDirection, player->position, player->playerIndex, _nextBulletID};
     _nextBulletID++; // Overflow allowed
     _existingBullets.push_back(b);
-    Vec2f v = {AddRecoil(player->playerIndex)};
+    AddRecoil(player->playerIndex);
 }
 
 void EntityHandler::UpdateClients()
