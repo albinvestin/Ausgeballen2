@@ -122,8 +122,8 @@ Vec2f Display::TranslatePosToRenderSpace(const Vec2f pos)
 void Display::RenderAll(EntityHandler const* entities)
 {
     //Clear screen
-    SDL_SetRenderDrawColor( _renderer, 0xFF, 0xFF, 0xFF, 0xFF );
-    SDL_RenderClear( _renderer );
+    SDL_SetRenderDrawColor(_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    SDL_RenderClear(_renderer);
 
     //Render background texture to screen
     // _HearthTexture.render( 0, 0, _Renderer );
@@ -182,7 +182,7 @@ void Display::RenderAll(EntityHandler const* entities)
     RenderString(scoreP2, MAP_OFFSET_HORI + MAP_WIDTH + 10, MAP_OFFSET_VERT); // Top right
 
     //Update screen
-    SDL_RenderPresent( _renderer );
+    SDL_RenderPresent(_renderer);
 }
 
 std::vector<uint8_t> Display::StringToAlphabetKeys(std::string input)
@@ -206,3 +206,15 @@ void Display::RenderString(std::string input, int x, int y)
     }
 }
 
+void Display::RenderMainMenu()
+{
+    //Clear screen
+    SDL_SetRenderDrawColor(_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    SDL_RenderClear(_renderer);
+    _hearthTexture.Render(SCREEN_WIDTH/2 - _hearthTexture.GetWidth()/2, SCREEN_HEIGHT/4 - _hearthTexture.GetHeight()/2, _renderer, NULL);
+    std::string text{"PRESS H TO HOST"};
+    RenderString(text, SCREEN_WIDTH/2 - (text.length()*ALPHABET_CHAR_WIDTH)/2, SCREEN_HEIGHT/2);
+    text = "PRESS J TO JOIN";
+    RenderString(text, SCREEN_WIDTH/2 - (text.length()*ALPHABET_CHAR_WIDTH)/2, SCREEN_HEIGHT/2+ALPHABET_CHAR_HEIGHT+20);
+    SDL_RenderPresent(_renderer);
+}

@@ -14,15 +14,8 @@
 #include <windows.h>
 #endif
 #include <inttypes.h>
-GameObj::GameObj()
-{
-}
 
-GameObj::~GameObj()
-{
-}
-
-void GameObj::start()
+void GameObj::Start()
 {
     //Start up SDL and create window
     if( !_display.init() )
@@ -30,7 +23,6 @@ void GameObj::start()
         printf( "Failed to initialize!\n" );
         return;
     }
-
     //Load media
     if( !_display.loadTextures() )
     {
@@ -38,21 +30,69 @@ void GameObj::start()
         return;
     }
 
-    int input;
+    StartMainMenu();
+    Close();
+}
+
+void GameObj::Close()
+{
+    _display.close();
+
+    //Quit SDL subsystems
+    SDL_Quit();
+}
+
+void GameObj::StartMainMenu()
+{
+    InputHandler inputHandler{};
+    int input = INPUT_NONE;
+    while(input != INPUT_QUIT)
+    {
+        input = inputHandler.EventHandler();
+        if (input == INPUT_HOST || input == INPUT_JOIN)
+        {
+            input = StartGameLoop(input);
+        }
+        _display.RenderMainMenu();
+    }
+}
+
+int GameObj::StartGameLoop(int input)
+{
     int8_t isServer = -1;
+    NetworkHandler networkHandler{};
+    if (input == INPUT_HOST)
+    {
+        if (networkHandler.Host())
+        {
+            isServer = true;
+        }
+        else
+        {
+            // Unsuccessful host, go back to main menu
+            return input;
+        }
+    }
+    else if (input == INPUT_JOIN)
+    {
+        if (networkHandler.Join())
+        {
+            isServer = false;
+        }
+        else
+        {
+            // Unsuccessful join, go back to main menu
+            return input;
+        }
+    }
     bool clientUpdateNeeded = false;
     uint8_t countSinceLastClientUpdate = 0;
-    NetworkHandler networkHandler{};
+
     EntityHandler entities{&networkHandler};
     networkHandler.setEntetiesHandler(&entities); // TODO: these are tightly coupled, could this be avoided?
     InputHandler inputHandler{};
     CollisionHandler collisionHandler{};
     std::vector<uint8_t> recivedActions;
-// #if defined(_WIN32)
-//             // Set timer resolution to 1ms for Sleep.
-//             timeBeginPeriod(1);
-// #endif
-
 
     Uint64 currentTime = SDL_GetPerformanceCounter();
     Uint64 timerStart;
@@ -62,20 +102,12 @@ void GameObj::start()
     uint8_t gameUpdatesCount = 0;
 
     //While application is running
-    while( input != INPUT_QUIT )
+    while(input != INPUT_QUIT && input != INPUT_ESCAPE)
     {
-        
         currentTime = SDL_GetPerformanceCounter();
         input = inputHandler.EventHandler();
-        if (input == INPUT_HOST)
-        {
-            isServer = networkHandler.Host();
-        }
-        else if (input == INPUT_JOIN)
-        {
-            isServer = !(networkHandler.Join());
-        }
-        else if (input == INPUT_DISCONNECT)
+
+        if (input == INPUT_DISCONNECT)
         {
             networkHandler.Disconnect();
         }
@@ -173,39 +205,7 @@ void GameObj::start()
         {
             printf("Overshoot with %f ms\n", timerDuration - timeDuration);
         }
-            
-        
-        
-        
-
-        
-        // return;
-        // if (timeTilNextFrame*1000/SDL_GetPerformanceFrequency() > 4)
-        // {
-        //     SDL_Delay(timeTilNextFrame*1000/SDL_GetPerformanceFrequency());
-        // }
-        // else
-        // {
-        //     SDL_Delay(1);
-        // }
-        // SDL_Delay(1000/60); // TODO: Add fixed game update time
-        // SDL_Delay(1);
-        // printf("%f ms/frame\n", (double)((SDL_GetPerformanceCounter() - currentTime)*1000) / SDL_GetPerformanceFrequency());
-        
     }
-// #if defined(_WIN32)
-//             // Free timer
-//             timeEndPeriod(1);
-// #endif
-        
-
-}
-
-void GameObj::close()
-{
-    _display.close();
-
-    //Quit SDL subsystems
-    SDL_Quit();
+    return input;
 }
  

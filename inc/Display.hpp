@@ -73,6 +73,7 @@ public:
     bool loadTextures();
     void close();
     void RenderAll(EntityHandler const*);
+    void RenderMainMenu();
 };
 
 

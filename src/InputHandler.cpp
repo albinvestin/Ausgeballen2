@@ -23,11 +23,11 @@ int InputHandler::EventHandler()
     while( SDL_PollEvent( &_event ) != 0 )
     {
         //User requests quit
-        if( _event.type == SDL_QUIT )
+        if (_event.type == SDL_QUIT)
         {
             returnValue = INPUT_QUIT;
         }
-        else if(_event.type == SDL_KEYDOWN)
+        else if (_event.type == SDL_KEYDOWN)
         {
             if (_event.key.keysym.sym == SDLK_b)
             {
@@ -53,17 +53,11 @@ int InputHandler::EventHandler()
             {
                 returnValue = INPUT_SEND_P2SHOOT;
             }
+            if (_event.key.keysym.sym == SDLK_ESCAPE)
+            {
+                returnValue = INPUT_ESCAPE;
+            }
         }
-        // else if(_Event.type == SDL_KEYDOWN)
-        // {
-        //     switch( _Event.key.keysym.sym )
-        //     {
-        //         case SDLK_w:
-        //         // Up
-        //         returnValue = player1Key;
-        //         break;
-        //     }
-        // }
     }
 
     // Handle continuous press

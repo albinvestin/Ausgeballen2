@@ -26,8 +26,8 @@ TODO:
 (- [] Make own serializing framework.)
 - [x] Fix so that host can send input shooting to client
 - [x] Handle framerate spikes (grabbing window)
-- [] Make main menu screen
-    - [] Add host and join functionality to main menu
+- [x] Make main menu screen
+    - [x] Add host and join functionality to main menu
     - [] Add local functionality to main menu
     - [] Add "button" selection before entering game
 - [] Make end game screen with result
