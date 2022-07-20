@@ -211,10 +211,31 @@ void Display::RenderMainMenu()
     //Clear screen
     SDL_SetRenderDrawColor(_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
     SDL_RenderClear(_renderer);
+    // Render
     _hearthTexture.Render(SCREEN_WIDTH/2 - _hearthTexture.GetWidth()/2, SCREEN_HEIGHT/4 - _hearthTexture.GetHeight()/2, _renderer, NULL);
     std::string text{"PRESS H TO HOST"};
     RenderString(text, SCREEN_WIDTH/2 - (text.length()*ALPHABET_CHAR_WIDTH)/2, SCREEN_HEIGHT/2);
     text = "PRESS J TO JOIN";
     RenderString(text, SCREEN_WIDTH/2 - (text.length()*ALPHABET_CHAR_WIDTH)/2, SCREEN_HEIGHT/2+ALPHABET_CHAR_HEIGHT+20);
+    SDL_RenderPresent(_renderer);
+}
+
+void Display::RenderEndScore(std::vector< std::pair<uint8_t,uint8_t> > playerAndScoreDesc)
+{
+    //Clear screen
+    SDL_SetRenderDrawColor(_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    SDL_RenderClear(_renderer);
+    // Render
+    std::string text;
+    for (int i=0; i < playerAndScoreDesc.size(); i++)
+    {
+        if (i == 0)
+        {
+            text = "WINNER: ";
+        }
+        text += "P" + std::to_string(playerAndScoreDesc[i].first) + " WITH " + std::to_string(playerAndScoreDesc[i].second) + "P";
+        RenderString(text, SCREEN_WIDTH/2 - (text.length()*ALPHABET_CHAR_WIDTH)/2, SCREEN_HEIGHT/6+(ALPHABET_CHAR_HEIGHT+20)*i);
+        text = "";
+    }
     SDL_RenderPresent(_renderer);
 }

@@ -14,6 +14,7 @@
 #include <windows.h>
 #endif
 #include <inttypes.h>
+#include <algorithm>
 
 void GameObj::Start()
 {
@@ -46,16 +47,37 @@ void GameObj::StartMainMenu()
 {
     InputHandler inputHandler{};
     int input = INPUT_NONE;
-    while(input != INPUT_QUIT)
+    while(input != INPUT_QUIT && input != INPUT_ESCAPE)
     {
         input = inputHandler.EventHandler();
         if (input == INPUT_HOST || input == INPUT_JOIN)
         {
             input = StartGameLoop(input);
+            if (input == INPUT_ESCAPE)
+            {
+                input = INPUT_NONE;
+            }
         }
         _display.RenderMainMenu();
     }
 }
+
+bool SortBySec(const std::pair<uint8_t,uint8_t> &a, const std::pair<uint8_t,uint8_t> &b)
+{
+    return (a.second > b.second);
+}
+
+void GameObj::StartEndScore(std::vector< std::pair<uint8_t,uint8_t> > playerAndScoreDesc)
+{
+    InputHandler inputHandler{};
+    int input = INPUT_NONE;
+    while(input != INPUT_QUIT && input != INPUT_ESCAPE)
+    {
+        input = inputHandler.EventHandler();
+        _display.RenderEndScore(playerAndScoreDesc);
+    }
+}
+
 
 int GameObj::StartGameLoop(int input)
 {
@@ -165,6 +187,24 @@ int GameObj::StartGameLoop(int input)
             }
 
             collisionHandler.HandleCollisons(entities);
+
+            // Check if anyone has won
+            for (uint8_t iPlayer = 1; iPlayer < MAX_PLAYERS; iPlayer++) // TODO instead use the connected amount of players?
+            {
+                if (entities.GetPlayerScore(iPlayer) >= END_SCORE)
+                {
+                    // We have a winner!
+                    std::vector< std::pair<uint8_t,uint8_t> > playerAndScoreDesc;
+                    // Do a second loop if we won instead of saveing all the values each time.
+                    for (uint8_t iPlayer = 1; iPlayer <= MAX_PLAYERS; iPlayer++) // TODO instead use the connected amount of players?
+                    {
+                        playerAndScoreDesc.push_back(std::make_pair(iPlayer,entities.GetPlayerScore(iPlayer)));
+                    }
+                    std::sort(playerAndScoreDesc.begin(), playerAndScoreDesc.end(), SortBySec);
+                    StartEndScore(playerAndScoreDesc);
+                    return input;
+                }
+            }
         }
 
         // Manage Network
@@ -208,4 +248,3 @@ int GameObj::StartGameLoop(int input)
     }
     return input;
 }
- 

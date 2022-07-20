@@ -138,6 +138,5 @@ void CollisionHandler::HandleCollisons(EntityHandler & entities)
 {
     HandlePlayerOnBulletCollisions(entities);
     HandlePlayerOnPlayerCollisions(entities);
-
 }
 

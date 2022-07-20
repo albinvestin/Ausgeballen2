@@ -7,6 +7,7 @@ class GameObj
 private:
     Display _display{};
     void StartMainMenu();
+    void StartEndScore(std::vector< std::pair<uint8_t,uint8_t> > playerAndScoreDesc);
     int StartGameLoop(int input);
     void Close();
 public:

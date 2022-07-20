@@ -13,6 +13,8 @@ const float PLAYER_FRICTION = 0.99;
 const float PLAYER_RECOIL = 10;
 const uint16_t PLAYER_RADIUS = 15;
 const uint16_t BULLET_RADIUS = 10;
+const uint8_t END_SCORE = 10;
+const uint8_t MAX_PLAYERS = 2;
 const Uint64 GAME_UPDATE_TIME = 16 * SDL_GetPerformanceFrequency() / 1000;
 enum INPUT_KEYS {
     INPUT_NONE,

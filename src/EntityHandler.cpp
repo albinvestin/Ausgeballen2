@@ -136,7 +136,7 @@ float EntityHandler::GetPlayerAim(int index) const
     return _players[index-1].aimDirection; 
 }
 
-int EntityHandler::GetPlayerScore(int index) const
+uint8_t EntityHandler::GetPlayerScore(int index) const
 {
     if (_players[index-1].playerIndex != index)
     {

@@ -30,7 +30,7 @@ TODO:
     - [x] Add host and join functionality to main menu
     - [] Add local functionality to main menu
     - [] Add "button" selection before entering game
-- [] Make end game screen with result
+- [x] Make end game screen with result
 
 
 References:
