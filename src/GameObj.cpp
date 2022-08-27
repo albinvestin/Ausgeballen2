@@ -53,6 +53,7 @@ void GameObj::StartMainMenu()
         if (input == INPUT_HOST || input == INPUT_JOIN)
         {
             input = StartGameLoop(input);
+            printf("input: %i", input);
             if (input == INPUT_ESCAPE)
             {
                 input = INPUT_NONE;
@@ -67,7 +68,7 @@ bool SortBySec(const std::pair<uint8_t,uint8_t> &a, const std::pair<uint8_t,uint
     return (a.second > b.second);
 }
 
-void GameObj::StartEndScore(std::vector< std::pair<uint8_t,uint8_t> > playerAndScoreDesc)
+int GameObj::StartEndScore(std::vector< std::pair<uint8_t,uint8_t> > playerAndScoreDesc)
 {
     InputHandler inputHandler{};
     int input = INPUT_NONE;
@@ -76,6 +77,7 @@ void GameObj::StartEndScore(std::vector< std::pair<uint8_t,uint8_t> > playerAndS
         input = inputHandler.EventHandler();
         _display.RenderEndScore(playerAndScoreDesc);
     }
+    return input;
 }
 
 
@@ -189,7 +191,7 @@ int GameObj::StartGameLoop(int input)
             collisionHandler.HandleCollisons(entities);
 
             // Check if anyone has won
-            for (uint8_t iPlayer = 1; iPlayer < MAX_PLAYERS; iPlayer++) // TODO instead use the connected amount of players?
+            for (uint8_t iPlayer = 1; iPlayer <= MAX_PLAYERS; iPlayer++) // TODO instead use the connected amount of players?
             {
                 if (entities.GetPlayerScore(iPlayer) >= END_SCORE)
                 {
@@ -201,7 +203,7 @@ int GameObj::StartGameLoop(int input)
                         playerAndScoreDesc.push_back(std::make_pair(iPlayer,entities.GetPlayerScore(iPlayer)));
                     }
                     std::sort(playerAndScoreDesc.begin(), playerAndScoreDesc.end(), SortBySec);
-                    StartEndScore(playerAndScoreDesc);
+                    input = StartEndScore(playerAndScoreDesc);
                     return input;
                 }
             }

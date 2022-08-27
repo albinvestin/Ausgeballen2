@@ -237,5 +237,7 @@ void Display::RenderEndScore(std::vector< std::pair<uint8_t,uint8_t> > playerAnd
         RenderString(text, SCREEN_WIDTH/2 - (text.length()*ALPHABET_CHAR_WIDTH)/2, SCREEN_HEIGHT/6+(ALPHABET_CHAR_HEIGHT+20)*i);
         text = "";
     }
+    text = "PRESS ESC FOR MAIN MENU";
+    RenderString(text, SCREEN_WIDTH/2 - (text.length()*ALPHABET_CHAR_WIDTH)/2, SCREEN_HEIGHT-(ALPHABET_CHAR_HEIGHT+20));
     SDL_RenderPresent(_renderer);
 }
