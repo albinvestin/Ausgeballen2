@@ -57,6 +57,30 @@ int InputHandler::EventHandler()
             {
                 returnValue = INPUT_ESCAPE;
             }
+            if (_event.key.keysym.sym == SDLK_l)
+            {
+                returnValue = INPUT_LOCAL_PLAY;
+            }
+            if (_event.key.keysym.sym == SDLK_2)
+            {
+                returnValue = INPUT_2;
+            }
+            if (_event.key.keysym.sym == SDLK_3)
+            {
+                returnValue = INPUT_3;
+            }
+            if (_event.key.keysym.sym == SDLK_4)
+            {
+                returnValue = INPUT_4;
+            }
+            if (_event.key.keysym.sym == SDLK_5)
+            {
+                returnValue = INPUT_5;
+            }
+            if (_event.key.keysym.sym == SDLK_6)
+            {
+                returnValue = INPUT_6;
+            }
         }
     }
 

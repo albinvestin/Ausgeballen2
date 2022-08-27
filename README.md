@@ -31,6 +31,14 @@ TODO:
     - [] Add local functionality to main menu
     - [] Add "button" selection before entering game
 - [x] Make end game screen with result
+- [] Make local play possible
+    - [] Select number of players
+- [] Add heroes selection
+- [] Add heroes
+- [] Add powerups
+- [] Add count down screen
+- [] Add music
+- [] Add sound effects
 
 
 References:

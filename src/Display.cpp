@@ -217,6 +217,19 @@ void Display::RenderMainMenu()
     RenderString(text, SCREEN_WIDTH/2 - (text.length()*ALPHABET_CHAR_WIDTH)/2, SCREEN_HEIGHT/2);
     text = "PRESS J TO JOIN";
     RenderString(text, SCREEN_WIDTH/2 - (text.length()*ALPHABET_CHAR_WIDTH)/2, SCREEN_HEIGHT/2+ALPHABET_CHAR_HEIGHT+20);
+    text = "PRESS L FOR LOCAL PLAY";
+    RenderString(text, SCREEN_WIDTH/2 - (text.length()*ALPHABET_CHAR_WIDTH)/2, SCREEN_HEIGHT/2+ALPHABET_CHAR_HEIGHT*2+40);
+    SDL_RenderPresent(_renderer);
+}
+
+void Display::RenderLocalPlay()
+{
+    //Clear screen
+    SDL_SetRenderDrawColor(_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    SDL_RenderClear(_renderer);
+    std::string text{"NO OF PLAYERS: 2 TO 6"};
+    RenderString(text, SCREEN_WIDTH/2 - (text.length()*ALPHABET_CHAR_WIDTH)/2, SCREEN_HEIGHT/2);
+
     SDL_RenderPresent(_renderer);
 }
 

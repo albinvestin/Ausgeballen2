@@ -59,8 +59,45 @@ void GameObj::StartMainMenu()
                 input = INPUT_NONE;
             }
         }
+        if (input == INPUT_LOCAL_PLAY)
+        {
+            input = StartLocalPlay();
+        }
         _display.RenderMainMenu();
     }
+}
+
+int GameObj::StartLocalPlay()
+{
+    InputHandler inputHandler{};
+    int input = INPUT_NONE;
+    int numberOfPlayers = 0;
+    while(input != INPUT_QUIT && input != INPUT_ESCAPE && numberOfPlayers < 1)
+    {
+        input = inputHandler.EventHandler();
+        switch (input)
+        {
+        case INPUT_2:
+            numberOfPlayers = 2;
+            break;
+        case INPUT_3:
+            numberOfPlayers = 3;
+            break;
+        case INPUT_4:
+            numberOfPlayers = 4;
+            break;
+        case INPUT_5:
+            numberOfPlayers = 5;
+            break;
+        case INPUT_6:
+            numberOfPlayers = 6;
+            break;
+        default:
+            break;
+        }
+        _display.RenderLocalPlay();
+    }
+    return input;
 }
 
 bool SortBySec(const std::pair<uint8_t,uint8_t> &a, const std::pair<uint8_t,uint8_t> &b)
