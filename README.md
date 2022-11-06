@@ -31,14 +31,16 @@ TODO:
     - [] Add local functionality to main menu
     - [] Add "button" selection before entering game
 - [x] Make end game screen with result
-- [] Make local play possible
+- [WIP] Make local play possible
     - [] Select number of players
+    - Use fixed buttons
 - [] Add heroes selection
 - [] Add heroes
 - [] Add powerups
 - [] Add count down screen
 - [] Add music
 - [] Add sound effects
+- [] Add particles
 
 
 References:

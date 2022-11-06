@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 #endif
 #include <vector>
+#include <algorithm>
 
 InputHandler::InputHandler()
 {
@@ -29,13 +30,25 @@ int InputHandler::EventHandler()
         }
         else if (_event.type == SDL_KEYDOWN)
         {
-            if (_event.key.keysym.sym == SDLK_b)
+            if (_event.key.keysym.sym == SDLK_q)
             {
                 returnValue = INPUT_P1SHOOT;
             }
-            if (_event.key.keysym.sym == SDLK_k)
+            if (_event.key.keysym.sym == SDLK_p)
             {
                 returnValue = INPUT_P2SHOOT;
+            }
+            if (_event.key.keysym.sym == SDLK_v)
+            {
+                returnValue = INPUT_P3SHOOT;
+            }
+            if (_event.key.keysym.sym == SDLK_z)
+            {
+                returnValue = INPUT_P4SHOOT;
+            }
+            if (_event.key.keysym.sym == SDLK_m)
+            {
+                returnValue = INPUT_P5SHOOT;
             }
             if (_event.key.keysym.sym == SDLK_h)
             {

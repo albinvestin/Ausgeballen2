@@ -227,8 +227,10 @@ void Display::RenderLocalPlay()
     //Clear screen
     SDL_SetRenderDrawColor(_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
     SDL_RenderClear(_renderer);
-    std::string text{"NO OF PLAYERS: 2 TO 6"};
+    std::string text{"NO OF PLAYERS: 2 TO 5"};
     RenderString(text, SCREEN_WIDTH/2 - (text.length()*ALPHABET_CHAR_WIDTH)/2, SCREEN_HEIGHT/2);
+    text = "P1:Q P2:P P3:V P4:Z P5:M";
+    RenderString(text, SCREEN_WIDTH/2 - (text.length()*ALPHABET_CHAR_WIDTH)/2, SCREEN_HEIGHT-40);
 
     SDL_RenderPresent(_renderer);
 }

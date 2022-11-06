@@ -72,28 +72,33 @@ int GameObj::StartLocalPlay()
     InputHandler inputHandler{};
     int input = INPUT_NONE;
     int numberOfPlayers = 0;
-    while(input != INPUT_QUIT && input != INPUT_ESCAPE && numberOfPlayers < 1)
+    while(input != INPUT_QUIT && input != INPUT_ESCAPE)
     {
         input = inputHandler.EventHandler();
-        switch (input)
+        if (input != INPUT_NONE)
         {
-        case INPUT_2:
-            numberOfPlayers = 2;
-            break;
-        case INPUT_3:
-            numberOfPlayers = 3;
-            break;
-        case INPUT_4:
-            numberOfPlayers = 4;
-            break;
-        case INPUT_5:
-            numberOfPlayers = 5;
-            break;
-        case INPUT_6:
-            numberOfPlayers = 6;
-            break;
-        default:
-            break;
+            switch (input)
+            {
+            case INPUT_2:
+                numberOfPlayers = 2;
+                break;
+            case INPUT_3:
+                numberOfPlayers = 3;
+                break;
+            case INPUT_4:
+                numberOfPlayers = 4;
+                break;
+            case INPUT_5:
+                numberOfPlayers = 5;
+                break;
+            case INPUT_6:
+                numberOfPlayers = 6;
+                break;
+            default:
+                printf("Not valid number of players!");
+                continue; // return from the if case.
+            }
+            return 1; // Add next screen here.
         }
         _display.RenderLocalPlay();
     }
