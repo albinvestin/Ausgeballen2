@@ -98,6 +98,7 @@ int GameObj::StartLocalPlay()
                 printf("Not valid number of players!");
                 continue; // return from the if case.
             }
+            StartGameLoop(INPUT_LOCAL_PLAY);
             return 1; // Add next screen here.
         }
         _display.RenderLocalPlay();
@@ -125,13 +126,13 @@ int GameObj::StartEndScore(std::vector< std::pair<uint8_t,uint8_t> > playerAndSc
 
 int GameObj::StartGameLoop(int input)
 {
-    int8_t isServer = -1;
+    int8_t networkMode = -1;
     NetworkHandler networkHandler{};
     if (input == INPUT_HOST)
     {
         if (networkHandler.Host())
         {
-            isServer = true;
+            networkMode = NETWORK_MODE_SERVER;
         }
         else
         {
@@ -143,7 +144,7 @@ int GameObj::StartGameLoop(int input)
     {
         if (networkHandler.Join())
         {
-            isServer = false;
+            networkMode = NETWORK_MODE_CLIENT;
         }
         else
         {
@@ -151,28 +152,36 @@ int GameObj::StartGameLoop(int input)
             return input;
         }
     }
+    else if (input == INPUT_LOCAL_PLAY)
+    {
+        networkMode = NETWORK_MODE_LOCAL;
+    }
+    else
+    {
+        printf("StartGameLoop::Incorrect input to start from!");
+        return -1;
+    }
     bool clientUpdateNeeded = false;
     uint8_t countSinceLastClientUpdate = 0;
 
-    EntityHandler entities{&networkHandler};
-    networkHandler.setEntetiesHandler(&entities); // TODO: these are tightly coupled, could this be avoided?
+
+    networkHandler.setEntetiesHandler(&_entityHandler); // TODO: these are tightly coupled, could this be avoided?
     InputHandler inputHandler{};
-    CollisionHandler collisionHandler{};
     std::vector<uint8_t> recivedActions;
 
-    Uint64 currentTime = SDL_GetPerformanceCounter();
-    Uint64 timerStart;
-    Uint64 timerEnd;
-    Uint64 timeTilNextFrame;
-    Uint64 lastUpdateTime = currentTime;
-    uint8_t gameUpdatesCount = 0;
+    uint64_t currentTime = SDL_GetPerformanceCounter();
+    uint64_t timerStart;
+    uint64_t timerEnd;
+    uint64_t timeTilNextFrame;
+    uint64_t lastUpdateTime = currentTime;
 
     //While application is running
     while(input != INPUT_QUIT && input != INPUT_ESCAPE)
     {
         currentTime = SDL_GetPerformanceCounter();
-        input = inputHandler.EventHandler();
 
+        // Handle input
+        input = inputHandler.EventHandler();
         if (input == INPUT_DISCONNECT)
         {
             networkHandler.Disconnect();
@@ -184,91 +193,65 @@ int GameObj::StartGameLoop(int input)
 
         // ONLY FOR SERVER: See if new network inputs have occured
         std::vector<uint8_t> newActions = networkHandler.PollAllServerEvents();
-        if (input == INPUT_P1SHOOT)
+        if (input == INPUT_P1SHOOT || input == INPUT_P2SHOOT)
         {
-            newActions.push_back(INPUT_P1SHOOT);
+            newActions.push_back(input);
         }
 
         // Append new actions to end of recived actions.
         if (!newActions.empty())
         {
-            printf("NewActions length: %i\n", newActions.size());
+            // printf("NewActions length: %i\n", newActions.size());
             recivedActions.insert(recivedActions.end(), newActions.begin(), newActions.end());
-            printf("RecivedActions length: %i\n", recivedActions.size());
+            // printf("RecivedActions length: %i\n", recivedActions.size());
         }
 
-        // Fixed rate updates:
-        gameUpdatesCount = 0;
-        while ((currentTime - lastUpdateTime) >= GAME_UPDATE_TIME)
+        // TODO convert recived actions to GAMELOOP_ACTIONS
+        GAMELOOP_ACTIONS actions = {.PlayersShooting = 0};
+        for (auto &&iAction : recivedActions)
         {
-            gameUpdatesCount++;
-            if (gameUpdatesCount > 5)
-            {
-                printf("Clamping!\n");
-                // Clamp the max allowed iterations per frame to not fall behind on spikes in framerate.
-                gameUpdatesCount = 0;
-                break;
-            }
-            // Fixed time update
-            lastUpdateTime += GAME_UPDATE_TIME;
+            printf("iAction: %d\n", iAction);
+            actions.PlayersShooting |= (iAction == INPUT_P1SHOOT);
+            actions.PlayersShooting |= (iAction == NETWORK_ACTION_SHOOT_P1);
+            actions.PlayersShooting |= ((iAction == INPUT_P2SHOOT) << 1);
+            actions.PlayersShooting |= ((iAction == NETWORK_ACTION_SHOOT_P2) << 1);
+        }
+        // printf("P1 shooting:%d\n", actions.PlayersShooting);
+        recivedActions.clear();
 
-            // Move all objects
-            entities.MoveAllObjects();
-
-            // Handle queued actions
-            if (isServer == 1)
-            {
-                for (std::vector<uint8_t>::iterator it = recivedActions.begin(); it != recivedActions.end(); ++it)
-                {
-                    // TODO These ifs are unnecessary since both cases are tested inside ServerCheckAndHandleShoot.
-                    if (*it == NETWORK_ACTION_SHOOT_P2 || *it == INPUT_P1SHOOT) // TODO this needs to be moved somewhere else
-                    {
-                        entities.ServerCheckAndHandleShoot(*it);
-                        clientUpdateNeeded = true;
-                    }
-                }
-                recivedActions.clear();
-            }
-
-            collisionHandler.HandleCollisons(entities);
-
-            // Check if anyone has won
+        // Fixed rate updates up to current time, using GAME_UPDATE_TIME as refresh rate.
+        GAMELOOP_OUTPUT output =  GameLoop(actions, currentTime, lastUpdateTime);
+        lastUpdateTime = output.lastUpdateTime;
+        if (output.playerWon)
+        {
+            std::vector< std::pair<uint8_t,uint8_t> > playerAndScoreDesc;
             for (uint8_t iPlayer = 1; iPlayer <= MAX_PLAYERS; iPlayer++) // TODO instead use the connected amount of players?
             {
-                if (entities.GetPlayerScore(iPlayer) >= END_SCORE)
-                {
-                    // We have a winner!
-                    std::vector< std::pair<uint8_t,uint8_t> > playerAndScoreDesc;
-                    // Do a second loop if we won instead of saveing all the values each time.
-                    for (uint8_t iPlayer = 1; iPlayer <= MAX_PLAYERS; iPlayer++) // TODO instead use the connected amount of players?
-                    {
-                        playerAndScoreDesc.push_back(std::make_pair(iPlayer,entities.GetPlayerScore(iPlayer)));
-                    }
-                    std::sort(playerAndScoreDesc.begin(), playerAndScoreDesc.end(), SortBySec);
-                    input = StartEndScore(playerAndScoreDesc);
-                    return input;
-                }
+                playerAndScoreDesc.push_back(std::make_pair(iPlayer,_entityHandler.GetPlayerScore(iPlayer)));
             }
+            std::sort(playerAndScoreDesc.begin(), playerAndScoreDesc.end(), SortBySec);
+            input = StartEndScore(playerAndScoreDesc);
+            return input;
         }
 
         // Manage Network
-        if (isServer == 1
+        if (networkMode == NETWORK_MODE_SERVER
             && (clientUpdateNeeded || countSinceLastClientUpdate > 250))
         {
-            entities.UpdateClients();
+            networkHandler.S2CGameSnapshot(_entityHandler.GetGameSnapShot());
             clientUpdateNeeded = false;
             countSinceLastClientUpdate = 0;
         }
-        else if (isServer == 1)
+        else if (networkMode == NETWORK_MODE_SERVER)
         {
             countSinceLastClientUpdate++;
         }
-        if (isServer == 0)
+        if (networkMode == NETWORK_MODE_CLIENT)
         {
             networkHandler.PollAllClientEvents();
         }
 
-        _display.RenderAll(&entities);
+        _display.RenderAll(&_entityHandler);
 
         // Sleep until roughly next frame
         timeTilNextFrame = lastUpdateTime + GAME_UPDATE_TIME - currentTime;
@@ -291,4 +274,47 @@ int GameObj::StartGameLoop(int input)
         }
     }
     return input;
+}
+
+GAMELOOP_OUTPUT GameObj::GameLoop(GAMELOOP_ACTIONS actions, uint64_t currentTime, uint64_t lastUpdateTime)
+{
+    uint8_t gameUpdatesCount = 0;
+    GAMELOOP_OUTPUT output{.playerWon = false};
+    // Fixed rate updates:
+    while ((currentTime - lastUpdateTime) >= GAME_UPDATE_TIME)
+    {
+        gameUpdatesCount++;
+        if (gameUpdatesCount > 5)
+        {
+            printf("Clamping!\n");
+            // Clamp the max allowed iterations per frame to not fall behind on spikes in framerate.
+            gameUpdatesCount = 0;
+            break;
+        }
+        // Fixed time update
+        lastUpdateTime += GAME_UPDATE_TIME;
+
+        // Move all objects
+        _entityHandler.MoveAllObjects();
+
+        // Handle actions
+        _entityHandler.HandlePlayerActions(actions);
+
+        // Handle collisions
+        _collisionHandler.HandleCollisons(_entityHandler);
+
+        // Check if anyone has won
+        // TODO: Handle the sorting and stuff somewhere else!?
+        for (uint8_t iPlayer = 1; iPlayer <= MAX_PLAYERS; iPlayer++) // TODO instead use the connected amount of players?
+        {
+            if (_entityHandler.GetPlayerScore(iPlayer) >= END_SCORE)
+            {
+                // We have a winner!
+                GAMELOOP_OUTPUT output {.playerWon = true};
+                return output;
+            }
+        }
+    }
+    output.lastUpdateTime = lastUpdateTime;
+    return output;
 }

@@ -15,7 +15,7 @@ const uint16_t PLAYER_RADIUS = 15;
 const uint16_t BULLET_RADIUS = 10;
 const uint8_t END_SCORE = 2;
 const uint8_t MAX_PLAYERS = 2;
-const Uint64 GAME_UPDATE_TIME = 16 * SDL_GetPerformanceFrequency() / 1000;
+const uint64_t GAME_UPDATE_TIME = 16 * SDL_GetPerformanceFrequency() / 1000;
 enum INPUT_KEYS {
     INPUT_NONE,
     INPUT_QUIT,
@@ -54,5 +54,18 @@ enum NETWORK_ACTIONS {
 const uint8_t ALPHABET_CHAR_WIDTH = 24;
 const uint8_t ALPHABET_CHAR_HEIGHT = 30;
 const uint8_t ALPHABET_LENGTH = 41;
+enum NETWORK_MODES {
+    NETWORK_MODE_SERVER,
+    NETWORK_MODE_CLIENT,
+    NETWORK_MODE_LOCAL
+};
+struct GAMELOOP_ACTIONS {
+    uint16_t PlayersShooting; // each bit represents one player, starting with index 0 (lowest significance) = player 1, index 1 = player 2 etc.
+};
+struct GAMELOOP_OUTPUT {
+    uint64_t lastUpdateTime;
+    uint8_t playerWon;
+};
+
 
 #endif /* CONSTANTS_HPP */

@@ -122,8 +122,7 @@ Vec2f Display::TranslatePosToRenderSpace(const Vec2f pos)
 void Display::RenderAll(EntityHandler const* entities)
 {
     //Clear screen
-    SDL_SetRenderDrawColor(_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-    SDL_RenderClear(_renderer);
+    RenderBackground();
 
     //Render background texture to screen
     // _HearthTexture.render( 0, 0, _Renderer );
@@ -206,11 +205,16 @@ void Display::RenderString(std::string input, int x, int y)
     }
 }
 
+void Display::RenderBackground()
+{
+    SDL_SetRenderDrawColor(_renderer, 0x00, 0x00, 0x00, 0x00);
+    SDL_RenderClear(_renderer);
+}
+
 void Display::RenderMainMenu()
 {
     //Clear screen
-    SDL_SetRenderDrawColor(_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-    SDL_RenderClear(_renderer);
+    RenderBackground();
     // Render
     _hearthTexture.Render(SCREEN_WIDTH/2 - _hearthTexture.GetWidth()/2, SCREEN_HEIGHT/4 - _hearthTexture.GetHeight()/2, _renderer, NULL);
     std::string text{"PRESS H TO HOST"};
@@ -225,8 +229,7 @@ void Display::RenderMainMenu()
 void Display::RenderLocalPlay()
 {
     //Clear screen
-    SDL_SetRenderDrawColor(_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-    SDL_RenderClear(_renderer);
+    RenderBackground();
     std::string text{"NO OF PLAYERS: 2 TO 5"};
     RenderString(text, SCREEN_WIDTH/2 - (text.length()*ALPHABET_CHAR_WIDTH)/2, SCREEN_HEIGHT/2);
     text = "P1:Q P2:P P3:V P4:Z P5:M";
@@ -238,8 +241,7 @@ void Display::RenderLocalPlay()
 void Display::RenderEndScore(std::vector< std::pair<uint8_t,uint8_t> > playerAndScoreDesc)
 {
     //Clear screen
-    SDL_SetRenderDrawColor(_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-    SDL_RenderClear(_renderer);
+    RenderBackground();
     // Render
     std::string text;
     for (int i=0; i < playerAndScoreDesc.size(); i++)

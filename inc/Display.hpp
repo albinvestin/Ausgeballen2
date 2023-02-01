@@ -73,6 +73,7 @@ public:
     bool loadTextures();
     void close();
     void RenderAll(EntityHandler const*);
+    void RenderBackground();
     void RenderMainMenu();
     void RenderLocalPlay();
     void RenderEndScore(std::vector< std::pair<uint8_t,uint8_t> > playerAndScoreDesc);

@@ -8,9 +8,7 @@
 #include <stdio.h>
 
 // Spawn players?
-EntityHandler::EntityHandler(NetworkHandler* networkHandler)
-    : _networkHandler{networkHandler}
-    // : _P1{Vec2f(MAP_WIDTH/4, MAP_HEIGHT/4)}, _P2{Vec2f((MAP_WIDTH*3)/4, MAP_HEIGHT/4)}
+EntityHandler::EntityHandler()
 {
     _players.reserve(2); // TODO Make number of players variable
     for (uint8_t index = 1; index <= 2; index++)
@@ -19,7 +17,6 @@ EntityHandler::EntityHandler(NetworkHandler* networkHandler)
         Player NewPlayer{spawningPos, index};
         _players.push_back(NewPlayer);
     }
-    
     // printf("Entity player adress: %d\n", &_Players);
     // printf("Entity player adress: %d\n", &_Players[0] );
 }
@@ -70,37 +67,27 @@ void EntityHandler::MoveAllObjects()
 }
 
 // Handle shoot inputs and spawns bullets
-void EntityHandler::ServerCheckAndHandleShoot(int inputkeys)
+void EntityHandler::HandlePlayerActions(GAMELOOP_ACTIONS actions)
 {
-    if (inputkeys != INPUT_P1SHOOT && inputkeys != NETWORK_ACTION_SHOOT_P2)
+    for (uint8_t playerIndex = 0; playerIndex < MAX_PLAYERS; playerIndex++)
     {
-        return;
+        Player* player;
+        if ((actions.PlayersShooting >> playerIndex) & ((uint8_t) 1))
+        {
+            player = &_players[playerIndex];
+            // Spawn bullet
+            Bullet b = {player->aimDirection, player->position, player->playerIndex, _nextBulletID};
+            _nextBulletID++; // Overflow allowed
+            _existingBullets.push_back(b);
+            AddRecoil(player->playerIndex);
+        }
     }
-    Player* player;
-    if (inputkeys == INPUT_P1SHOOT)
-    {
-        player = &_players[0];
-    }
-    else if (inputkeys == NETWORK_ACTION_SHOOT_P2)
-    {
-        player = &_players[1];
-    }
-    else
-    {
-        return; // Unnecessary?
-    }
-    // Spawn bullet
-    Bullet b = {player->aimDirection, player->position, player->playerIndex, _nextBulletID};
-    _nextBulletID++; // Overflow allowed
-    _existingBullets.push_back(b);
-    AddRecoil(player->playerIndex);
 }
 
-void EntityHandler::UpdateClients()
+GameSnapshot EntityHandler::GetGameSnapShot()
 {
-    //Send snapshot of game to all clients
     GameSnapshot gs{_players, _existingBullets};
-    _networkHandler->S2CGameSnapshot(gs);
+    return gs;
 }
 
 // index starts at 1, TODO: check length of _Players before getting index
