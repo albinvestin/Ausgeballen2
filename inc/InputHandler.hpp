@@ -5,7 +5,7 @@
 #else
 #include <SDL2/SDL.h>
 #endif
-#include <vector>
+#include "Constants.hpp"
 
 
 /* InputHandler takes care of all user input and window events.
@@ -20,7 +20,7 @@ private:
 public:
     InputHandler();
     ~InputHandler();
-    int EventHandler();
+    void EventHandler(INPUT_FLAGS* inputs);
 };  
 
 #endif /* INPUTHANDLER_HPP */

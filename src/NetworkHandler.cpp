@@ -98,7 +98,7 @@ void NetworkHandler::setEntetiesHandler(EntityHandler* entities)
     _entities = entities;
 }
 
-std::vector<uint8_t> NetworkHandler::PollAllServerEvents()
+std::vector<uint8_t> NetworkHandler::ServerPollAllEvents()
 {
     std::vector<uint8_t> recivedActions;
     if (_server == NULL)
@@ -355,7 +355,7 @@ std::string NetworkHandler::GetIPFromAdress(ENetAddress address)
     return IP;
 }
 
-void NetworkHandler::Shoot(uint8_t playerIndex)
+void NetworkHandler::C2SShoot(uint8_t playerIndex)
 {
     uint8_t header = NETWORK_TYPE_UINT8;
     uint8_t action = NETWORK_TYPE_NOTHING;
@@ -381,6 +381,19 @@ void NetworkHandler::Shoot(uint8_t playerIndex)
     SendPacket(oss);
 }
 
+void NetworkHandler::C2SGameLoopActions(GAMELOOP_ACTIONS actions)
+{
+    if (actions.PlayersShooting > 0)
+    {
+        for (uint8_t playerIndex = 0; playerIndex < MAX_PLAYERS; playerIndex++)
+        {
+            if (actions.PlayersShooting & (playerIndex + 1))
+            {
+                C2SShoot(playerIndex + 1);
+            }
+        }
+    }
+}
 
 void NetworkHandler::S2CGameSnapshot(const GameSnapshot& gs)
 {

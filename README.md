@@ -43,8 +43,7 @@ TODO:
 - [] Add particles
 
 CURRENTLY WORKING ON REFACTORING THE CODE, CHECK GAMEOBJ.CPP
-I CHANGED SO THAT THERE IS A SEPARATE GAMELOOP AND FIX NETWORK HANDLING AS A SEPARATE TOPIC TO ALLOW LOCAL PLAY MORE EASILY.
-
+Working on new inputflags insted of using vectors.
 
 References:
 https://floating-point-gui.de/errors/comparison/

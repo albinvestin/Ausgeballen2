@@ -1,14 +1,12 @@
 #ifndef ENTITYHANDLER_HPP
 #define ENTITYHANDLER_HPP
-// #include "Player.hpp"
 #include "Entities.hpp"
 #include "Constants.hpp"
-// #include "NetworkHandler.hpp"
 #include <vector>
 // TODO: You should not be #includeing at all. Since you only store pointers, you do not need the full definition of the classes - you only need the declaration. Simply use the forward declarations by themselves
 
 // Forward delcaration:
-class NetworkHandler;
+// class NetworkHandler;
 
 
 class EntityHandler

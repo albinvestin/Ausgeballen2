@@ -4,6 +4,8 @@
 #include "Constants.hpp"
 #include "EntityHandler.hpp"
 #include "CollisionHandler.hpp"
+#include "NetworkHandler.hpp"
+#include "InputHandler.hpp"
 
 class GameObj
 {
@@ -11,10 +13,14 @@ private:
     Display _display{};
     EntityHandler _entityHandler{};
     CollisionHandler _collisionHandler{};
+    NetworkHandler _networkHandler{};
+    InputHandler _inputHandler{};
+    INPUT_FLAGS _inputFlags{};
+    uint8_t _networkMode;
     void StartMainMenu();
-    int StartLocalPlay();
-    int StartEndScore(std::vector< std::pair<uint8_t,uint8_t> > playerAndScoreDesc);
-    int StartGameLoop(int input);
+    void StartLocalPlay();
+    void StartEndScore(std::vector< std::pair<uint8_t,uint8_t> > playerAndScoreDesc);
+    void StartGameLoop(uint8_t numberOfplayers);
     GAMELOOP_OUTPUT GameLoop(GAMELOOP_ACTIONS actions, uint64_t currentTime, uint64_t lastUpdateTime);
     void Close();
 public:

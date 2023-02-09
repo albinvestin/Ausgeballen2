@@ -45,65 +45,58 @@ void GameObj::Close()
 
 void GameObj::StartMainMenu()
 {
-    InputHandler inputHandler{};
-    int input = INPUT_NONE;
-    while(input != INPUT_QUIT && input != INPUT_ESCAPE)
+    while(!_inputFlags.QUIT && !_inputFlags.ESCAPE)
     {
-        input = inputHandler.EventHandler();
-        if (input == INPUT_HOST || input == INPUT_JOIN)
+        _inputHandler.EventHandler(&_inputFlags);
+        if (_inputFlags.HOST)
         {
-            input = StartGameLoop(input);
-            printf("input: %i", input);
-            if (input == INPUT_ESCAPE)
-            {
-                input = INPUT_NONE;
-            }
+            _networkMode = NETWORK_MODE_SERVER;
+            StartGameLoop(2);
         }
-        if (input == INPUT_LOCAL_PLAY)
+        else if (_inputFlags.JOIN)
         {
-            input = StartLocalPlay();
+            _networkMode = NETWORK_MODE_CLIENT;
+            StartGameLoop(2);
+        }
+        if (_inputFlags.LOCAL_PLAY)
+        {
+            _networkMode = NETWORK_MODE_LOCAL;
+            StartLocalPlay();
         }
         _display.RenderMainMenu();
     }
 }
 
-int GameObj::StartLocalPlay()
+void GameObj::StartLocalPlay()
 {
-    InputHandler inputHandler{};
-    int input = INPUT_NONE;
     int numberOfPlayers = 0;
-    while(input != INPUT_QUIT && input != INPUT_ESCAPE)
+    while(!_inputFlags.QUIT && !_inputFlags.ESCAPE)
     {
-        input = inputHandler.EventHandler();
-        if (input != INPUT_NONE)
+        _inputHandler.EventHandler(&_inputFlags);
+        if (_inputFlags.NUMBER2)
         {
-            switch (input)
-            {
-            case INPUT_2:
-                numberOfPlayers = 2;
-                break;
-            case INPUT_3:
-                numberOfPlayers = 3;
-                break;
-            case INPUT_4:
-                numberOfPlayers = 4;
-                break;
-            case INPUT_5:
-                numberOfPlayers = 5;
-                break;
-            case INPUT_6:
-                numberOfPlayers = 6;
-                break;
-            default:
-                printf("Not valid number of players!");
-                continue; // return from the if case.
-            }
-            StartGameLoop(INPUT_LOCAL_PLAY);
-            return 1; // Add next screen here.
+            numberOfPlayers = 2;
+        }
+        else if (_inputFlags.NUMBER3)
+        {
+            numberOfPlayers = 3;
+        }
+        else if (_inputFlags.NUMBER4)
+        {
+            numberOfPlayers = 4;
+        }
+        else if (_inputFlags.NUMBER5)
+        {
+            numberOfPlayers = 5;
+        }
+        if (numberOfPlayers > 0)
+        {
+            // TODO instead handle the numbers of players in this loop instead of in the StartGameLoop one.
+            StartGameLoop(numberOfPlayers);
+            return;
         }
         _display.RenderLocalPlay();
     }
-    return input;
 }
 
 bool SortBySec(const std::pair<uint8_t,uint8_t> &a, const std::pair<uint8_t,uint8_t> &b)
@@ -111,63 +104,51 @@ bool SortBySec(const std::pair<uint8_t,uint8_t> &a, const std::pair<uint8_t,uint
     return (a.second > b.second);
 }
 
-int GameObj::StartEndScore(std::vector< std::pair<uint8_t,uint8_t> > playerAndScoreDesc)
+void GameObj::StartEndScore(std::vector< std::pair<uint8_t,uint8_t> > playerAndScoreDesc)
 {
-    InputHandler inputHandler{};
-    int input = INPUT_NONE;
-    while(input != INPUT_QUIT && input != INPUT_ESCAPE)
+    while(!_inputFlags.QUIT && !_inputFlags.ESCAPE)
     {
-        input = inputHandler.EventHandler();
+        _inputHandler.EventHandler(&_inputFlags);
         _display.RenderEndScore(playerAndScoreDesc);
     }
-    return input;
 }
 
 
-int GameObj::StartGameLoop(int input)
+void GameObj::StartGameLoop(uint8_t numberOfPlayers)
 {
-    int8_t networkMode = -1;
-    NetworkHandler networkHandler{};
-    if (input == INPUT_HOST)
+    if (_networkMode == NETWORK_MODE_SERVER)
     {
-        if (networkHandler.Host())
+        bool success = _networkHandler.Host();
+        if (!success)
         {
-            networkMode = NETWORK_MODE_SERVER;
-        }
-        else
-        {
-            // Unsuccessful host, go back to main menu
-            return input;
+            printf("Unsucessful hosting!\n");
+            return;
         }
     }
-    else if (input == INPUT_JOIN)
+    else if (_networkMode == NETWORK_MODE_CLIENT)
     {
-        if (networkHandler.Join())
+        bool success = _networkHandler.Join();
+        if (!success)
         {
-            networkMode = NETWORK_MODE_CLIENT;
-        }
-        else
-        {
-            // Unsuccessful join, go back to main menu
-            return input;
+            printf("Unsucessful joining!\n");
+            return;
         }
     }
-    else if (input == INPUT_LOCAL_PLAY)
+    else if (_networkMode == NETWORK_MODE_LOCAL)
     {
-        networkMode = NETWORK_MODE_LOCAL;
+        // TODO use numberOfPlayers here. 
+        printf("Starting local play with hardcoded number of players\n");
     }
     else
     {
         printf("StartGameLoop::Incorrect input to start from!");
-        return -1;
+        return;
     }
     bool clientUpdateNeeded = false;
     uint8_t countSinceLastClientUpdate = 0;
 
-
-    networkHandler.setEntetiesHandler(&_entityHandler); // TODO: these are tightly coupled, could this be avoided?
-    InputHandler inputHandler{};
-    std::vector<uint8_t> recivedActions;
+    // TODO: Bad ownership of entitiyHandler
+    _networkHandler.setEntetiesHandler(&_entityHandler); // TODO: these are tightly coupled, could this be avoided?
 
     uint64_t currentTime = SDL_GetPerformanceCounter();
     uint64_t timerStart;
@@ -176,48 +157,36 @@ int GameObj::StartGameLoop(int input)
     uint64_t lastUpdateTime = currentTime;
 
     //While application is running
-    while(input != INPUT_QUIT && input != INPUT_ESCAPE)
+    while(!_inputFlags.QUIT && !_inputFlags.ESCAPE)
     {
         currentTime = SDL_GetPerformanceCounter();
 
-        // Handle input
-        input = inputHandler.EventHandler();
-        if (input == INPUT_DISCONNECT)
+        _inputHandler.EventHandler(&_inputFlags);
+        if (_inputFlags.DISCONNECT)
         {
-            networkHandler.Disconnect();
-        }
-        else if (input == INPUT_SEND_P2SHOOT)
-        {
-            networkHandler.Shoot(2);
+            _networkHandler.Disconnect();
+            printf("Disconnecting.\n");
+            return;
         }
 
-        // ONLY FOR SERVER: See if new network inputs have occured
-        std::vector<uint8_t> newActions = networkHandler.PollAllServerEvents();
-        if (input == INPUT_P1SHOOT || input == INPUT_P2SHOOT)
-        {
-            newActions.push_back(input);
-        }
-
-        // Append new actions to end of recived actions.
-        if (!newActions.empty())
-        {
-            // printf("NewActions length: %i\n", newActions.size());
-            recivedActions.insert(recivedActions.end(), newActions.begin(), newActions.end());
-            // printf("RecivedActions length: %i\n", recivedActions.size());
-        }
-
-        // TODO convert recived actions to GAMELOOP_ACTIONS
         GAMELOOP_ACTIONS actions = {.PlayersShooting = 0};
-        for (auto &&iAction : recivedActions)
+        actions.PlayersShooting |= _inputFlags.P1SHOOT;
+        actions.PlayersShooting |= _inputFlags.P2SHOOT << 1;
+        if (_networkMode == NETWORK_MODE_CLIENT)
         {
-            printf("iAction: %d\n", iAction);
-            actions.PlayersShooting |= (iAction == INPUT_P1SHOOT);
-            actions.PlayersShooting |= (iAction == NETWORK_ACTION_SHOOT_P1);
-            actions.PlayersShooting |= ((iAction == INPUT_P2SHOOT) << 1);
-            actions.PlayersShooting |= ((iAction == NETWORK_ACTION_SHOOT_P2) << 1);
+            _networkHandler.C2SGameLoopActions(actions);
         }
-        // printf("P1 shooting:%d\n", actions.PlayersShooting);
-        recivedActions.clear();
+
+        if (_networkMode == NETWORK_MODE_SERVER)
+        {
+            std::vector<uint8_t> newActions = _networkHandler.ServerPollAllEvents();
+            for (uint8_t &iAction : newActions)
+            {
+                printf("iAction: %d\n", iAction);
+                actions.PlayersShooting |= (iAction == NETWORK_ACTION_SHOOT_P1);
+                actions.PlayersShooting |= ((iAction == NETWORK_ACTION_SHOOT_P2) << 1);
+            }
+        }
 
         // Fixed rate updates up to current time, using GAME_UPDATE_TIME as refresh rate.
         GAMELOOP_OUTPUT output =  GameLoop(actions, currentTime, lastUpdateTime);
@@ -230,25 +199,25 @@ int GameObj::StartGameLoop(int input)
                 playerAndScoreDesc.push_back(std::make_pair(iPlayer,_entityHandler.GetPlayerScore(iPlayer)));
             }
             std::sort(playerAndScoreDesc.begin(), playerAndScoreDesc.end(), SortBySec);
-            input = StartEndScore(playerAndScoreDesc);
-            return input;
+            StartEndScore(playerAndScoreDesc);
+            return;
         }
 
         // Manage Network
-        if (networkMode == NETWORK_MODE_SERVER
+        if (_networkMode == NETWORK_MODE_SERVER
             && (clientUpdateNeeded || countSinceLastClientUpdate > 250))
         {
-            networkHandler.S2CGameSnapshot(_entityHandler.GetGameSnapShot());
+            _networkHandler.S2CGameSnapshot(_entityHandler.GetGameSnapShot());
             clientUpdateNeeded = false;
             countSinceLastClientUpdate = 0;
         }
-        else if (networkMode == NETWORK_MODE_SERVER)
+        else if (_networkMode == NETWORK_MODE_SERVER)
         {
             countSinceLastClientUpdate++;
         }
-        if (networkMode == NETWORK_MODE_CLIENT)
+        if (_networkMode == NETWORK_MODE_CLIENT)
         {
-            networkHandler.PollAllClientEvents();
+            _networkHandler.PollAllClientEvents();
         }
 
         _display.RenderAll(&_entityHandler);
@@ -273,7 +242,6 @@ int GameObj::StartGameLoop(int input)
             printf("Overshoot with %f ms\n", timerDuration - timeDuration);
         }
     }
-    return input;
 }
 
 GAMELOOP_OUTPUT GameObj::GameLoop(GAMELOOP_ACTIONS actions, uint64_t currentTime, uint64_t lastUpdateTime)

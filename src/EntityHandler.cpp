@@ -2,8 +2,6 @@
 //#include "../inc/Player.hpp"
 #include "../inc/Entities.hpp"
 #include "../inc/Constants.hpp"
-#include "../inc/InputHandler.hpp"
-#include "../inc/NetworkHandler.hpp"
 #include <cmath>
 #include <stdio.h>
 

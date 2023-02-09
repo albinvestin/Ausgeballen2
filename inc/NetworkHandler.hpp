@@ -28,7 +28,7 @@ private:
     std::string GetIPFromAdress(ENetAddress address);
     void SendPacket(std::ostringstream& data);
 public:
-    std::vector<uint8_t> PollAllServerEvents();
+    std::vector<uint8_t> ServerPollAllEvents();
     void PollAllClientEvents();
     void setEntetiesHandler(EntityHandler* entities);
     NetworkHandler();
@@ -36,8 +36,9 @@ public:
     bool Host();
     bool Join();
     void Disconnect();
-    void Shoot(uint8_t playerIndex);
+    void C2SShoot(uint8_t playerIndex);
     void S2CGameSnapshot(const GameSnapshot& gs);
+    void C2SGameLoopActions(GAMELOOP_ACTIONS actions);
 };
 
 #endif /* NETWORKHANDLER_HPP */

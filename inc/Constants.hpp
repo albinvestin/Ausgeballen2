@@ -24,8 +24,6 @@ enum INPUT_KEYS {
     INPUT_P3SHOOT,
     INPUT_P4SHOOT,
     INPUT_P5SHOOT,
-    INPUT_SEND_P1SHOOT,
-    INPUT_SEND_P2SHOOT,
     INPUT_HOST,
     INPUT_JOIN,
     INPUT_DISCONNECT,
@@ -35,8 +33,25 @@ enum INPUT_KEYS {
     INPUT_3,
     INPUT_4,
     INPUT_5,
-    INPUT_6
 };
+struct INPUT_FLAGS {
+    uint8_t QUIT : 1;
+    uint8_t P1SHOOT : 1;
+    uint8_t P2SHOOT : 1;
+    uint8_t P3SHOOT : 1;
+    uint8_t P4SHOOT : 1;
+    uint8_t P5SHOOT : 1;
+    uint8_t HOST : 1;
+    uint8_t JOIN : 1;
+    uint8_t DISCONNECT : 1;
+    uint8_t ESCAPE : 1;
+    uint8_t LOCAL_PLAY : 1;
+    uint8_t NUMBER2 : 1;
+    uint8_t NUMBER3 : 1;
+    uint8_t NUMBER4 : 1;
+    uint8_t NUMBER5 : 1;
+};
+
 enum NETWORK_TYPES {
     NETWORK_TYPE_NOTHING = 0,
     NETWORK_TYPE_FLOAT,
@@ -49,13 +64,14 @@ enum NETWORK_TYPES {
 };
 enum NETWORK_ACTIONS {
     NETWORK_ACTION_SHOOT_P1 = 100,
-    NETWORK_ACTION_SHOOT_P2
+    NETWORK_ACTION_SHOOT_P2,
+    NETWORK_ACTION_DISCONNECT
 };
 const uint8_t ALPHABET_CHAR_WIDTH = 24;
 const uint8_t ALPHABET_CHAR_HEIGHT = 30;
 const uint8_t ALPHABET_LENGTH = 41;
 enum NETWORK_MODES {
-    NETWORK_MODE_SERVER,
+    NETWORK_MODE_SERVER = 10,
     NETWORK_MODE_CLIENT,
     NETWORK_MODE_LOCAL
 };

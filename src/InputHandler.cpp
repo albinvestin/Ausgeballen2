@@ -16,94 +16,45 @@ InputHandler::~InputHandler()
 {
 }
 
-// Returns quit bool
-int InputHandler::EventHandler()
+void InputHandler::EventHandler(INPUT_FLAGS* inputs)
 {
-    int returnValue = INPUT_NONE;
+    // Clear inputs
+    INPUT_FLAGS cleared{};
+    *inputs = cleared;
     // Handle single press events
-    while( SDL_PollEvent( &_event ) != 0 )
+    while(SDL_PollEvent(&_event) != 0 )
     {
         //User requests quit
         if (_event.type == SDL_QUIT)
         {
-            returnValue = INPUT_QUIT;
+            inputs->QUIT = 1;
+            return;
         }
-        else if (_event.type == SDL_KEYDOWN)
+        if (_event.type == SDL_KEYDOWN)
         {
-            if (_event.key.keysym.sym == SDLK_q)
-            {
-                returnValue = INPUT_P1SHOOT;
-            }
-            if (_event.key.keysym.sym == SDLK_p)
-            {
-                returnValue = INPUT_P2SHOOT;
-            }
-            if (_event.key.keysym.sym == SDLK_v)
-            {
-                returnValue = INPUT_P3SHOOT;
-            }
-            if (_event.key.keysym.sym == SDLK_z)
-            {
-                returnValue = INPUT_P4SHOOT;
-            }
-            if (_event.key.keysym.sym == SDLK_m)
-            {
-                returnValue = INPUT_P5SHOOT;
-            }
-            if (_event.key.keysym.sym == SDLK_h)
-            {
-                returnValue = INPUT_HOST;
-            }
-            if (_event.key.keysym.sym == SDLK_j)
-            {
-                returnValue = INPUT_JOIN;
-            }
-            if (_event.key.keysym.sym == SDLK_d)
-            {
-                returnValue = INPUT_DISCONNECT;
-            }
-            if (_event.key.keysym.sym == SDLK_y)
-            {
-                returnValue = INPUT_SEND_P2SHOOT;
-            }
-            if (_event.key.keysym.sym == SDLK_ESCAPE)
-            {
-                returnValue = INPUT_ESCAPE;
-            }
-            if (_event.key.keysym.sym == SDLK_l)
-            {
-                returnValue = INPUT_LOCAL_PLAY;
-            }
-            if (_event.key.keysym.sym == SDLK_2)
-            {
-                returnValue = INPUT_2;
-            }
-            if (_event.key.keysym.sym == SDLK_3)
-            {
-                returnValue = INPUT_3;
-            }
-            if (_event.key.keysym.sym == SDLK_4)
-            {
-                returnValue = INPUT_4;
-            }
-            if (_event.key.keysym.sym == SDLK_5)
-            {
-                returnValue = INPUT_5;
-            }
-            if (_event.key.keysym.sym == SDLK_6)
-            {
-                returnValue = INPUT_6;
-            }
+            inputs->P1SHOOT =        _event.key.keysym.sym == SDLK_q;
+            inputs->P2SHOOT =        _event.key.keysym.sym == SDLK_p;
+            inputs->P3SHOOT =        _event.key.keysym.sym == SDLK_v;
+            inputs->P4SHOOT =        _event.key.keysym.sym == SDLK_z;
+            inputs->P5SHOOT =        _event.key.keysym.sym == SDLK_m;
+            inputs->HOST =           _event.key.keysym.sym == SDLK_h;
+            inputs->JOIN =           _event.key.keysym.sym == SDLK_j;
+            inputs->DISCONNECT =     _event.key.keysym.sym == SDLK_d;
+            inputs->ESCAPE =         _event.key.keysym.sym == SDLK_ESCAPE;
+            inputs->LOCAL_PLAY =     _event.key.keysym.sym == SDLK_l;
+            inputs->NUMBER2 =        _event.key.keysym.sym == SDLK_2;
+            inputs->NUMBER3 =        _event.key.keysym.sym == SDLK_3;
+            inputs->NUMBER4 =        _event.key.keysym.sym == SDLK_4;
+            inputs->NUMBER5 =        _event.key.keysym.sym == SDLK_5;
+            inputs->NUMBER5 =        _event.key.keysym.sym == SDLK_5;
         }
     }
 
     // Handle continuous press
-    const uint8_t* keystates = SDL_GetKeyboardState(NULL);
-    // Uses SCANCODE for key codes.
-    if(keystates[SDL_SCANCODE_W])
-    {
-        returnValue = INPUT_P1SHOOT;
-    }
-
-    return returnValue;
+    // const uint8_t* keystates = SDL_GetKeyboardState(NULL);
+    // // Uses SCANCODE for key codes.
+    // if(keystates[SDL_SCANCODE_W])
+    // {
+    //     inputs->push_back(INPUT_P1SHOOT);
+    // }
 }
