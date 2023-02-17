@@ -20,9 +20,9 @@ private:
     Texture _bulletTexture;
     Texture _alphabeth;
     SDL_Rect _alphabethClippingRect[ALPHABET_LENGTH];
-    std::vector<uint8_t> StringToAlphabetKeys(std::string input);
-    void RenderString(std::string input, int x, int y);
-    Vec2f TranslatePosToRenderSpace(const Vec2f pos);
+    std::vector<uint8_t> StringToAlphabetKeys(const std::string &input) const;
+    void RenderString(const std::string &input, int x, int y) const;
+    Vec2f TranslatePosToRenderSpace(const Vec2f &pos) const;
     const std::map<char, uint8_t> ALPHABET_KEYS 
     {{'A', 0},
     {'B', 1},
@@ -72,11 +72,11 @@ public:
     bool LoadFromFile(Texture *const texture, std::string relPath); // Help function for loadTextures
     bool loadTextures();
     void close();
-    void RenderAll(EntityHandler const*);
-    void RenderBackground();
-    void RenderMainMenu();
-    void RenderLocalPlay();
-    void RenderEndScore(std::vector< std::pair<uint8_t,uint8_t> > playerAndScoreDesc);
+    void RenderAll(EntityHandler const& entities) const;
+    void RenderBackground() const;
+    void RenderMainMenu() const;
+    void RenderLocalPlay() const;
+    void RenderEndScore(const std::vector<std::pair<uint8_t,uint8_t>> &playerAndScoreDesc) const;
 };
 
 

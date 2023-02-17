@@ -20,7 +20,7 @@ private:
 public:
     InputHandler();
     ~InputHandler();
-    void EventHandler(INPUT_FLAGS* inputs);
+    void EventHandler(INPUT_FLAGS &inputs);
 };  
 
 #endif /* INPUTHANDLER_HPP */

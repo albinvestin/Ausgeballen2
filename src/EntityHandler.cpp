@@ -23,7 +23,7 @@ EntityHandler::~EntityHandler()
 {
 }
 
-bool isOutOfBounds(Vec2f position)
+bool isOutOfBounds(const Vec2f &position)
 {
     // TODO access defined map size
     if (position.x + 2*BULLET_RADIUS > MAP_WIDTH || position.x < 0)
@@ -39,11 +39,11 @@ bool isOutOfBounds(Vec2f position)
 
 void EntityHandler::MoveAllObjects()
 {
-    std::vector<Player>::iterator itP = _players.begin();
+    auto itP = _players.begin();
     while (itP != _players.end())
     {
-        UpdatePlayerPos((*itP).playerIndex);
-        UpdateAimDirection((*itP).playerIndex);
+        UpdatePlayerPos(itP->playerIndex);
+        UpdateAimDirection(itP->playerIndex);
         ++itP;
     }
 
@@ -65,7 +65,7 @@ void EntityHandler::MoveAllObjects()
 }
 
 // Handle shoot inputs and spawns bullets
-void EntityHandler::HandlePlayerActions(GAMELOOP_ACTIONS actions)
+void EntityHandler::HandlePlayerActions(const GAMELOOP_ACTIONS &actions)
 {
     for (uint8_t playerIndex = 0; playerIndex < MAX_PLAYERS; playerIndex++)
     {
@@ -82,14 +82,14 @@ void EntityHandler::HandlePlayerActions(GAMELOOP_ACTIONS actions)
     }
 }
 
-GameSnapshot EntityHandler::GetGameSnapShot()
+GameSnapshot EntityHandler::GetGameSnapShot() const
 {
     GameSnapshot gs{_players, _existingBullets};
     return gs;
 }
 
 // index starts at 1, TODO: check length of _Players before getting index
-void EntityHandler::SetRecoilOfPlayer(Vec2f vel, uint8_t playerIndex)
+void EntityHandler::SetRecoilOfPlayer(const Vec2f &vel, uint8_t playerIndex)
 {
     if (_players[playerIndex-1].playerIndex != playerIndex)
     {
@@ -130,7 +130,7 @@ uint8_t EntityHandler::GetPlayerScore(int index) const
     return _players[index-1].score; 
 }
 
-Vec2f EntityHandler::GetBullet1Pos()
+Vec2f EntityHandler::GetBullet1Pos() const
 {
     if (_existingBullets.empty())
     {
@@ -155,12 +155,12 @@ std::vector<Vec2f> EntityHandler::GetAllBulletPos() const
     return result;
 }
 
-const std::vector<Bullet> & EntityHandler::GetAllBullets()
+const std::vector<Bullet> &EntityHandler::GetAllBullets() const
 {
     return _existingBullets;
 }
 
-std::vector<Player>& EntityHandler::GetAllPlayers()
+std::vector<Player> &EntityHandler::GetAllPlayers()
 {
     return _players;
 }
@@ -236,7 +236,7 @@ float EntityHandler::UpdateAimDirection(uint8_t playerIndex) // TODO take an ite
     return _AimDirection;
 }
 
-Vec2f EntityHandler::UpdateBulletPos(std::vector<Bullet>::iterator bullet)
+Vec2f EntityHandler::UpdateBulletPos(std::vector<Bullet>::iterator bullet) const
 {
     return bullet->position += bullet->velocity;
 }
@@ -248,7 +248,7 @@ std::vector<Bullet>::const_iterator EntityHandler::RemoveBulletFromIt(std::vecto
     return _existingBullets.erase(itB);
 }
 
-void EntityHandler::HandleNetworkShoot(Bullet& b, Vec2f& newVel, uint8_t playerIndex, Vec2f& playerPos)
+void EntityHandler::HandleNetworkShoot(const Bullet &b, const Vec2f &newVel, uint8_t playerIndex, const Vec2f &playerPos)
 {
 
     _existingBullets.push_back(b);

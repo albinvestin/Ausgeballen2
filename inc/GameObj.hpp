@@ -19,9 +19,9 @@ private:
     uint8_t _networkMode;
     void StartMainMenu();
     void StartLocalPlay();
-    void StartEndScore(std::vector< std::pair<uint8_t,uint8_t> > playerAndScoreDesc);
-    void StartGameLoop(uint8_t numberOfplayers);
-    GAMELOOP_OUTPUT GameLoop(GAMELOOP_ACTIONS actions, uint64_t currentTime, uint64_t lastUpdateTime);
+    void StartEndScore(const std::vector<std::pair<uint8_t,uint8_t>> &playerAndScoreDesc);
+    void StartGameLoop(const uint8_t numberOfplayers);
+    GAMELOOP_OUTPUT GameLoop(const GAMELOOP_ACTIONS &actions, const uint64_t currentTime, uint64_t &lastUpdateTime);
     void Close();
 public:
     GameObj() {};

@@ -93,9 +93,9 @@ bool NetworkHandler::Join()
     }
 }
 
-void NetworkHandler::setEntetiesHandler(EntityHandler* entities)
+void NetworkHandler::setEntetiesHandler(EntityHandler &entities)
 {
-    _entities = entities;
+    _entities = &entities;
 }
 
 std::vector<uint8_t> NetworkHandler::ServerPollAllEvents()
@@ -342,7 +342,7 @@ void NetworkHandler::Disconnect()
     enet_peer_reset(_peer);
 }
 
-std::string NetworkHandler::GetIPFromAdress(ENetAddress address)
+std::string NetworkHandler::GetIPFromAdress(ENetAddress &address) const
 {
     std::string IP = "X.X.X.X";
     IP[0] = address.host & 0xff;
@@ -355,7 +355,7 @@ std::string NetworkHandler::GetIPFromAdress(ENetAddress address)
     return IP;
 }
 
-void NetworkHandler::C2SShoot(uint8_t playerIndex)
+void NetworkHandler::C2SShoot(uint8_t playerIndex) const
 {
     uint8_t header = NETWORK_TYPE_UINT8;
     uint8_t action = NETWORK_TYPE_NOTHING;
@@ -381,7 +381,7 @@ void NetworkHandler::C2SShoot(uint8_t playerIndex)
     SendPacket(oss);
 }
 
-void NetworkHandler::C2SGameLoopActions(GAMELOOP_ACTIONS actions)
+void NetworkHandler::C2SGameLoopActions(const GAMELOOP_ACTIONS &actions) const
 {
     if (actions.PlayersShooting > 0)
     {
@@ -395,7 +395,7 @@ void NetworkHandler::C2SGameLoopActions(GAMELOOP_ACTIONS actions)
     }
 }
 
-void NetworkHandler::S2CGameSnapshot(const GameSnapshot& gs)
+void NetworkHandler::S2CGameSnapshot(const GameSnapshot &gs) const
 {
     uint8_t header = NETWORK_TYPE_GAMESNAPSHOT;
     std::ostringstream oss(std::ios_base::out|std::ios::binary);
@@ -408,7 +408,7 @@ void NetworkHandler::S2CGameSnapshot(const GameSnapshot& gs)
     SendPacket(oss);
 }
 
-void NetworkHandler::SendPacket(std::ostringstream& data)
+void NetworkHandler::SendPacket(std::ostringstream &data) const
 {
     if (_peer == NULL)
     {

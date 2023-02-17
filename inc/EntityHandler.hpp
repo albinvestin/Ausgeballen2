@@ -20,25 +20,28 @@ private:
 public:
     EntityHandler();
     ~EntityHandler();
-    void HandlePlayerActions(GAMELOOP_ACTIONS actions);
+    void HandlePlayerActions(const GAMELOOP_ACTIONS &actions);
+    // Get methods
     Vec2f GetPlayerPos(int index) const; // Index starts at 1
     float GetPlayerAim(int index) const;
     uint8_t GetPlayerScore(int index) const;
-    Vec2f GetBullet1Pos();
+    Vec2f GetBullet1Pos() const;
     std::vector<Vec2f> GetAllBulletPos() const;
-    const std::vector<Bullet>& GetAllBullets();
-    std::vector<Player>& GetAllPlayers(); // TODO This is bad?
+    const std::vector<Bullet> &GetAllBullets() const;
+    std::vector<Player> &GetAllPlayers(); // TODO This is bad?
+    GameSnapshot GetGameSnapShot() const;
+
+    // Update methods
     Vec2f UpdatePlayerPos(uint8_t playerIndex);
     Vec2f AddRecoil(uint8_t playerIndex);
-    void SetRecoilOfPlayer(Vec2f vel, uint8_t playerIndex);
+    void SetRecoilOfPlayer(const Vec2f &vel, uint8_t playerIndex);
     // const Bullet& RegisterNewBullet(const Bullet& bullet);
     // void AddNetworkBullet(Bullet& b);
     float UpdateAimDirection(uint8_t playerIndex);
-    Vec2f UpdateBulletPos(std::vector<Bullet>::iterator bullet);
+    Vec2f UpdateBulletPos(std::vector<Bullet>::iterator bullet) const;
     std::vector<Bullet>::const_iterator RemoveBulletFromIt(std::vector<Bullet>::const_iterator itB);
-    void HandleNetworkShoot(Bullet& b, Vec2f& v, uint8_t playerIndex, Vec2f& playerPos);
+    void HandleNetworkShoot(const Bullet &b, const Vec2f &v, uint8_t playerIndex, const Vec2f &playerPos);
     void HandleNetworkGameSnapshot(const GameSnapshot& gs);
     void MoveAllObjects();
-    GameSnapshot GetGameSnapShot();
 };
 #endif /* ENTITYHANDLER_HPP */

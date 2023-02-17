@@ -29,14 +29,14 @@ public:
     //Deallocates texture
     void Free();
 
-    void ModifyColor( uint8_t red, uint8_t green, uint8_t blue );
+    void ModifyColor( uint8_t red, uint8_t green, uint8_t blue ) const; // TODO this is not const?!
 
     //Renders texture at given point
-    void Render(int x, int y, SDL_Renderer* renderer, SDL_Rect* clip);
+    void Render(int x, int y, SDL_Renderer* renderer, const SDL_Rect *clip) const;
 
     //Gets image dimensions
-    int GetWidth();
-    int GetHeight();
+    int GetWidth() const;
+    int GetHeight() const;
 };
 
 #endif /* TEXTURE_HPP */

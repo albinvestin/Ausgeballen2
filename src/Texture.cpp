@@ -77,12 +77,12 @@ void Texture::Free()
     }
 }
 
-void Texture::ModifyColor(uint8_t red, uint8_t green, uint8_t blue)
+void Texture::ModifyColor(uint8_t red, uint8_t green, uint8_t blue) const
 {
     SDL_SetTextureColorMod(_texture, red, green, blue);
 }
 
-void Texture::Render( int x, int y, SDL_Renderer* gRenderer, SDL_Rect* clip )
+void Texture::Render(int x, int y, SDL_Renderer* gRenderer, const SDL_Rect *clip) const
 {
     //Set rendering space and render to screen
     SDL_Rect renderQuad = { x, y, _width, _height };
@@ -96,12 +96,12 @@ void Texture::Render( int x, int y, SDL_Renderer* gRenderer, SDL_Rect* clip )
     SDL_RenderCopy( gRenderer, _texture, clip, &renderQuad );
 }
 
-int Texture::GetWidth()
+int Texture::GetWidth() const
 {
     return _width;
 }
 
-int Texture::GetHeight()
+int Texture::GetHeight() const
 {
     return _height;
 }

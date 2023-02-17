@@ -12,20 +12,22 @@ private:
     int _playerIndex;
     uint8_t _score = 0;
 public:
-    Player(Vec2f startPos, int playerIndex);
+    Player(const Vec2f &startPos, int playerIndex);
     ~Player();
-    Vec2f UpdatePos();
-    float updateAimDirection();
+    // Get methods
     Vec2f GetPos() const;
     float GetAim() const;
-    void AddRecoil();
     int GetPlayerIndex() const;
-    Vec2f AddVelocity(Vec2f vel);
-    Vec2f GetVelocity();
-    Vec2f SetVelocity(Vec2f v);
-    void AddToPosition(Vec2f v);
+    Vec2f GetVelocity() const;
+    uint8_t GetScore() const;
+    // Update methods
+    Vec2f UpdatePos();
+    float updateAimDirection();
+    void AddRecoil();
+    Vec2f AddVelocity(const Vec2f &vel);
+    Vec2f SetVelocity(const Vec2f &v);
+    void AddToPosition(const Vec2f &v);
     void AddOneToScore();
-    uint8_t GetScore();
 };
 
 

@@ -10,7 +10,7 @@
 #include <iostream>
 #include <stdint.h>
 
-Player::Player(Vec2f startPos, int playerIndex)
+Player::Player(const Vec2f &startPos, int playerIndex)
     : _position(startPos), _Velocity(Vec2f{0,0}), _playerIndex{playerIndex}
 {
 }
@@ -93,24 +93,24 @@ int Player::GetPlayerIndex() const
     return _playerIndex;
 }
 
-Vec2f Player::AddVelocity(Vec2f vel)
+Vec2f Player::AddVelocity(const Vec2f &vel)
 {
     _Velocity += vel;
     return _Velocity;
 }
 
-Vec2f Player::GetVelocity()
+Vec2f Player::GetVelocity() const
 {
     return _Velocity;
 }
 
-Vec2f Player::SetVelocity(Vec2f v)
+Vec2f Player::SetVelocity(const Vec2f &v)
 {
     _Velocity = v;
     return _Velocity;
 }
 
-void Player::AddToPosition(Vec2f v)
+void Player::AddToPosition(const Vec2f &v)
 {
     _position += v;
 }
@@ -121,7 +121,7 @@ void Player::AddOneToScore()
     printf("%d\n", _score);
 }
 
-uint8_t Player::GetScore()
+uint8_t Player::GetScore() const
 {
     return _score;
 }

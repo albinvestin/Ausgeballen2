@@ -113,13 +113,13 @@ void Display::close()
     IMG_Quit();
 }
 
-Vec2f Display::TranslatePosToRenderSpace(const Vec2f pos)
+Vec2f Display::TranslatePosToRenderSpace(const Vec2f &pos) const
 {
     Vec2f renderSpacePos{pos.x + MAP_OFFSET_HORI, pos.y + MAP_OFFSET_VERT};
     return renderSpacePos;
 }
 
-void Display::RenderAll(EntityHandler const* entities)
+void Display::RenderAll(EntityHandler const &entities) const
 {
     //Clear screen
     RenderBackground();
@@ -128,7 +128,7 @@ void Display::RenderAll(EntityHandler const* entities)
     // _HearthTexture.render( 0, 0, _Renderer );
 
     // Render bullets
-    std::vector<Vec2f> AllBulletPos = (*entities).GetAllBulletPos();
+    std::vector<Vec2f> AllBulletPos = entities.GetAllBulletPos();
     std::vector<Vec2f>::iterator it = AllBulletPos.begin();
     while (it != AllBulletPos.end())
     {
@@ -141,7 +141,7 @@ void Display::RenderAll(EntityHandler const* entities)
     //_HearthTexture.render( bulletPos.x, bulletPos.y, _Renderer );
 
     //Render Player1 to the screen
-    Vec2f tempPos = (*entities).GetPlayerPos(1);
+    Vec2f tempPos = entities.GetPlayerPos(1);
     Vec2f playerPos = TranslatePosToRenderSpace(tempPos);
 
     _ballTexture.ModifyColor(255, 255, 50);
@@ -149,20 +149,20 @@ void Display::RenderAll(EntityHandler const* entities)
 
     // Render player1 shooting direction
     SDL_SetRenderDrawColor(_renderer, 0, 0, 255, 150); // BLUE
-    float angle = (*entities).GetPlayerAim(1);
+    float angle = entities.GetPlayerAim(1);
     int centerX = playerPos.x+PLAYER_RADIUS;
     int centerY = playerPos.y+PLAYER_RADIUS;
     SDL_RenderDrawLine(_renderer, centerX, centerY, centerX + cos(angle)*(2*PLAYER_RADIUS), centerY + sin(angle)*(2*PLAYER_RADIUS));
 
     //Render Player2 to the screen
-    tempPos = (*entities).GetPlayerPos(2);
+    tempPos = entities.GetPlayerPos(2);
     playerPos = TranslatePosToRenderSpace(tempPos);
     // printf("P2: (%f,%f)\n",playerPos.x, playerPos.y);
     _ballTexture.ModifyColor(255, 50, 255);
     _ballTexture.Render(playerPos.x, playerPos.y, _renderer, NULL);
 
     // Render player2 shooting direction
-    angle = (*entities).GetPlayerAim(2);
+    angle = entities.GetPlayerAim(2);
     centerX = playerPos.x+PLAYER_RADIUS;
     centerY = playerPos.y+PLAYER_RADIUS;
     SDL_RenderDrawLine(_renderer, centerX, centerY, centerX + cos(angle)*(2*PLAYER_RADIUS), centerY + sin(angle)*(2*PLAYER_RADIUS));
@@ -175,8 +175,8 @@ void Display::RenderAll(EntityHandler const* entities)
     SDL_RenderDrawLine(_renderer, MAP_WIDTH+MAP_OFFSET_HORI, 0+MAP_OFFSET_VERT,          MAP_WIDTH+MAP_OFFSET_HORI, MAP_HEIGHT+MAP_OFFSET_VERT); // Right
 
     // Render score
-    std::string scoreP1 = "P1:" + std::to_string((*entities).GetPlayerScore(1));
-    std::string scoreP2 = "P2:" + std::to_string((*entities).GetPlayerScore(2));
+    std::string scoreP1 = "P1:" + std::to_string(entities.GetPlayerScore(1));
+    std::string scoreP2 = "P2:" + std::to_string(entities.GetPlayerScore(2));
     RenderString(scoreP1, 10, MAP_OFFSET_VERT); // Top left
     RenderString(scoreP2, MAP_OFFSET_HORI + MAP_WIDTH + 10, MAP_OFFSET_VERT); // Top right
 
@@ -184,34 +184,34 @@ void Display::RenderAll(EntityHandler const* entities)
     SDL_RenderPresent(_renderer);
 }
 
-std::vector<uint8_t> Display::StringToAlphabetKeys(std::string input)
+std::vector<uint8_t> Display::StringToAlphabetKeys(const std::string &input) const
 {
     std::vector<uint8_t> result;
-    for (std::string::iterator it = input.begin(); it != input.end(); ++it)
+    for (auto &&it = input.begin(); it != input.end(); ++it)
     {
         result.push_back(ALPHABET_KEYS.at(*it));
     }
     return result;
 }
 
-void Display::RenderString(std::string input, int x, int y)
+void Display::RenderString(const std::string &input, int x, int y) const
 {
     std::vector<uint8_t> clippingIndex = StringToAlphabetKeys(input);
     int i = 0;
-    for (std::vector<uint8_t>::iterator it = clippingIndex.begin(); it != clippingIndex.end(); ++it)
+    for (auto &&it = clippingIndex.begin(); it != clippingIndex.end(); ++it)
     {
         _alphabeth.Render(x + i * (ALPHABET_CHAR_WIDTH ), y, _renderer, &_alphabethClippingRect[clippingIndex[i]]);
         ++i;
     }
 }
 
-void Display::RenderBackground()
+void Display::RenderBackground() const
 {
     SDL_SetRenderDrawColor(_renderer, 0x00, 0x00, 0x00, 0x00);
     SDL_RenderClear(_renderer);
 }
 
-void Display::RenderMainMenu()
+void Display::RenderMainMenu() const
 {
     //Clear screen
     RenderBackground();
@@ -226,7 +226,7 @@ void Display::RenderMainMenu()
     SDL_RenderPresent(_renderer);
 }
 
-void Display::RenderLocalPlay()
+void Display::RenderLocalPlay() const
 {
     //Clear screen
     RenderBackground();
@@ -238,7 +238,7 @@ void Display::RenderLocalPlay()
     SDL_RenderPresent(_renderer);
 }
 
-void Display::RenderEndScore(std::vector< std::pair<uint8_t,uint8_t> > playerAndScoreDesc)
+void Display::RenderEndScore(const std::vector<std::pair<uint8_t,uint8_t>> &playerAndScoreDesc) const
 {
     //Clear screen
     RenderBackground();

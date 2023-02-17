@@ -44,6 +44,7 @@ TODO:
 
 CURRENTLY WORKING ON REFACTORING THE CODE, CHECK GAMEOBJ.CPP
 Working on new inputflags insted of using vectors.
+Also adding const declarations.
 
 References:
 https://floating-point-gui.de/errors/comparison/

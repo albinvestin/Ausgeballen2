@@ -76,11 +76,10 @@ enum NETWORK_MODES {
     NETWORK_MODE_LOCAL
 };
 struct GAMELOOP_ACTIONS {
-    uint16_t PlayersShooting; // each bit represents one player, starting with index 0 (lowest significance) = player 1, index 1 = player 2 etc.
+    uint16_t PlayersShooting = 0; // each bit represents one player, starting with index 0 (lowest significance) = player 1, index 1 = player 2 etc.
 };
 struct GAMELOOP_OUTPUT {
-    uint64_t lastUpdateTime;
-    uint8_t playerWon;
+    uint8_t playerWon = false;
 };
 
 

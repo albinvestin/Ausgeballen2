@@ -25,20 +25,20 @@ private:
     ENetPeer* _peer = NULL;
     EntityHandler* _entities = NULL;
     
-    std::string GetIPFromAdress(ENetAddress address);
-    void SendPacket(std::ostringstream& data);
+    std::string GetIPFromAdress(ENetAddress &address) const;
+    void SendPacket(std::ostringstream &data) const;
 public:
     std::vector<uint8_t> ServerPollAllEvents();
     void PollAllClientEvents();
-    void setEntetiesHandler(EntityHandler* entities);
+    void setEntetiesHandler(EntityHandler &entities);
     NetworkHandler();
     ~NetworkHandler();
     bool Host();
     bool Join();
     void Disconnect();
-    void C2SShoot(uint8_t playerIndex);
-    void S2CGameSnapshot(const GameSnapshot& gs);
-    void C2SGameLoopActions(GAMELOOP_ACTIONS actions);
+    void C2SShoot(uint8_t playerIndex) const;
+    void S2CGameSnapshot(const GameSnapshot &gs) const;
+    void C2SGameLoopActions(const GAMELOOP_ACTIONS &actions) const;
 };
 
 #endif /* NETWORKHANDLER_HPP */

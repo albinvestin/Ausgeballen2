@@ -8,11 +8,11 @@ class CollisionHandler
 public:
     CollisionHandler();
     ~CollisionHandler();
-    void HandleCollisons(EntityHandler & entities);
+    void HandleCollisons(EntityHandler &entities);
 };
 
-float Squaredf(float x);
-Vec2f ElasticCollision(Vec2f playerPos1, Vec2f playerPos2, Vec2f p1Vel, Vec2f p2Vel);
+float Squaredf(const float x);
+Vec2f ElasticCollision(const Vec2f &playerPos1, const Vec2f &playerPos2, const Vec2f &p1Vel, const Vec2f &p2Vel);
 
 
 

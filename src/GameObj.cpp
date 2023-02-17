@@ -47,7 +47,7 @@ void GameObj::StartMainMenu()
 {
     while(!_inputFlags.QUIT && !_inputFlags.ESCAPE)
     {
-        _inputHandler.EventHandler(&_inputFlags);
+        _inputHandler.EventHandler(_inputFlags);
         if (_inputFlags.HOST)
         {
             _networkMode = NETWORK_MODE_SERVER;
@@ -72,7 +72,7 @@ void GameObj::StartLocalPlay()
     int numberOfPlayers = 0;
     while(!_inputFlags.QUIT && !_inputFlags.ESCAPE)
     {
-        _inputHandler.EventHandler(&_inputFlags);
+        _inputHandler.EventHandler(_inputFlags);
         if (_inputFlags.NUMBER2)
         {
             numberOfPlayers = 2;
@@ -104,17 +104,17 @@ bool SortBySec(const std::pair<uint8_t,uint8_t> &a, const std::pair<uint8_t,uint
     return (a.second > b.second);
 }
 
-void GameObj::StartEndScore(std::vector< std::pair<uint8_t,uint8_t> > playerAndScoreDesc)
+void GameObj::StartEndScore(const std::vector<std::pair<uint8_t,uint8_t>> &playerAndScoreDesc)
 {
     while(!_inputFlags.QUIT && !_inputFlags.ESCAPE)
     {
-        _inputHandler.EventHandler(&_inputFlags);
+        _inputHandler.EventHandler(_inputFlags);
         _display.RenderEndScore(playerAndScoreDesc);
     }
 }
 
 
-void GameObj::StartGameLoop(uint8_t numberOfPlayers)
+void GameObj::StartGameLoop(const uint8_t numberOfPlayers)
 {
     if (_networkMode == NETWORK_MODE_SERVER)
     {
@@ -147,8 +147,8 @@ void GameObj::StartGameLoop(uint8_t numberOfPlayers)
     bool clientUpdateNeeded = false;
     uint8_t countSinceLastClientUpdate = 0;
 
-    // TODO: Bad ownership of entitiyHandler
-    _networkHandler.setEntetiesHandler(&_entityHandler); // TODO: these are tightly coupled, could this be avoided?
+    // TODO: Bad ownership of entitiyHandler, should we use shared pointer or change ownership?
+    _networkHandler.setEntetiesHandler(_entityHandler); // TODO: these are tightly coupled, could this be avoided?
 
     uint64_t currentTime = SDL_GetPerformanceCounter();
     uint64_t timerStart;
@@ -161,7 +161,7 @@ void GameObj::StartGameLoop(uint8_t numberOfPlayers)
     {
         currentTime = SDL_GetPerformanceCounter();
 
-        _inputHandler.EventHandler(&_inputFlags);
+        _inputHandler.EventHandler(_inputFlags);
         if (_inputFlags.DISCONNECT)
         {
             _networkHandler.Disconnect();
@@ -169,7 +169,7 @@ void GameObj::StartGameLoop(uint8_t numberOfPlayers)
             return;
         }
 
-        GAMELOOP_ACTIONS actions = {.PlayersShooting = 0};
+        GAMELOOP_ACTIONS actions = {};
         actions.PlayersShooting |= _inputFlags.P1SHOOT;
         actions.PlayersShooting |= _inputFlags.P2SHOOT << 1;
         if (_networkMode == NETWORK_MODE_CLIENT)
@@ -189,8 +189,7 @@ void GameObj::StartGameLoop(uint8_t numberOfPlayers)
         }
 
         // Fixed rate updates up to current time, using GAME_UPDATE_TIME as refresh rate.
-        GAMELOOP_OUTPUT output =  GameLoop(actions, currentTime, lastUpdateTime);
-        lastUpdateTime = output.lastUpdateTime;
+        GAMELOOP_OUTPUT output = GameLoop(actions, currentTime, lastUpdateTime);
         if (output.playerWon)
         {
             std::vector< std::pair<uint8_t,uint8_t> > playerAndScoreDesc;
@@ -220,7 +219,7 @@ void GameObj::StartGameLoop(uint8_t numberOfPlayers)
             _networkHandler.PollAllClientEvents();
         }
 
-        _display.RenderAll(&_entityHandler);
+        _display.RenderAll(_entityHandler);
 
         // Sleep until roughly next frame
         timeTilNextFrame = lastUpdateTime + GAME_UPDATE_TIME - currentTime;
@@ -244,10 +243,10 @@ void GameObj::StartGameLoop(uint8_t numberOfPlayers)
     }
 }
 
-GAMELOOP_OUTPUT GameObj::GameLoop(GAMELOOP_ACTIONS actions, uint64_t currentTime, uint64_t lastUpdateTime)
+GAMELOOP_OUTPUT GameObj::GameLoop(const GAMELOOP_ACTIONS &actions, const uint64_t currentTime, uint64_t &lastUpdateTime)
 {
     uint8_t gameUpdatesCount = 0;
-    GAMELOOP_OUTPUT output{.playerWon = false};
+    GAMELOOP_OUTPUT output{};
     // Fixed rate updates:
     while ((currentTime - lastUpdateTime) >= GAME_UPDATE_TIME)
     {
@@ -278,11 +277,11 @@ GAMELOOP_OUTPUT GameObj::GameLoop(GAMELOOP_ACTIONS actions, uint64_t currentTime
             if (_entityHandler.GetPlayerScore(iPlayer) >= END_SCORE)
             {
                 // We have a winner!
-                GAMELOOP_OUTPUT output {.playerWon = true};
+                output.playerWon = true;
                 return output;
             }
         }
     }
-    output.lastUpdateTime = lastUpdateTime;
+
     return output;
 }
