@@ -124,6 +124,7 @@ void GameObj::StartGameLoop(const uint8_t numberOfPlayers)
             printf("Unsucessful hosting!\n");
             return;
         }
+        _entityHandler.Init(1);
     }
     else if (_networkMode == NETWORK_MODE_CLIENT)
     {
@@ -133,10 +134,12 @@ void GameObj::StartGameLoop(const uint8_t numberOfPlayers)
             printf("Unsucessful joining!\n");
             return;
         }
+        _entityHandler.Init(1);
     }
     else if (_networkMode == NETWORK_MODE_LOCAL)
     {
         // TODO use numberOfPlayers here. 
+        _entityHandler.Init(numberOfPlayers);
         printf("Starting local play with hardcoded number of players\n");
     }
     else
@@ -172,6 +175,9 @@ void GameObj::StartGameLoop(const uint8_t numberOfPlayers)
         GAMELOOP_ACTIONS actions = {};
         actions.PlayersShooting |= _inputFlags.P1SHOOT;
         actions.PlayersShooting |= _inputFlags.P2SHOOT << 1;
+        actions.PlayersShooting |= _inputFlags.P3SHOOT << 2;
+        actions.PlayersShooting |= _inputFlags.P4SHOOT << 3;
+        actions.PlayersShooting |= _inputFlags.P5SHOOT << 4;
         if (_networkMode == NETWORK_MODE_CLIENT)
         {
             _networkHandler.C2SGameLoopActions(actions);
@@ -185,15 +191,18 @@ void GameObj::StartGameLoop(const uint8_t numberOfPlayers)
                 printf("iAction: %d\n", iAction);
                 actions.PlayersShooting |= (iAction == NETWORK_ACTION_SHOOT_P1);
                 actions.PlayersShooting |= ((iAction == NETWORK_ACTION_SHOOT_P2) << 1);
+                actions.PlayersShooting |= ((iAction == NETWORK_ACTION_SHOOT_P3) << 2);
+                actions.PlayersShooting |= ((iAction == NETWORK_ACTION_SHOOT_P4) << 3);
+                actions.PlayersShooting |= ((iAction == NETWORK_ACTION_SHOOT_P5) << 4);
             }
         }
 
         // Fixed rate updates up to current time, using GAME_UPDATE_TIME as refresh rate.
-        GAMELOOP_OUTPUT output = GameLoop(actions, currentTime, lastUpdateTime);
+        GAMELOOP_OUTPUT output = GameLoop(actions, currentTime, lastUpdateTime, numberOfPlayers);
         if (output.playerWon)
         {
             std::vector< std::pair<uint8_t,uint8_t> > playerAndScoreDesc;
-            for (uint8_t iPlayer = 1; iPlayer <= MAX_PLAYERS; iPlayer++) // TODO instead use the connected amount of players?
+            for (uint8_t iPlayer = 1; iPlayer <= numberOfPlayers; iPlayer++) // TODO instead use the connected amount of players?
             {
                 playerAndScoreDesc.push_back(std::make_pair(iPlayer,_entityHandler.GetPlayerScore(iPlayer)));
             }
@@ -243,7 +252,7 @@ void GameObj::StartGameLoop(const uint8_t numberOfPlayers)
     }
 }
 
-GAMELOOP_OUTPUT GameObj::GameLoop(const GAMELOOP_ACTIONS &actions, const uint64_t currentTime, uint64_t &lastUpdateTime)
+GAMELOOP_OUTPUT GameObj::GameLoop(const GAMELOOP_ACTIONS &actions, const uint64_t currentTime, uint64_t &lastUpdateTime, uint8_t numberOfPlayers)
 {
     uint8_t gameUpdatesCount = 0;
     GAMELOOP_OUTPUT output{};
@@ -272,7 +281,7 @@ GAMELOOP_OUTPUT GameObj::GameLoop(const GAMELOOP_ACTIONS &actions, const uint64_
 
         // Check if anyone has won
         // TODO: Handle the sorting and stuff somewhere else!?
-        for (uint8_t iPlayer = 1; iPlayer <= MAX_PLAYERS; iPlayer++) // TODO instead use the connected amount of players?
+        for (uint8_t iPlayer = 1; iPlayer <= numberOfPlayers; iPlayer++) // TODO instead use the connected amount of players?
         {
             if (_entityHandler.GetPlayerScore(iPlayer) >= END_SCORE)
             {

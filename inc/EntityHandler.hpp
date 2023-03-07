@@ -20,15 +20,17 @@ private:
 public:
     EntityHandler();
     ~EntityHandler();
+    void Init(const uint8_t numberOfPlayers);
     void HandlePlayerActions(const GAMELOOP_ACTIONS &actions);
     // Get methods
-    Vec2f GetPlayerPos(int index) const; // Index starts at 1
-    float GetPlayerAim(int index) const;
-    uint8_t GetPlayerScore(int index) const;
+    Vec2f GetPlayerPos(uint8_t index) const; // Index starts at 1
+    float GetPlayerAim(uint8_t index) const;
+    uint8_t GetPlayerScore(uint8_t index) const;
     Vec2f GetBullet1Pos() const;
     std::vector<Vec2f> GetAllBulletPos() const;
     const std::vector<Bullet> &GetAllBullets() const;
     std::vector<Player> &GetAllPlayers(); // TODO This is bad?
+    const std::vector<Player> &GetAllPlayers() const; // TODO This is bad?
     GameSnapshot GetGameSnapShot() const;
 
     // Update methods

@@ -31,8 +31,8 @@ TODO:
     - [] Add local functionality to main menu
     - [] Add "button" selection before entering game
 - [x] Make end game screen with result
-- [WIP] Make local play possible
-    - [] Select number of players
+- [x] Make local play possible
+    - [x] Select number of players
     - Use fixed buttons
 - [] Add heroes selection
 - [] Add heroes
@@ -41,10 +41,7 @@ TODO:
 - [] Add music
 - [] Add sound effects
 - [] Add particles
-
-CURRENTLY WORKING ON REFACTORING THE CODE, CHECK GAMEOBJ.CPP
-Working on new inputflags insted of using vectors.
-Also adding const declarations.
+- [] Change to ECS?
 
 References:
 https://floating-point-gui.de/errors/comparison/

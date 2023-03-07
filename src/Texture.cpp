@@ -24,7 +24,7 @@ Texture::~Texture()
     Free();
 }
 
-bool Texture::LoadFromFile( std::string path, SDL_Renderer* gRenderer )
+bool Texture::LoadFromFile(std::string path, SDL_Renderer* gRenderer)
 {
     //Get rid of preexisting texture
     Free();
@@ -68,9 +68,9 @@ bool Texture::LoadFromFile( std::string path, SDL_Renderer* gRenderer )
 void Texture::Free()
 {
     //Free texture if it exists
-    if( _texture != NULL )
+    if(_texture != NULL)
     {
-        SDL_DestroyTexture( _texture );
+        SDL_DestroyTexture(_texture);
         _texture = NULL;
         _width = 0;
         _height = 0;
@@ -93,7 +93,7 @@ void Texture::Render(int x, int y, SDL_Renderer* gRenderer, const SDL_Rect *clip
         renderQuad.h = clip->h;
     }
 
-    SDL_RenderCopy( gRenderer, _texture, clip, &renderQuad );
+    SDL_RenderCopy(gRenderer, _texture, clip, &renderQuad);
 }
 
 int Texture::GetWidth() const

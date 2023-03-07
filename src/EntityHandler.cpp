@@ -6,21 +6,37 @@
 #include <stdio.h>
 
 // Spawn players?
-EntityHandler::EntityHandler()
+EntityHandler::EntityHandler()//const uint8_t numberOfPlayers)
 {
-    _players.reserve(2); // TODO Make number of players variable
-    for (uint8_t index = 1; index <= 2; index++)
-    {
-        Vec2f spawningPos{(MAP_WIDTH*index)/4, (MAP_HEIGHT*index)/4};
-        Player NewPlayer{spawningPos, index};
-        _players.push_back(NewPlayer);
-    }
+    // _players.reserve(numberOfPlayers); // TODO Make number of players variable
+    // for (uint8_t index = 1; index <= numberOfPlayers; index++)
+    // {
+    //     Vec2f spawningPos{(MAP_WIDTH*index/(numberOfPlayers+2)+MAP_WIDTH/(numberOfPlayers+2)), (MAP_HEIGHT*index/(numberOfPlayers+2)+MAP_HEIGHT/(numberOfPlayers+2))};
+    //     Player NewPlayer{spawningPos, index};
+    //     _players.push_back(NewPlayer);
+    // }
     // printf("Entity player adress: %d\n", &_Players);
     // printf("Entity player adress: %d\n", &_Players[0] );
 }
 
 EntityHandler::~EntityHandler()
 {
+}
+
+void EntityHandler::Init(const uint8_t numberOfPlayers)
+{
+    _players.reserve(numberOfPlayers); // TODO Make number of players variable
+    Vec2f startPos{-(MAP_WIDTH/numberOfPlayers)/2, -(MAP_HEIGHT/numberOfPlayers)/2};
+    for (uint8_t index = 1; index <= numberOfPlayers; index++)
+    {
+        startPos.x += MAP_WIDTH/numberOfPlayers;
+        startPos.y += MAP_HEIGHT/numberOfPlayers;
+        // Vec2f spawningPos{(float) MAP_WIDTH*index/(numberOfPlayers+2)+MAP_WIDTH/(numberOfPlayers+2), (float) MAP_HEIGHT*index/(numberOfPlayers+2)+MAP_HEIGHT/(numberOfPlayers+2)};
+        Player NewPlayer{startPos, index};
+        _players.push_back(NewPlayer);
+    }
+    // printf("Entity player adress: %d\n", &_Players);
+    // printf("Entity player adress: %d\n", &_Players[0] );
 }
 
 bool isOutOfBounds(const Vec2f &position)
@@ -67,7 +83,7 @@ void EntityHandler::MoveAllObjects()
 // Handle shoot inputs and spawns bullets
 void EntityHandler::HandlePlayerActions(const GAMELOOP_ACTIONS &actions)
 {
-    for (uint8_t playerIndex = 0; playerIndex < MAX_PLAYERS; playerIndex++)
+    for (uint8_t playerIndex = 0; playerIndex < _players.size(); playerIndex++)
     {
         Player* player;
         if ((actions.PlayersShooting >> playerIndex) & ((uint8_t) 1))
@@ -102,7 +118,7 @@ void EntityHandler::SetRecoilOfPlayer(const Vec2f &vel, uint8_t playerIndex)
 }
 
 // index starts at 1, TODO: check length of _Players before getting index
-Vec2f EntityHandler::GetPlayerPos(int index) const
+Vec2f EntityHandler::GetPlayerPos(uint8_t index) const
 {
     if (_players[index-1].playerIndex != index)
     {
@@ -112,20 +128,20 @@ Vec2f EntityHandler::GetPlayerPos(int index) const
 }
 
 // index starts at 1, TODO: check length of _Players before getting index
-float EntityHandler::GetPlayerAim(int index) const
+float EntityHandler::GetPlayerAim(uint8_t index) const
 {
     if (_players[index-1].playerIndex != index)
     {
-        printf("EntityHandler::GetPlayerPos(int index) ERROR\n");
+        printf("EntityHandler::GetPlayerAim(int index) ERROR\n");
     }
     return _players[index-1].aimDirection; 
 }
 
-uint8_t EntityHandler::GetPlayerScore(int index) const
+uint8_t EntityHandler::GetPlayerScore(uint8_t index) const
 {
     if (_players[index-1].playerIndex != index)
     {
-        printf("EntityHandler::GetPlayerPos(int index) ERROR\n");
+        printf("EntityHandler::GetPlayerScore(int index) ERROR\n");
     }
     return _players[index-1].score; 
 }
@@ -161,6 +177,11 @@ const std::vector<Bullet> &EntityHandler::GetAllBullets() const
 }
 
 std::vector<Player> &EntityHandler::GetAllPlayers()
+{
+    return _players;
+}
+
+const std::vector<Player> &EntityHandler::GetAllPlayers() const
 {
     return _players;
 }

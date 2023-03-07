@@ -14,7 +14,7 @@ const float PLAYER_RECOIL = 10;
 const uint16_t PLAYER_RADIUS = 15;
 const uint16_t BULLET_RADIUS = 10;
 const uint8_t END_SCORE = 2;
-const uint8_t MAX_PLAYERS = 2;
+const uint8_t MAX_PLAYERS = 5;
 const uint64_t GAME_UPDATE_TIME = 16 * SDL_GetPerformanceFrequency() / 1000;
 enum INPUT_KEYS {
     INPUT_NONE,
@@ -65,6 +65,9 @@ enum NETWORK_TYPES {
 enum NETWORK_ACTIONS {
     NETWORK_ACTION_SHOOT_P1 = 100,
     NETWORK_ACTION_SHOOT_P2,
+    NETWORK_ACTION_SHOOT_P3,
+    NETWORK_ACTION_SHOOT_P4,
+    NETWORK_ACTION_SHOOT_P5,
     NETWORK_ACTION_DISCONNECT
 };
 const uint8_t ALPHABET_CHAR_WIDTH = 24;
@@ -81,6 +84,10 @@ struct GAMELOOP_ACTIONS {
 struct GAMELOOP_OUTPUT {
     uint8_t playerWon = false;
 };
+const struct PLAYER_COLORS {
+    uint8_t r, g, b;
+} PLAYER_COLOR_1{0, 0, 255}, PLAYER_COLOR_2{255, 0, 0}, PLAYER_COLOR_3{0, 255, 0}, PLAYER_COLOR_4{255, 255, 0}, PLAYER_COLOR_5{0, 255, 255};
+
 
 
 #endif /* CONSTANTS_HPP */

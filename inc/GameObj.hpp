@@ -21,7 +21,7 @@ private:
     void StartLocalPlay();
     void StartEndScore(const std::vector<std::pair<uint8_t,uint8_t>> &playerAndScoreDesc);
     void StartGameLoop(const uint8_t numberOfplayers);
-    GAMELOOP_OUTPUT GameLoop(const GAMELOOP_ACTIONS &actions, const uint64_t currentTime, uint64_t &lastUpdateTime);
+    GAMELOOP_OUTPUT GameLoop(const GAMELOOP_ACTIONS &actions, const uint64_t currentTime, uint64_t &lastUpdateTime, uint8_t numberOfPlayers);
     void Close();
 public:
     GameObj() {};

@@ -141,44 +141,74 @@ void Display::RenderAll(EntityHandler const &entities) const
     //_HearthTexture.render( bulletPos.x, bulletPos.y, _Renderer );
 
     //Render Player1 to the screen
-    Vec2f tempPos = entities.GetPlayerPos(1);
-    Vec2f playerPos = TranslatePosToRenderSpace(tempPos);
+    auto &allPlayers = entities.GetAllPlayers();
 
-    _ballTexture.ModifyColor(255, 255, 50);
-    _ballTexture.Render(playerPos.x, playerPos.y, _renderer, NULL);
+    for (auto &&player : allPlayers)
+    {
+        // Render player
+        Vec2f tempPos = player.position;
+        Vec2f playerPos = TranslatePosToRenderSpace(tempPos);
+        switch (player.playerIndex)
+        {
+        case 1:
+            {
+                _ballTexture.ModifyColor(PLAYER_COLOR_1.r, PLAYER_COLOR_1.g, PLAYER_COLOR_1.b);
+                // Render score
+                std::string scoreP1 = "P1:" + std::to_string(player.score);
+                RenderString(scoreP1, 10, MAP_OFFSET_VERT + ALPHABET_CHAR_HEIGHT+20); // Top left
+                break;
+            }
+        case 2:
+            {
+                _ballTexture.ModifyColor(PLAYER_COLOR_2.r, PLAYER_COLOR_2.g, PLAYER_COLOR_2.b);
+                // Render score
+                std::string scoreP2 = "P2:" + std::to_string(player.score);
+                RenderString(scoreP2, 10, MAP_OFFSET_VERT + ALPHABET_CHAR_HEIGHT*2+20); // Top left
+                break;
+            }
+        case 3:
+            {
+                _ballTexture.ModifyColor(PLAYER_COLOR_3.r, PLAYER_COLOR_3.g, PLAYER_COLOR_3.b);
+                // Render score
+                std::string scoreP3 = "P3:" + std::to_string(player.score);
+                RenderString(scoreP3, 10, MAP_OFFSET_VERT + ALPHABET_CHAR_HEIGHT*3+20); // Top left
+                break;
+            }
+        case 4:
+            {
+                _ballTexture.ModifyColor(PLAYER_COLOR_4.r, PLAYER_COLOR_4.g, PLAYER_COLOR_4.b);
+                // Render score
+                std::string scoreP4 = "P4:" + std::to_string(player.score);
+                RenderString(scoreP4, 10, MAP_OFFSET_VERT + ALPHABET_CHAR_HEIGHT*4+20); // Top left
+                break;
+            }
+        case 5:
+            {
+                _ballTexture.ModifyColor(PLAYER_COLOR_5.r, PLAYER_COLOR_5.g, PLAYER_COLOR_5.b);
+                // Render score
+                std::string scoreP5 = "P5:" + std::to_string(player.score);
+                RenderString(scoreP5, 10, MAP_OFFSET_VERT + ALPHABET_CHAR_HEIGHT*5+20); // Top left
+                break;
+            }
+        default:
+            break;
+        }
+        _ballTexture.Render(playerPos.x, playerPos.y, _renderer, NULL);
 
-    // Render player1 shooting direction
-    SDL_SetRenderDrawColor(_renderer, 0, 0, 255, 150); // BLUE
-    float angle = entities.GetPlayerAim(1);
-    int centerX = playerPos.x+PLAYER_RADIUS;
-    int centerY = playerPos.y+PLAYER_RADIUS;
-    SDL_RenderDrawLine(_renderer, centerX, centerY, centerX + cos(angle)*(2*PLAYER_RADIUS), centerY + sin(angle)*(2*PLAYER_RADIUS));
-
-    //Render Player2 to the screen
-    tempPos = entities.GetPlayerPos(2);
-    playerPos = TranslatePosToRenderSpace(tempPos);
-    // printf("P2: (%f,%f)\n",playerPos.x, playerPos.y);
-    _ballTexture.ModifyColor(255, 50, 255);
-    _ballTexture.Render(playerPos.x, playerPos.y, _renderer, NULL);
-
-    // Render player2 shooting direction
-    angle = entities.GetPlayerAim(2);
-    centerX = playerPos.x+PLAYER_RADIUS;
-    centerY = playerPos.y+PLAYER_RADIUS;
-    SDL_RenderDrawLine(_renderer, centerX, centerY, centerX + cos(angle)*(2*PLAYER_RADIUS), centerY + sin(angle)*(2*PLAYER_RADIUS));
+        // Render shooting direction
+        SDL_SetRenderDrawColor(_renderer, 255, 0, 255, 150);
+        float angle = player.aimDirection;
+        int centerX = playerPos.x+PLAYER_RADIUS;
+        int centerY = playerPos.y+PLAYER_RADIUS;
+        SDL_RenderDrawLine(_renderer, centerX, centerY, centerX + cos(angle)*(2*PLAYER_RADIUS), centerY + sin(angle)*(2*PLAYER_RADIUS));
+    }
 
     // Render map borders
-    SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255); // Black
+    SDL_SetRenderDrawColor(_renderer, 100, 100, 100, 255); // Black
     SDL_RenderDrawLine(_renderer, 0+MAP_OFFSET_HORI,         0+MAP_OFFSET_VERT,          MAP_WIDTH+MAP_OFFSET_HORI, 0+MAP_OFFSET_VERT); // Top
     SDL_RenderDrawLine(_renderer, 0+MAP_OFFSET_HORI,         MAP_HEIGHT+MAP_OFFSET_VERT, MAP_WIDTH+MAP_OFFSET_HORI, MAP_HEIGHT+MAP_OFFSET_VERT); // Bottom
     SDL_RenderDrawLine(_renderer, 0+MAP_OFFSET_HORI,         0+MAP_OFFSET_VERT,          0+MAP_OFFSET_HORI,         MAP_HEIGHT+MAP_OFFSET_VERT); // Left
     SDL_RenderDrawLine(_renderer, MAP_WIDTH+MAP_OFFSET_HORI, 0+MAP_OFFSET_VERT,          MAP_WIDTH+MAP_OFFSET_HORI, MAP_HEIGHT+MAP_OFFSET_VERT); // Right
-
-    // Render score
-    std::string scoreP1 = "P1:" + std::to_string(entities.GetPlayerScore(1));
-    std::string scoreP2 = "P2:" + std::to_string(entities.GetPlayerScore(2));
-    RenderString(scoreP1, 10, MAP_OFFSET_VERT); // Top left
-    RenderString(scoreP2, MAP_OFFSET_HORI + MAP_WIDTH + 10, MAP_OFFSET_VERT); // Top right
 
     //Update screen
     SDL_RenderPresent(_renderer);
@@ -207,7 +237,7 @@ void Display::RenderString(const std::string &input, int x, int y) const
 
 void Display::RenderBackground() const
 {
-    SDL_SetRenderDrawColor(_renderer, 0x00, 0x00, 0x00, 0x00);
+    SDL_SetRenderDrawColor(_renderer, 49, 69, 88, 255);
     SDL_RenderClear(_renderer);
 }
 
