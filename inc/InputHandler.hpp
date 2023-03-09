@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 #endif
 #include "Constants.hpp"
+#include <map>
 
 
 /* InputHandler takes care of all user input and window events.
@@ -15,11 +16,13 @@ class InputHandler
 {
 private:
     SDL_Event _event;
+    std::map<SDL_Keycode , INPUT_FLAGS> _keyCodesToInputFlags;
     //std::vector<SDL_KeyCode> _PlayerKeys; Should I use a std::map?
     
 public:
     InputHandler();
     ~InputHandler();
+    void Init(const std::map<SDL_Keycode, INPUT_FLAGS> &keyCodesToInputFlags);
     void EventHandler(INPUT_FLAGS &inputs);
 };  
 

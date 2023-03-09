@@ -34,22 +34,23 @@ enum INPUT_KEYS {
     INPUT_4,
     INPUT_5,
 };
-struct INPUT_FLAGS {
-    uint8_t QUIT : 1;
-    uint8_t P1SHOOT : 1;
-    uint8_t P2SHOOT : 1;
-    uint8_t P3SHOOT : 1;
-    uint8_t P4SHOOT : 1;
-    uint8_t P5SHOOT : 1;
-    uint8_t HOST : 1;
-    uint8_t JOIN : 1;
-    uint8_t DISCONNECT : 1;
-    uint8_t ESCAPE : 1;
-    uint8_t LOCAL_PLAY : 1;
-    uint8_t NUMBER2 : 1;
-    uint8_t NUMBER3 : 1;
-    uint8_t NUMBER4 : 1;
-    uint8_t NUMBER5 : 1;
+typedef uint32_t INPUT_FLAGS;
+enum INPUT_FLAG_SHIFT : INPUT_FLAGS {
+    QUIT,
+    P1SHOOT,
+    P2SHOOT,
+    P3SHOOT,
+    P4SHOOT,
+    P5SHOOT,
+    HOST,
+    JOIN,
+    DISCONNECT,
+    ESCAPE,
+    LOCAL_PLAY,
+    NUMBER2,
+    NUMBER3,
+    NUMBER4,
+    NUMBER5,
 };
 
 enum NETWORK_TYPES {
@@ -87,7 +88,10 @@ struct GAMELOOP_OUTPUT {
 const struct PLAYER_COLORS {
     uint8_t r, g, b;
 } PLAYER_COLOR_1{0, 0, 255}, PLAYER_COLOR_2{255, 0, 0}, PLAYER_COLOR_3{0, 255, 0}, PLAYER_COLOR_4{255, 255, 0}, PLAYER_COLOR_5{0, 255, 255};
-
+enum GAMESCENE_ID: uint8_t {
+    GAMESCENE_ID_MAINMENU,
+    GAMESCENE_ID_LOCALPLAY,
+};
 
 
 #endif /* CONSTANTS_HPP */

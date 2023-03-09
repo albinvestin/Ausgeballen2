@@ -5,15 +5,18 @@
 #else
 #include <SDL2/SDL.h>
 #endif
-#include <vector>
+#include <map>
 #include <algorithm>
 
 InputHandler::InputHandler()
-{
-}
+{}
 
 InputHandler::~InputHandler()
+{}
+
+void InputHandler::Init(const std::map<SDL_Keycode, INPUT_FLAGS> &keyCodesToInputFlags)
 {
+    _keyCodesToInputFlags = keyCodesToInputFlags;
 }
 
 void InputHandler::EventHandler(INPUT_FLAGS &inputs)
@@ -27,26 +30,33 @@ void InputHandler::EventHandler(INPUT_FLAGS &inputs)
         //User requests quit
         if (_event.type == SDL_QUIT)
         {
-            inputs.QUIT = 1;
+            inputs = (1 << INPUT_FLAG_SHIFT::QUIT);
             return;
         }
         if (_event.type == SDL_KEYDOWN && _event.key.repeat == 0)
         {
-            inputs.P1SHOOT =        _event.key.keysym.sym == SDLK_q;
-            inputs.P2SHOOT =        _event.key.keysym.sym == SDLK_p;
-            inputs.P3SHOOT =        _event.key.keysym.sym == SDLK_v;
-            inputs.P4SHOOT =        _event.key.keysym.sym == SDLK_z;
-            inputs.P5SHOOT =        _event.key.keysym.sym == SDLK_m;
-            inputs.HOST =           _event.key.keysym.sym == SDLK_h;
-            inputs.JOIN =           _event.key.keysym.sym == SDLK_j;
-            inputs.DISCONNECT =     _event.key.keysym.sym == SDLK_d;
-            inputs.ESCAPE =         _event.key.keysym.sym == SDLK_ESCAPE;
-            inputs.LOCAL_PLAY =     _event.key.keysym.sym == SDLK_l;
-            inputs.NUMBER2 =        _event.key.keysym.sym == SDLK_2;
-            inputs.NUMBER3 =        _event.key.keysym.sym == SDLK_3;
-            inputs.NUMBER4 =        _event.key.keysym.sym == SDLK_4;
-            inputs.NUMBER5 =        _event.key.keysym.sym == SDLK_5;
-            inputs.NUMBER5 =        _event.key.keysym.sym == SDLK_5;
+            const auto& search = _keyCodesToInputFlags.find(_event.key.keysym.sym);
+            if (search == _keyCodesToInputFlags.end())
+            {
+                continue;
+            }
+            inputs |= (1 << search->second);
+            
+            // inputs.P1SHOOT =        _event.key.keysym.sym == SDLK_q;
+            // inputs.P2SHOOT =        _event.key.keysym.sym == SDLK_p;
+            // inputs.P3SHOOT =        _event.key.keysym.sym == SDLK_v;
+            // inputs.P4SHOOT =        _event.key.keysym.sym == SDLK_z;
+            // inputs.P5SHOOT =        _event.key.keysym.sym == SDLK_m;
+            // inputs.HOST =           _event.key.keysym.sym == SDLK_h;
+            // inputs.JOIN =           _event.key.keysym.sym == SDLK_j;
+            // inputs.DISCONNECT =     _event.key.keysym.sym == SDLK_d;
+            // inputs.ESCAPE =         _event.key.keysym.sym == SDLK_ESCAPE;
+            // inputs.LOCAL_PLAY =     _event.key.keysym.sym == SDLK_l;
+            // inputs.NUMBER2 =        _event.key.keysym.sym == SDLK_2;
+            // inputs.NUMBER3 =        _event.key.keysym.sym == SDLK_3;
+            // inputs.NUMBER4 =        _event.key.keysym.sym == SDLK_4;
+            // inputs.NUMBER5 =        _event.key.keysym.sym == SDLK_5;
+            // inputs.NUMBER5 =        _event.key.keysym.sym == SDLK_5;
         }
     }
 
