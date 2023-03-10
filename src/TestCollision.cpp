@@ -15,9 +15,9 @@ bool FloatCompareEqual(float lhs, float rhs)
 
 void Test_Vector2()
 {
-    Vec2f p1Vel{1,0};
-    Vec2f p2Vel{0,0};
-    Vec2f velDiff2 = p2Vel - p1Vel;
+    // Vec2f p1Vel{1,0};
+    // Vec2f p2Vel{0,0};
+    // Vec2f velDiff2 = p2Vel - p1Vel;
 }
 
 

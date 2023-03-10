@@ -1,6 +1,6 @@
 #include "../inc/GameObj.hpp"
 
-int main( int argc, char* args[] )
+int main(int argc, char* args[])
 {
     GameObj game{};
     game.Start();

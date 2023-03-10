@@ -25,18 +25,54 @@ EntityHandler::~EntityHandler()
 
 void EntityHandler::Init(const uint8_t numberOfPlayers)
 {
-    _players.reserve(numberOfPlayers); // TODO Make number of players variable
-    Vec2f startPos{-(MAP_WIDTH/numberOfPlayers)/2, -(MAP_HEIGHT/numberOfPlayers)/2};
-    for (uint8_t index = 1; index <= numberOfPlayers; index++)
+    _players.reserve(MAX_PLAYERS); // TODO Make number of players variable
+    for (uint8_t i = 0; i < numberOfPlayers; i++)
     {
-        startPos.x += MAP_WIDTH/numberOfPlayers;
-        startPos.y += MAP_HEIGHT/numberOfPlayers;
-        // Vec2f spawningPos{(float) MAP_WIDTH*index/(numberOfPlayers+2)+MAP_WIDTH/(numberOfPlayers+2), (float) MAP_HEIGHT*index/(numberOfPlayers+2)+MAP_HEIGHT/(numberOfPlayers+2)};
-        Player NewPlayer{startPos, index};
-        _players.push_back(NewPlayer);
+        AddPlayer();
     }
     // printf("Entity player adress: %d\n", &_Players);
     // printf("Entity player adress: %d\n", &_Players[0] );
+}
+
+void EntityHandler::AddPlayer()
+{
+    _numberOfPlayers++;
+    Vec2f startPos{(float)-(MAP_WIDTH/MAX_PLAYERS)/2 + _numberOfPlayers*MAP_WIDTH/MAX_PLAYERS, 
+                   (float)-(MAP_HEIGHT/MAX_PLAYERS)/2 + _numberOfPlayers*MAP_HEIGHT/MAX_PLAYERS};
+    // Vec2f spawningPos{(float) MAP_WIDTH*index/(numberOfPlayers+2)+MAP_WIDTH/(numberOfPlayers+2), (float) MAP_HEIGHT*index/(numberOfPlayers+2)+MAP_HEIGHT/(numberOfPlayers+2)};
+    Player NewPlayer{startPos, _numberOfPlayers};
+    printf("Adding player with index %d\n", _numberOfPlayers);
+    _players.push_back(NewPlayer);
+}
+
+void EntityHandler::AddPlayer(Player &newPlayer)
+{
+    _numberOfPlayers++;
+    if (newPlayer.playerIndex != _numberOfPlayers)
+    {
+        printf("New player could not be added due to mismatch of number of local players and new player index!\n");
+        return;
+    }
+
+    // Vec2f spawningPos{(float) MAP_WIDTH*index/(numberOfPlayers+2)+MAP_WIDTH/(numberOfPlayers+2), (float) MAP_HEIGHT*index/(numberOfPlayers+2)+MAP_HEIGHT/(numberOfPlayers+2)};
+
+    printf("Adding player with index %d\n", _numberOfPlayers);
+    _players.push_back(newPlayer);
+}
+
+void EntityHandler::AddBullet(Bullet &newBullet)
+{
+    if (newBullet.id != _nextBulletID)
+    {
+        printf("New bullet could not be added due to mismatch of number of local _nextBulletID (%d) and new bullet id (%d)!\n", _nextBulletID, newBullet.id);
+        return;
+    }
+    _nextBulletID++;
+
+    // Vec2f spawningPos{(float) MAP_WIDTH*index/(numberOfPlayers+2)+MAP_WIDTH/(numberOfPlayers+2), (float) MAP_HEIGHT*index/(numberOfPlayers+2)+MAP_HEIGHT/(numberOfPlayers+2)};
+
+    printf("Adding bullet with id %d\n", _nextBulletID);
+    _existingBullets.push_back(newBullet);
 }
 
 bool isOutOfBounds(const Vec2f &position)
@@ -90,8 +126,8 @@ void EntityHandler::HandlePlayerActions(const GAMELOOP_ACTIONS &actions)
         {
             player = &_players[playerIndex];
             // Spawn bullet
-            Bullet b = {player->aimDirection, player->position, player->playerIndex, _nextBulletID};
-            _nextBulletID++; // Overflow allowed
+            Bullet b{player->aimDirection, player->position, player->playerIndex, _nextBulletID};
+            _nextBulletID++; // Overflow allowed, TODO how do we handle this when networking?
             _existingBullets.push_back(b);
             AddRecoil(player->playerIndex);
         }
@@ -102,6 +138,11 @@ GameSnapshot EntityHandler::GetGameSnapShot() const
 {
     GameSnapshot gs{_players, _existingBullets};
     return gs;
+}
+
+uint8_t EntityHandler::GetNumberOfPlayers() const
+{
+    return _numberOfPlayers;
 }
 
 // index starts at 1, TODO: check length of _Players before getting index
@@ -264,7 +305,6 @@ Vec2f EntityHandler::UpdateBulletPos(std::vector<Bullet>::iterator bullet) const
 
 std::vector<Bullet>::const_iterator EntityHandler::RemoveBulletFromIt(std::vector<Bullet>::const_iterator itB)
 {
-    printf("TRYING TO REMOVE BULLET FROM IT\n");
     // TODO make check if this is valid?
     return _existingBullets.erase(itB);
 }
@@ -281,4 +321,33 @@ void EntityHandler::HandleNetworkGameSnapshot(const GameSnapshot& gs)
 {
     _players = gs.players;
     _existingBullets = gs.bullets;
+}
+
+// TODO template these?
+void EntityHandler::HandleNetworkPlayerUpdate(Player &p)
+{
+    for (auto &&localplayer : _players)
+    {
+        if (p.playerIndex == localplayer.playerIndex)
+        {
+            localplayer = p;
+            return;
+        }
+    }
+    // No matching player, add a new
+    AddPlayer(p);
+}
+// TODO template these?
+void EntityHandler::HandleNetworkBulletUpdate(Bullet &b)
+{
+    for (auto &&localbullet : _existingBullets)
+    {
+        if (b.id == localbullet.id)
+        {
+            localbullet = b;
+            return;
+        }
+    }
+    // No matching bullet, add a new
+    AddBullet(b);
 }

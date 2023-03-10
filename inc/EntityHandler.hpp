@@ -16,12 +16,16 @@ private:
     // Player _P2;
     std::vector<Player> _players; // Make references to players instead of pass by value.
     std::vector<Bullet> _existingBullets;
+    uint8_t _numberOfPlayers = 0;
     uint16_t _nextBulletID = 0;
 public:
     EntityHandler();
     ~EntityHandler();
     void Init(const uint8_t numberOfPlayers);
-    void HandlePlayerActions(const GAMELOOP_ACTIONS &actions);
+    void AddPlayer();
+    void AddPlayer(Player &newPlayer);
+    void AddBullet(Bullet &newBullet);
+
     // Get methods
     Vec2f GetPlayerPos(uint8_t index) const; // Index starts at 1
     float GetPlayerAim(uint8_t index) const;
@@ -32,8 +36,10 @@ public:
     std::vector<Player> &GetAllPlayers(); // TODO This is bad?
     const std::vector<Player> &GetAllPlayers() const; // TODO This is bad?
     GameSnapshot GetGameSnapShot() const;
+    uint8_t GetNumberOfPlayers() const;
 
     // Update methods
+    void HandlePlayerActions(const GAMELOOP_ACTIONS &actions);
     Vec2f UpdatePlayerPos(uint8_t playerIndex);
     Vec2f AddRecoil(uint8_t playerIndex);
     void SetRecoilOfPlayer(const Vec2f &vel, uint8_t playerIndex);
@@ -44,6 +50,8 @@ public:
     std::vector<Bullet>::const_iterator RemoveBulletFromIt(std::vector<Bullet>::const_iterator itB);
     void HandleNetworkShoot(const Bullet &b, const Vec2f &v, uint8_t playerIndex, const Vec2f &playerPos);
     void HandleNetworkGameSnapshot(const GameSnapshot& gs);
+    void HandleNetworkPlayerUpdate(Player &p);
+    void HandleNetworkBulletUpdate(Bullet &b);
     void MoveAllObjects();
 };
 #endif /* ENTITYHANDLER_HPP */

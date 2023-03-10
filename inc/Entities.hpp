@@ -3,16 +3,10 @@
 #include "Vector2.hpp"
 #include "Constants.hpp"
 #include <vector>
-
 #include <cmath>
 
 struct Bullet
 {
-    // Data
-    Vec2f position;
-    Vec2f velocity;
-    uint8_t playerIndex;
-    uint16_t id;
     // Constructor
     Bullet() {}
     // Bullet(const Bullet &other) = default; // Copy operator
@@ -24,28 +18,35 @@ struct Bullet
       id{id}
     {}
 
+    // Data
+    Vec2f position;
+    Vec2f velocity;
+    uint8_t playerIndex;
+    uint16_t id;
+
     // Needed for Serialize
     template<typename Archive>
     void serialize(Archive & ar)
     {
-        ar(position, velocity, playerIndex);
+        ar(position, velocity, playerIndex, id);
     }
 };
 
 
 struct Player
 {
+    // Constructor
+    Player(Vec2f startPos, uint8_t playerIndex)
+    : position{startPos}, playerIndex{playerIndex}
+    {};
+    Player() {};
+
     // Data
     Vec2f position;
     Vec2f velocity;
     uint8_t playerIndex;
     float aimDirection = 0; // in Radians
     uint8_t score = 0;
-    // Constructor
-    Player(Vec2f startPos, uint8_t playerIndex)
-    : position{startPos}, playerIndex{playerIndex}
-    {};
-    Player() {};
 
     // Needed for Serialize
     template<typename Archive>

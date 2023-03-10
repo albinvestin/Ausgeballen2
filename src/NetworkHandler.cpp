@@ -106,11 +106,16 @@ std::vector<uint8_t> NetworkHandler::ServerPollAllEvents()
         return recivedActions;
     }
 
-    while (enet_host_service (_server, &_event, 0) > 0)
+    while (enet_host_service(_server, &_event, 0) > 0)
     {
         // printf("Got an event\n");
         switch (_event.type)
         {
+            case ENET_EVENT_TYPE_NONE:
+            {
+                printf("ENET_EVENT_TYPE_NONE not handled for server.\n");
+                break;
+            }
             case ENET_EVENT_TYPE_CONNECT:
             {
                 _event.peer->data = (void*)"FirstConnection";
@@ -119,6 +124,10 @@ std::vector<uint8_t> NetworkHandler::ServerPollAllEvents()
                     _event.peer->address.port,
                     (char*)_event.peer->data);
                 _peer = _event.peer; // Set first connected as _peer
+                // TODO Ask name of the new connection
+                recivedActions.push_back(NETWORK_ACTION_NEW_CONNECTION);
+                // TODO add a lobby before starting the game, then we can ensure that we have correct start criteria.
+
                 break;
             }
 
@@ -199,7 +208,7 @@ std::vector<uint8_t> NetworkHandler::ServerPollAllEvents()
 
             case ENET_EVENT_TYPE_DISCONNECT:
             {
-                printf ("%s disconnected.\n", _event.peer -> data);
+                printf ("%s disconnected.\n", (char*)_event.peer->data);
                 /* Reset the peer's client information. */
                 _event.peer -> data = NULL;
                 break;
@@ -222,6 +231,16 @@ void NetworkHandler::PollAllClientEvents()
     {
         switch(_event.type)
         {
+            case ENET_EVENT_TYPE_NONE:
+            {
+                printf("ENET_EVENT_TYPE_NONE not handled for client.\n");
+                break;
+            }
+            case ENET_EVENT_TYPE_CONNECT:
+            {
+                printf("ENET_EVENT_TYPE_CONNECT not handled for client.\n");
+                break;
+            }
             case ENET_EVENT_TYPE_RECEIVE:
                 // printf("Recived data\n");
                 if (_event.packet->dataLength > 0)
@@ -270,15 +289,16 @@ void NetworkHandler::PollAllClientEvents()
                     }
                     case NETWORK_TYPE_GAMESNAPSHOT:
                     {
-                        GameSnapshot gs;
-                        {
-                            // Encapsulate archive to make sure all content is flused
-                            cereal::PortableBinaryInputArchive inArchive(iss);
-                            inArchive(header, gs);
-                        }
+                        printf("NETWORK_TYPE_GAMESNAPSHOT not implemented!\n");
+                        // GameSnapshot gs;
+                        // {
+                        //     // Encapsulate archive to make sure all content is flused
+                        //     cereal::PortableBinaryInputArchive inArchive(iss);
+                        //     inArchive(header, gs);
+                        // }
 
-                        // TODO Handle the recived actions after the network loop?
-                        _entities->HandleNetworkGameSnapshot(gs);
+                        // // TODO Handle the recived actions after the network loop?
+                        // _entities->HandleNetworkGameSnapshot(gs);
                         break;
                     }
                     case NETWORK_TYPE_UINT8:
@@ -291,6 +311,34 @@ void NetworkHandler::PollAllClientEvents()
                         }
                         printf("Got uint8_t: %u\n", inputdata);
 
+                        break;
+                    }
+                    case NETWORK_TYPE_PLAYER:
+                    {
+                        // Update player with matching ID
+                        Player p;
+                        {
+                            // Encapsulate archive to make sure all content is flused
+                            cereal::PortableBinaryInputArchive inArchive(iss);
+                            inArchive(header, p);
+                        }
+
+                        // TODO Handle the recived actions after the network loop?
+                        _entities->HandleNetworkPlayerUpdate(p);
+                        break;
+                    }
+                    case NETWORK_TYPE_BULLET:
+                    {
+                        // Update bullet with matching ID
+                        Bullet b;
+                        {
+                            // Encapsulate archive to make sure all content is flused
+                            cereal::PortableBinaryInputArchive inArchive(iss);
+                            inArchive(header, b);
+                        }
+
+                        // TODO Handle the recived actions after the network loop?
+                        _entities->HandleNetworkBulletUpdate(b);
                         break;
                     }
 
@@ -327,13 +375,26 @@ void NetworkHandler::Disconnect()
     {
         switch(_event.type)
         {
+            case ENET_EVENT_TYPE_NONE:
+            {
+                printf("ENET_EVENT_TYPE_NONE not handled when disconnecting.\n");
+                break;
+            }
+            case ENET_EVENT_TYPE_CONNECT:
+            {
+                printf("ENET_EVENT_TYPE_CONNECT not handled when disconnecting.\n");
+                break;
+            }
             case ENET_EVENT_TYPE_RECEIVE:
+            {
                 enet_packet_destroy(_event.packet);
                 break;
+            }
             case ENET_EVENT_TYPE_DISCONNECT:
+            {
                 printf("Disconnection succeeded.\n");
                 return;
-                break;
+            }
         }
     }
 
@@ -357,6 +418,7 @@ std::string NetworkHandler::GetIPFromAdress(ENetAddress &address) const
 
 void NetworkHandler::C2SShoot(uint8_t playerIndex) const
 {
+    printf("playerindex: %d\n", playerIndex);
     uint8_t header = NETWORK_TYPE_UINT8;
     uint8_t action = NETWORK_TYPE_NOTHING;
     switch (playerIndex)
@@ -387,7 +449,7 @@ void NetworkHandler::C2SGameLoopActions(const GAMELOOP_ACTIONS &actions) const
     {
         for (uint8_t playerIndex = 0; playerIndex < MAX_PLAYERS; playerIndex++)
         {
-            if (actions.PlayersShooting & (playerIndex + 1))
+            if (1 & (actions.PlayersShooting >> playerIndex))
             {
                 C2SShoot(playerIndex + 1);
             }
@@ -397,15 +459,28 @@ void NetworkHandler::C2SGameLoopActions(const GAMELOOP_ACTIONS &actions) const
 
 void NetworkHandler::S2CGameSnapshot(const GameSnapshot &gs) const
 {
-    uint8_t header = NETWORK_TYPE_GAMESNAPSHOT;
-    std::ostringstream oss(std::ios_base::out|std::ios::binary);
+    for (auto &&player : gs.players)
     {
-        // Encapsulate archive to make sure all content is flused
-        cereal::PortableBinaryOutputArchive outArchive(oss);
-        outArchive(header, gs); // Serialize
+        uint8_t header = NETWORK_TYPE_PLAYER;
+        std::ostringstream oss(std::ios_base::out|std::ios::binary);
+        {
+            // Encapsulate archive to make sure all content is flused
+            cereal::PortableBinaryOutputArchive outArchive(oss);
+            outArchive(header, player); // Serialize
+        }
+        SendPacket(oss);
     }
-
-    SendPacket(oss);
+    for (auto &&bullet : gs.bullets)
+    {
+        uint8_t header = NETWORK_TYPE_BULLET;
+        std::ostringstream oss(std::ios_base::out|std::ios::binary);
+        {
+            // Encapsulate archive to make sure all content is flused
+            cereal::PortableBinaryOutputArchive outArchive(oss);
+            outArchive(header, bullet); // Serialize
+        }
+        SendPacket(oss);
+    }
 }
 
 void NetworkHandler::SendPacket(std::ostringstream &data) const

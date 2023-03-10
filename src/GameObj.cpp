@@ -51,12 +51,12 @@ void GameObj::StartMainMenu()
         if (_inputFlags.HOST)
         {
             _networkMode = NETWORK_MODE_SERVER;
-            StartGameLoop(2);
+            StartGameLoop(1);
         }
         else if (_inputFlags.JOIN)
         {
             _networkMode = NETWORK_MODE_CLIENT;
-            StartGameLoop(2);
+            StartGameLoop(1);
         }
         if (_inputFlags.LOCAL_PLAY)
         {
@@ -124,17 +124,18 @@ void GameObj::StartGameLoop(const uint8_t numberOfPlayers)
             printf("Unsucessful hosting!\n");
             return;
         }
-        _entityHandler.Init(1);
+        _entityHandler.Init(numberOfPlayers);
     }
     else if (_networkMode == NETWORK_MODE_CLIENT)
     {
+        printf("Trying to join default ip...\n");
         bool success = _networkHandler.Join();
         if (!success)
         {
             printf("Unsucessful joining!\n");
             return;
         }
-        _entityHandler.Init(1);
+        _entityHandler.Init(numberOfPlayers);
     }
     else if (_networkMode == NETWORK_MODE_LOCAL)
     {
@@ -181,6 +182,7 @@ void GameObj::StartGameLoop(const uint8_t numberOfPlayers)
         if (_networkMode == NETWORK_MODE_CLIENT)
         {
             _networkHandler.C2SGameLoopActions(actions);
+            actions.PlayersShooting = 0;
         }
 
         if (_networkMode == NETWORK_MODE_SERVER)
@@ -194,15 +196,26 @@ void GameObj::StartGameLoop(const uint8_t numberOfPlayers)
                 actions.PlayersShooting |= ((iAction == NETWORK_ACTION_SHOOT_P3) << 2);
                 actions.PlayersShooting |= ((iAction == NETWORK_ACTION_SHOOT_P4) << 3);
                 actions.PlayersShooting |= ((iAction == NETWORK_ACTION_SHOOT_P5) << 4);
+
+                if (iAction == NETWORK_ACTION_NEW_CONNECTION)
+                {
+                    // Add a player
+                    _entityHandler.AddPlayer();
+                    clientUpdateNeeded = true;
+                }
             }
+        }
+        if (actions.PlayersShooting > 0)
+        {
+            clientUpdateNeeded = true;
         }
 
         // Fixed rate updates up to current time, using GAME_UPDATE_TIME as refresh rate.
-        GAMELOOP_OUTPUT output = GameLoop(actions, currentTime, lastUpdateTime, numberOfPlayers);
+        GAMELOOP_OUTPUT output = GameLoop(actions, currentTime, lastUpdateTime, _entityHandler.GetNumberOfPlayers());
         if (output.playerWon)
         {
             std::vector< std::pair<uint8_t,uint8_t> > playerAndScoreDesc;
-            for (uint8_t iPlayer = 1; iPlayer <= numberOfPlayers; iPlayer++) // TODO instead use the connected amount of players?
+            for (uint8_t iPlayer = 1; iPlayer <= _entityHandler.GetNumberOfPlayers(); iPlayer++) // TODO instead use the connected amount of players?
             {
                 playerAndScoreDesc.push_back(std::make_pair(iPlayer,_entityHandler.GetPlayerScore(iPlayer)));
             }

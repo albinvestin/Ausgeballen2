@@ -274,7 +274,7 @@ void Display::RenderEndScore(const std::vector<std::pair<uint8_t,uint8_t>> &play
     RenderBackground();
     // Render
     std::string text;
-    for (int i=0; i < playerAndScoreDesc.size(); i++)
+    for (size_t i=0; i < playerAndScoreDesc.size(); i++)
     {
         if (i == 0)
         {
