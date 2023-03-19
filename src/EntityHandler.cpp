@@ -5,6 +5,58 @@
 #include <cmath>
 #include <stdio.h>
 
+Entity &EntityManager::AddEntity(entitytag_t tag)
+{
+    _entitiesToAddNextFrame.push_back(Entity(tag));
+    return _entitiesToAddNextFrame.back();
+}
+
+// Removes the entity on the next frame.
+void EntityManager::RemoveEntity(Entity & entity)
+{
+    entity._active = false;
+}
+
+std::vector<Entity> &EntityManager::GetEntities(entitytag_t tag)
+{
+    return _entityMap[tag];
+}
+
+std::map<entitytag_t, std::vector<Entity>> &EntityManager::GetAllEntities()
+{
+    return _entityMap;
+}
+
+void EntityManager::Update()
+{
+    // Remove marked entities
+    auto iteratorOverTags = _entityMap.begin();
+    while (iteratorOverTags != _entityMap.end())
+    {
+        auto &entities = iteratorOverTags->second;
+        auto iteratorOverEntities = entities.begin();
+        while (iteratorOverEntities != entities.end())
+        {
+            if (!iteratorOverEntities->_active)
+            {
+                iteratorOverEntities = entities.erase(iteratorOverEntities); // TODO this is very inefficient for vectors.
+            }
+            else
+            {
+                iteratorOverEntities++;
+            }
+        }
+        // Never remove tags with no entities, just keep them laying.
+        iteratorOverTags++;
+    }
+
+    // Add new entites
+    for (auto &&entity : _entitiesToAddNextFrame)
+    {
+        _entityMap[entity._tag].push_back(entity); // TODO can I move it instead?
+    }
+}
+
 // Spawn players?
 EntityHandler::EntityHandler()//const uint8_t numberOfPlayers)
 {
@@ -45,7 +97,7 @@ void EntityHandler::AddPlayer()
     _players.push_back(NewPlayer);
 }
 
-void EntityHandler::AddPlayer(Player &newPlayer)
+void EntityHandler::AddPlayer(const Player &newPlayer)
 {
     _numberOfPlayers++;
     if (newPlayer.playerIndex != _numberOfPlayers)
@@ -60,7 +112,7 @@ void EntityHandler::AddPlayer(Player &newPlayer)
     _players.push_back(newPlayer);
 }
 
-void EntityHandler::AddBullet(Bullet &newBullet)
+void EntityHandler::AddBullet(const Bullet &newBullet)
 {
     if (newBullet.id != _nextBulletID)
     {
@@ -119,17 +171,13 @@ void EntityHandler::MoveAllObjects()
 // Handle shoot inputs and spawns bullets
 void EntityHandler::HandlePlayerActions(const GAMELOOP_ACTIONS &actions)
 {
-    for (uint8_t playerIndex = 0; playerIndex < _players.size(); playerIndex++)
+    for (auto &&player : _players)
     {
-        Player* player;
-        if ((actions.PlayersShooting >> playerIndex) & ((uint8_t) 1))
+        if ((actions.PlayersShooting >> (player.playerIndex - 1)) & ((uint8_t) 1))
         {
-            player = &_players[playerIndex];
             // Spawn bullet
-            Bullet b{player->aimDirection, player->position, player->playerIndex, _nextBulletID};
-            _nextBulletID++; // Overflow allowed, TODO how do we handle this when networking?
-            _existingBullets.push_back(b);
-            AddRecoil(player->playerIndex);
+            AddBullet(Bullet(player.aimDirection, player.position, player.playerIndex, _nextBulletID));
+            AddRecoil(player.playerIndex);
         }
     }
 }

@@ -90,7 +90,11 @@ struct GAMELOOP_OUTPUT {
 const struct PLAYER_COLORS {
     uint8_t r, g, b;
 } PLAYER_COLOR_1{0, 0, 255}, PLAYER_COLOR_2{255, 0, 0}, PLAYER_COLOR_3{0, 255, 0}, PLAYER_COLOR_4{255, 255, 0}, PLAYER_COLOR_5{0, 255, 255};
-
+typedef uint8_t entitytag_t;
+enum ENTITY_TAG : entitytag_t {
+    ENTITY_TAG_PLAYER,
+    ENTITY_TAG_BULLET,
+};
 
 
 #endif /* CONSTANTS_HPP */

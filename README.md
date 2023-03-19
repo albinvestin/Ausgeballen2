@@ -28,8 +28,9 @@ TODO:
 - [x] Handle framerate spikes (grabbing window)
 - [x] Make main menu screen
     - [x] Add host and join functionality to main menu
-    - [] Add local functionality to main menu
+    - [x] Add local functionality to main menu
     - [] Add "button" selection before entering game
+    - [] Add lobby when in online mode before starting the game
 - [x] Make end game screen with result
 - [x] Make local play possible
     - [x] Select number of players
@@ -41,7 +42,7 @@ TODO:
 - [] Add music
 - [] Add sound effects
 - [] Add particles
-- [] Change to ECS?
+- [WIP] Change to ECS?
 
 References:
 https://floating-point-gui.de/errors/comparison/

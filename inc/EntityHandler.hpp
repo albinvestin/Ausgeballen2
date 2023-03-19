@@ -3,10 +3,28 @@
 #include "Entities.hpp"
 #include "Constants.hpp"
 #include <vector>
+#include <map>
+#include <utility>
 // TODO: You should not be #includeing at all. Since you only store pointers, you do not need the full definition of the classes - you only need the declaration. Simply use the forward declarations by themselves
 
 // Forward delcaration:
 // class NetworkHandler;
+
+class EntityManager
+{
+private:
+    std::map<entitytag_t, std::vector<Entity>> _entityMap;
+    std::vector<Entity> _entitiesToAddNextFrame;
+public:
+    EntityManager() {}
+    ~EntityManager() {}
+
+    void Update();
+    Entity &AddEntity(entitytag_t tag);
+    void RemoveEntity(Entity & entity);
+    std::vector<Entity> &GetEntities(entitytag_t tag);
+    std::map<entitytag_t, std::vector<Entity>> &GetAllEntities();
+};
 
 
 class EntityHandler
@@ -23,8 +41,8 @@ public:
     ~EntityHandler();
     void Init(const uint8_t numberOfPlayers);
     void AddPlayer();
-    void AddPlayer(Player &newPlayer);
-    void AddBullet(Bullet &newBullet);
+    void AddPlayer(const Player &newPlayer);
+    void AddBullet(const Bullet &newBullet);
 
     // Get methods
     Vec2f GetPlayerPos(uint8_t index) const; // Index starts at 1
