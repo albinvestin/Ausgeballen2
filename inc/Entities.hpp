@@ -86,8 +86,19 @@ private:
 public:
     ~Entity() {};
 
+    entitytag_t GetTag() const
+    {
+        return _tag;
+    }
+
     template <typename Component>
     Component &GetComponent()
+    {
+        return std::get<Component>(_components);
+    }
+
+    template <typename Component>
+    const Component &GetComponent() const
     {
         return std::get<Component>(_components);
     }

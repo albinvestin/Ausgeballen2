@@ -9,6 +9,7 @@ const uint16_t MAP_HEIGHT = 700;
 const uint16_t MAP_OFFSET_HORI = (SCREEN_WIDTH-MAP_WIDTH)/2;
 const uint16_t MAP_OFFSET_VERT = 25;
 const uint16_t BULLET_INIT_VEL = 20;
+const float PLAYER_AIM_SPEED = M_PI/30;
 const float PLAYER_FRICTION = 0.99;
 const float PLAYER_RECOIL = 10;
 const uint16_t PLAYER_RADIUS = 15;
@@ -87,9 +88,14 @@ struct GAMELOOP_ACTIONS {
 struct GAMELOOP_OUTPUT {
     uint8_t playerWon = false;
 };
-const struct PLAYER_COLORS {
-    uint8_t r, g, b;
-} PLAYER_COLOR_1{0, 0, 255}, PLAYER_COLOR_2{255, 0, 0}, PLAYER_COLOR_3{0, 255, 0}, PLAYER_COLOR_4{255, 255, 0}, PLAYER_COLOR_5{0, 255, 255};
+const uint8_t PLAYER_COLORS[MAX_PLAYERS][3] = {
+    {0, 0, 255},
+    {255, 0, 0},
+    {0, 255, 0},
+    {255, 255, 0},
+    {0, 255, 255}
+};
+
 typedef uint8_t entitytag_t;
 enum ENTITY_TAG : entitytag_t {
     ENTITY_TAG_PLAYER,

@@ -4,16 +4,16 @@
 #include "Vector2.hpp"
 #include "Texture.hpp"
 
-class Component
+struct Component
 {
-public:
     bool has = false;
     virtual ~Component() {}
 };
 
-class CTransform : public Component
+// Components should be small and grouped with members that are accessed together.
+
+struct CTransform : public Component
 {
-public:
     Vec2f position{0, 0};
     Vec2f velocity{0, 0};
 
@@ -24,28 +24,32 @@ public:
         : position(p), velocity(vel) {}
 };
 
-class CPlayer : public Component
+struct CCannon : public Component
 {
-public:
-    uint8_t playerIndex  = 255;
     float   aimDirection = 0; // in Radians
-    uint8_t score        = 0;
+    bool    isShooting = false;
 
-    CPlayer() {}
-    CPlayer(uint8_t playerIndex, float aimDirection)
-        : playerIndex(playerIndex), aimDirection(aimDirection) {}
+    CCannon() {}
+    CCannon(float aimDirection)
+        : aimDirection(aimDirection) {}
 };
 
-class CBullet : public Component
+struct CScore : public Component
 {
-public:
+    uint8_t score = 0;
+
+    CScore() {}
+};
+
+struct CIndex : public Component
+{
     uint8_t playerIndex = 255;
 
-    CBullet() {}
-    CBullet(uint8_t playerIndex)
+    CIndex() {}
+    CIndex(uint8_t playerIndex)
         : playerIndex(playerIndex) {}
 };
 
-typedef std::tuple<CTransform, CPlayer, CBullet> AvailableComponents;
+typedef std::tuple<CTransform, CCannon, CScore, CIndex> AvailableComponents;
 
 #endif /* COMPONENTS_HPP */

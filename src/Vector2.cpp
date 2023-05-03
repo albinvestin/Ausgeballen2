@@ -36,6 +36,13 @@ Vec2f Vec2f::operator+=(const Vec2f &vec)
     y += vec.y;
     return *this;
 }
+Vec2f Vec2f::operator-=(const Vec2f &vec)
+{
+    // Use compound assignment
+    x -= vec.x;
+    y -= vec.y;
+    return *this;
+}
 
 float DotProduct(const Vec2f &v1, const Vec2f &v2)
 {

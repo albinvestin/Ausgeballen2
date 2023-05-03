@@ -13,6 +13,7 @@ struct Vec2f
     Vec2f(const Vec2f &other); // Copy operator
     Vec2f operator*=(const float multiplier);
     Vec2f operator+=(const Vec2f &vec);
+    Vec2f operator-=(const Vec2f &vec);
 
     // Needed for Serialize
     template<typename Archive>

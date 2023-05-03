@@ -11,8 +11,8 @@ public:
     void HandleCollisons(EntityHandler &entities);
 };
 
-float Squaredf(const float x);
-Vec2f ElasticCollision(const Vec2f &playerPos1, const Vec2f &playerPos2, const Vec2f &p1Vel, const Vec2f &p2Vel);
+// float Squaredf(const float x);
+// Vec2f ElasticCollision(const Vec2f &playerPos1, const Vec2f &playerPos2, const Vec2f &p1Vel, const Vec2f &p2Vel);
 
 
 

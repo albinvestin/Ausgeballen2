@@ -72,7 +72,7 @@ public:
     bool LoadFromFile(Texture *const texture, std::string relPath); // Help function for loadTextures
     bool loadTextures();
     void close();
-    void RenderAll(EntityHandler const& entities) const;
+    void RenderAll(EntityManager const& entityManager) const;
     void RenderBackground() const;
     void RenderMainMenu() const;
     void RenderLocalPlay() const;

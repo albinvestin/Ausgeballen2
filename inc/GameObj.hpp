@@ -11,8 +11,9 @@ class GameObj
 {
 private:
     Display _display{};
-    EntityHandler _entityHandler{};
-    CollisionHandler _collisionHandler{};
+    // EntityHandler _entityHandler{};
+    EntityManager _entityManager{};
+    // CollisionHandler _collisionHandler{};
     NetworkHandler _networkHandler{};
     InputHandler _inputHandler{};
     INPUT_FLAGS _inputFlags{};
@@ -21,8 +22,13 @@ private:
     void StartLocalPlay();
     void StartEndScore(const std::vector<std::pair<uint8_t,uint8_t>> &playerAndScoreDesc);
     void StartGameLoop(const uint8_t numberOfplayers);
-    GAMELOOP_OUTPUT GameLoop(const GAMELOOP_ACTIONS &actions, const uint64_t currentTime, uint64_t &lastUpdateTime, uint8_t numberOfPlayers);
+    GAMELOOP_OUTPUT GameLoop(const uint64_t currentTime, uint64_t &lastUpdateTime, uint8_t numberOfPlayers);
     void Close();
+    void SMovement();
+    void SPlayerActions();
+    void SpawnBullet(float aimDirection, const Vec2f &position, uint8_t playerIndex);
+    void SUserInput();
+    void SCollisions();
 public:
     GameObj() {};
     ~GameObj() {};

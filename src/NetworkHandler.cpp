@@ -418,7 +418,7 @@ std::string NetworkHandler::GetIPFromAdress(ENetAddress &address) const
 
 void NetworkHandler::C2SShoot(uint8_t playerIndex) const
 {
-    printf("playerindex: %d\n", playerIndex);
+    printf("playerIndex: %d\n", playerIndex);
     uint8_t header = NETWORK_TYPE_UINT8;
     uint8_t action = NETWORK_TYPE_NOTHING;
     switch (playerIndex)

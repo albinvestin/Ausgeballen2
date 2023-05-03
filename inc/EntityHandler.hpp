@@ -5,25 +5,31 @@
 #include <vector>
 #include <map>
 #include <utility>
+#include <memory>
 // TODO: You should not be #includeing at all. Since you only store pointers, you do not need the full definition of the classes - you only need the declaration. Simply use the forward declarations by themselves
 
 // Forward delcaration:
 // class NetworkHandler;
 
+typedef std::vector<std::shared_ptr<Entity>> EntityVec;
+
 class EntityManager
 {
 private:
-    std::map<entitytag_t, std::vector<Entity>> _entityMap;
-    std::vector<Entity> _entitiesToAddNextFrame;
+    EntityVec _allEntities;
+    std::map<entitytag_t, EntityVec> _entityMap;
+    EntityVec _entitiesToAddNextUpdate;
 public:
     EntityManager() {}
     ~EntityManager() {}
 
     void Update();
-    Entity &AddEntity(entitytag_t tag);
+    std::shared_ptr<Entity> AddEntity(entitytag_t tag);
     void RemoveEntity(Entity & entity);
-    std::vector<Entity> &GetEntities(entitytag_t tag);
-    std::map<entitytag_t, std::vector<Entity>> &GetAllEntities();
+    EntityVec &GetEntities(entitytag_t tag);
+    const EntityVec &GetEntities(entitytag_t tag) const;
+    EntityVec &GetAllEntities();
+    const EntityVec &GetAllEntities() const;
 };
 
 

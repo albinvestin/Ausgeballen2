@@ -4,57 +4,79 @@
 #include "../inc/Constants.hpp"
 #include <cmath>
 #include <stdio.h>
+#include <algorithm>
 
-Entity &EntityManager::AddEntity(entitytag_t tag)
+std::shared_ptr<Entity> EntityManager::AddEntity(entitytag_t tag)
 {
-    _entitiesToAddNextFrame.push_back(Entity(tag));
-    return _entitiesToAddNextFrame.back();
+    auto newEntity = std::shared_ptr<Entity>(new Entity(tag));
+    _entitiesToAddNextUpdate.push_back(newEntity);
+    return newEntity;
 }
 
-// Removes the entity on the next frame.
+// Removes the entity on the next update.
 void EntityManager::RemoveEntity(Entity & entity)
 {
     entity._active = false;
 }
 
-std::vector<Entity> &EntityManager::GetEntities(entitytag_t tag)
+EntityVec &EntityManager::GetEntities(entitytag_t tag)
 {
-    return _entityMap[tag];
+    const auto &vec = _entityMap.find(tag);
+    if (vec != _entityMap.end())
+    {
+        return vec->second;
+    }
+    else
+    {
+        static std::vector<std::shared_ptr<Entity>> emptyVec{};
+        return emptyVec;
+    }
+}
+const EntityVec &EntityManager::GetEntities(entitytag_t tag) const
+{
+    const auto &vec = _entityMap.find(tag);
+    if (vec != _entityMap.end())
+    {
+        return vec->second;
+    }
+    else
+    {
+        static std::vector<std::shared_ptr<Entity>> emptyVec{};
+        return emptyVec;
+    }
 }
 
-std::map<entitytag_t, std::vector<Entity>> &EntityManager::GetAllEntities()
+EntityVec &EntityManager::GetAllEntities()
 {
-    return _entityMap;
+    return _allEntities;
+}
+const EntityVec &EntityManager::GetAllEntities() const
+{
+    return _allEntities;
 }
 
 void EntityManager::Update()
 {
-    // Remove marked entities
+    // Remove inactive entities, first remove the reference, then the entity.
     auto iteratorOverTags = _entityMap.begin();
     while (iteratorOverTags != _entityMap.end())
     {
         auto &entities = iteratorOverTags->second;
-        auto iteratorOverEntities = entities.begin();
-        while (iteratorOverEntities != entities.end())
-        {
-            if (!iteratorOverEntities->_active)
-            {
-                iteratorOverEntities = entities.erase(iteratorOverEntities); // TODO this is very inefficient for vectors.
-            }
-            else
-            {
-                iteratorOverEntities++;
-            }
-        }
+        entities.erase(std::remove_if(entities.begin(), entities.end(), 
+            [](const std::shared_ptr<Entity> &e) {return !e->_active;}), entities.end());
         // Never remove tags with no entities, just keep them laying.
         iteratorOverTags++;
     }
+    _allEntities.erase(std::remove_if(_allEntities.begin(), _allEntities.end(), 
+        [](const std::shared_ptr<Entity> &e) {return !e->_active;}), _allEntities.end());
 
     // Add new entites
-    for (auto &&entity : _entitiesToAddNextFrame)
+    for (auto &&entity : _entitiesToAddNextUpdate)
     {
-        _entityMap[entity._tag].push_back(entity); // TODO can I move it instead?
+        _allEntities.push_back(entity);
+        _entityMap[entity->_tag].push_back(entity);
     }
+    _entitiesToAddNextUpdate.clear();
 }
 
 // Spawn players?

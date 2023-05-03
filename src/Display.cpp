@@ -119,7 +119,7 @@ Vec2f Display::TranslatePosToRenderSpace(const Vec2f &pos) const
     return renderSpacePos;
 }
 
-void Display::RenderAll(EntityHandler const &entities) const
+void Display::RenderAll(EntityManager const &entityManager) const
 {
     //Clear screen
     RenderBackground();
@@ -127,80 +127,38 @@ void Display::RenderAll(EntityHandler const &entities) const
     //Render background texture to screen
     // _HearthTexture.render( 0, 0, _Renderer );
 
-    // Render bullets
-    std::vector<Vec2f> AllBulletPos = entities.GetAllBulletPos();
-    std::vector<Vec2f>::iterator it = AllBulletPos.begin();
-    while (it != AllBulletPos.end())
+    // Render entities
+    auto &bullets = entityManager.GetEntities(ENTITY_TAG_BULLET);
+    for (auto &&bullet : bullets)
     {
-        Vec2f bulletPos = TranslatePosToRenderSpace(*it);
-        _bulletTexture.Render( bulletPos.x, bulletPos.y, _renderer, NULL );
-        ++it;
+        auto &cTransform = bullet->GetComponent<CTransform>();
+        Vec2f pos{TranslatePosToRenderSpace(cTransform.position)};
+        _bulletTexture.Render(pos.x, pos.y, _renderer, NULL); // TODO add texture as component.
     }
 
-    //Vec2 bulletPos = (*entities)..GetBullet1Pos();
-    //_HearthTexture.render( bulletPos.x, bulletPos.y, _Renderer );
-
-    //Render Player1 to the screen
-    auto &allPlayers = entities.GetAllPlayers();
-
-    for (auto &&player : allPlayers)
+    auto &players = entityManager.GetEntities(ENTITY_TAG_PLAYER);
+    for (auto &&player : players)
     {
-        // Render player
-        Vec2f tempPos = player.position;
-        Vec2f playerPos = TranslatePosToRenderSpace(tempPos);
-        switch (player.playerIndex)
-        {
-        case 1:
-            {
-                _ballTexture.ModifyColor(PLAYER_COLOR_1.r, PLAYER_COLOR_1.g, PLAYER_COLOR_1.b);
-                // Render score
-                std::string scoreP1 = "P1:" + std::to_string(player.score);
-                RenderString(scoreP1, 10, MAP_OFFSET_VERT + ALPHABET_CHAR_HEIGHT+20); // Top left
-                break;
-            }
-        case 2:
-            {
-                _ballTexture.ModifyColor(PLAYER_COLOR_2.r, PLAYER_COLOR_2.g, PLAYER_COLOR_2.b);
-                // Render score
-                std::string scoreP2 = "P2:" + std::to_string(player.score);
-                RenderString(scoreP2, 10, MAP_OFFSET_VERT + ALPHABET_CHAR_HEIGHT*2+20); // Top left
-                break;
-            }
-        case 3:
-            {
-                _ballTexture.ModifyColor(PLAYER_COLOR_3.r, PLAYER_COLOR_3.g, PLAYER_COLOR_3.b);
-                // Render score
-                std::string scoreP3 = "P3:" + std::to_string(player.score);
-                RenderString(scoreP3, 10, MAP_OFFSET_VERT + ALPHABET_CHAR_HEIGHT*3+20); // Top left
-                break;
-            }
-        case 4:
-            {
-                _ballTexture.ModifyColor(PLAYER_COLOR_4.r, PLAYER_COLOR_4.g, PLAYER_COLOR_4.b);
-                // Render score
-                std::string scoreP4 = "P4:" + std::to_string(player.score);
-                RenderString(scoreP4, 10, MAP_OFFSET_VERT + ALPHABET_CHAR_HEIGHT*4+20); // Top left
-                break;
-            }
-        case 5:
-            {
-                _ballTexture.ModifyColor(PLAYER_COLOR_5.r, PLAYER_COLOR_5.g, PLAYER_COLOR_5.b);
-                // Render score
-                std::string scoreP5 = "P5:" + std::to_string(player.score);
-                RenderString(scoreP5, 10, MAP_OFFSET_VERT + ALPHABET_CHAR_HEIGHT*5+20); // Top left
-                break;
-            }
-        default:
-            break;
-        }
-        _ballTexture.Render(playerPos.x, playerPos.y, _renderer, NULL);
+        auto &cIndex = player->GetComponent<CIndex>();
+        auto &cTransform = player->GetComponent<CTransform>();
+        auto &cCannon = player->GetComponent<CCannon>();
+        auto &cScore = player->GetComponent<CScore>();
 
+        // Render Player
+        Vec2f pos{TranslatePosToRenderSpace(cTransform.position)};
+        _ballTexture.ModifyColor(PLAYER_COLORS[cIndex.playerIndex][0], PLAYER_COLORS[cIndex.playerIndex][1], PLAYER_COLORS[cIndex.playerIndex][2]);
+        _ballTexture.Render(pos.x, pos.y, _renderer, NULL); // TODO add texture as component.
+    
         // Render shooting direction
         SDL_SetRenderDrawColor(_renderer, 255, 0, 255, 150);
-        float angle = player.aimDirection;
-        int centerX = playerPos.x+PLAYER_RADIUS;
-        int centerY = playerPos.y+PLAYER_RADIUS;
+        float angle = cCannon.aimDirection;
+        int centerX = pos.x+PLAYER_RADIUS;
+        int centerY = pos.y+PLAYER_RADIUS;
         SDL_RenderDrawLine(_renderer, centerX, centerY, centerX + cos(angle)*(2*PLAYER_RADIUS), centerY + sin(angle)*(2*PLAYER_RADIUS));
+
+        // Render score
+        std::string score = "P" + std::to_string(cIndex.playerIndex) + ":" + std::to_string(cScore.score);
+        RenderString(score, 10, MAP_OFFSET_VERT + ALPHABET_CHAR_HEIGHT*cIndex.playerIndex+20);
     }
 
     // Render map borders
