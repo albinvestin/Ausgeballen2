@@ -37,7 +37,6 @@ public:
     bool Join();
     void Disconnect();
     void C2SShoot(uint8_t playerIndex) const;
-    void S2CGameSnapshot(const GameSnapshot &gs) const;
     void C2SGameLoopActions(const GAMELOOP_ACTIONS &actions) const;
 };
 

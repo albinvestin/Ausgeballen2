@@ -3,7 +3,6 @@
 #include "Display.hpp"
 #include "Constants.hpp"
 #include "EntityHandler.hpp"
-#include "CollisionHandler.hpp"
 #include "NetworkHandler.hpp"
 #include "InputHandler.hpp"
 

@@ -287,20 +287,6 @@ void NetworkHandler::PollAllClientEvents()
                         // printf("Got float: %f\n", inputdata);
                         break;
                     }
-                    case NETWORK_TYPE_GAMESNAPSHOT:
-                    {
-                        printf("NETWORK_TYPE_GAMESNAPSHOT not implemented!\n");
-                        // GameSnapshot gs;
-                        // {
-                        //     // Encapsulate archive to make sure all content is flused
-                        //     cereal::PortableBinaryInputArchive inArchive(iss);
-                        //     inArchive(header, gs);
-                        // }
-
-                        // // TODO Handle the recived actions after the network loop?
-                        // _entities->HandleNetworkGameSnapshot(gs);
-                        break;
-                    }
                     case NETWORK_TYPE_UINT8:
                     {
                         uint8_t inputdata;
@@ -313,34 +299,34 @@ void NetworkHandler::PollAllClientEvents()
 
                         break;
                     }
-                    case NETWORK_TYPE_PLAYER:
-                    {
-                        // Update player with matching ID
-                        Player p;
-                        {
-                            // Encapsulate archive to make sure all content is flused
-                            cereal::PortableBinaryInputArchive inArchive(iss);
-                            inArchive(header, p);
-                        }
+                    // case NETWORK_TYPE_PLAYER:
+                    // {
+                    //     // Update player with matching ID
+                    //     Player p;
+                    //     {
+                    //         // Encapsulate archive to make sure all content is flused
+                    //         cereal::PortableBinaryInputArchive inArchive(iss);
+                    //         inArchive(header, p);
+                    //     }
 
-                        // TODO Handle the recived actions after the network loop?
-                        _entities->HandleNetworkPlayerUpdate(p);
-                        break;
-                    }
-                    case NETWORK_TYPE_BULLET:
-                    {
-                        // Update bullet with matching ID
-                        Bullet b;
-                        {
-                            // Encapsulate archive to make sure all content is flused
-                            cereal::PortableBinaryInputArchive inArchive(iss);
-                            inArchive(header, b);
-                        }
+                    //     // TODO Handle the recived actions after the network loop?
+                    //     _entities->HandleNetworkPlayerUpdate(p);
+                    //     break;
+                    // }
+                    // case NETWORK_TYPE_BULLET:
+                    // {
+                    //     // Update bullet with matching ID
+                    //     Bullet b;
+                    //     {
+                    //         // Encapsulate archive to make sure all content is flused
+                    //         cereal::PortableBinaryInputArchive inArchive(iss);
+                    //         inArchive(header, b);
+                    //     }
 
-                        // TODO Handle the recived actions after the network loop?
-                        _entities->HandleNetworkBulletUpdate(b);
-                        break;
-                    }
+                    //     // TODO Handle the recived actions after the network loop?
+                    //     _entities->HandleNetworkBulletUpdate(b);
+                    //     break;
+                    // }
 
                     default:
                         break;
@@ -457,31 +443,31 @@ void NetworkHandler::C2SGameLoopActions(const GAMELOOP_ACTIONS &actions) const
     }
 }
 
-void NetworkHandler::S2CGameSnapshot(const GameSnapshot &gs) const
-{
-    for (auto &&player : gs.players)
-    {
-        uint8_t header = NETWORK_TYPE_PLAYER;
-        std::ostringstream oss(std::ios_base::out|std::ios::binary);
-        {
-            // Encapsulate archive to make sure all content is flused
-            cereal::PortableBinaryOutputArchive outArchive(oss);
-            outArchive(header, player); // Serialize
-        }
-        SendPacket(oss);
-    }
-    for (auto &&bullet : gs.bullets)
-    {
-        uint8_t header = NETWORK_TYPE_BULLET;
-        std::ostringstream oss(std::ios_base::out|std::ios::binary);
-        {
-            // Encapsulate archive to make sure all content is flused
-            cereal::PortableBinaryOutputArchive outArchive(oss);
-            outArchive(header, bullet); // Serialize
-        }
-        SendPacket(oss);
-    }
-}
+// void NetworkHandler::S2CGameSnapshot(const GameSnapshot &gs) const
+// {
+//     for (auto &&player : gs.players)
+//     {
+//         uint8_t header = NETWORK_TYPE_PLAYER;
+//         std::ostringstream oss(std::ios_base::out|std::ios::binary);
+//         {
+//             // Encapsulate archive to make sure all content is flused
+//             cereal::PortableBinaryOutputArchive outArchive(oss);
+//             outArchive(header, player); // Serialize
+//         }
+//         SendPacket(oss);
+//     }
+//     for (auto &&bullet : gs.bullets)
+//     {
+//         uint8_t header = NETWORK_TYPE_BULLET;
+//         std::ostringstream oss(std::ios_base::out|std::ios::binary);
+//         {
+//             // Encapsulate archive to make sure all content is flused
+//             cereal::PortableBinaryOutputArchive outArchive(oss);
+//             outArchive(header, bullet); // Serialize
+//         }
+//         SendPacket(oss);
+//     }
+// }
 
 void NetworkHandler::SendPacket(std::ostringstream &data) const
 {

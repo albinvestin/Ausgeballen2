@@ -1,12 +1,11 @@
 #include "../inc/GameObj.hpp"
 #include "../inc/Display.hpp"
-// #include "../inc/Player.hpp"
 #include "../inc/Vector2.hpp"
 #include "../inc/InputHandler.hpp"
 #include "../inc/EntityHandler.hpp"
 #include "../inc/Constants.hpp"
-#include "../inc/CollisionHandler.hpp"
 #include "../inc/NetworkHandler.hpp"
+#include <cmath>
 #if defined(__APPLE__) || defined(__linux__)
 #include <SDL2/SDL.h>
 #else
@@ -253,17 +252,10 @@ GAMELOOP_OUTPUT GameObj::GameLoop(const uint64_t currentTime, uint64_t &lastUpda
         // Fixed time update
         lastUpdateTime += GAME_UPDATE_TIME;
 
-        // Move all objects
-        // _entityHandler.MoveAllObjects();
         SMovement();
-
-        // Handle actions
         SPlayerActions();
-        // _entityHandler.HandlePlayerActions(actions);
-
-        // Handle collisions
         SCollisions();
-        // _collisionHandler.HandleCollisons(_entityHandler);
+        // TODO Score checker system
 
         // Check if anyone has won
         // TODO: Handle the sorting and stuff somewhere else!?
