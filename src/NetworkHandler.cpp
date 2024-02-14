@@ -429,18 +429,19 @@ void NetworkHandler::C2SShoot(uint8_t playerIndex) const
     SendPacket(oss);
 }
 
-void NetworkHandler::C2SGameLoopActions(const GAMELOOP_ACTIONS &actions) const
+void NetworkHandler::C2SGameLoopActions() const
 {
-    if (actions.PlayersShooting > 0)
-    {
-        for (uint8_t playerIndex = 0; playerIndex < MAX_PLAYERS; playerIndex++)
-        {
-            if (1 & (actions.PlayersShooting >> playerIndex))
-            {
-                C2SShoot(playerIndex + 1);
-            }
-        }
-    }
+    puts("Not ImplementedC2SGameLoopActions ");
+    // if (actions.PlayersShooting > 0)
+    // {
+    //     for (uint8_t playerIndex = 0; playerIndex < MAX_PLAYERS; playerIndex++)
+    //     {
+    //         if (1 & (actions.PlayersShooting >> playerIndex))
+    //         {
+    //             C2SShoot(playerIndex + 1);
+    //         }
+    //     }
+    // }
 }
 
 // void NetworkHandler::S2CGameSnapshot(const GameSnapshot &gs) const

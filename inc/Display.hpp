@@ -68,10 +68,10 @@ private:
 public:
     Display();
     ~Display();
-    bool init();
-    bool LoadFromFile(Texture *const texture, std::string relPath); // Help function for loadTextures
-    bool loadTextures();
-    void close();
+    bool Init();
+    bool LoadFromFile(Texture *const texture, std::string relPath); // Help function for LoadTextures
+    bool LoadTextures();
+    void Close();
     void RenderAll(EntityManager const& entityManager) const;
     void RenderBackground() const;
     void RenderMainMenu() const;

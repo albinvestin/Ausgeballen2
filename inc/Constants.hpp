@@ -79,12 +79,7 @@ enum NETWORK_MODES {
     NETWORK_MODE_CLIENT,
     NETWORK_MODE_LOCAL
 };
-struct GAMELOOP_ACTIONS {
-    uint16_t PlayersShooting = 0; // each bit represents one player, starting with index 0 (lowest significance) = player 1, index 1 = player 2 etc.
-};
-struct GAMELOOP_OUTPUT {
-    uint8_t playerWon = false;
-};
+
 const uint8_t PLAYER_COLORS[MAX_PLAYERS][3] = {
     {0, 0, 255},
     {255, 0, 0},

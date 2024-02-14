@@ -37,7 +37,7 @@ public:
     bool Join();
     void Disconnect();
     void C2SShoot(uint8_t playerIndex) const;
-    void C2SGameLoopActions(const GAMELOOP_ACTIONS &actions) const;
+    void C2SGameLoopActions() const;
 };
 
 #endif /* NETWORKHANDLER_HPP */

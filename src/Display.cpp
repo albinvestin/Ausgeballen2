@@ -22,7 +22,7 @@ Display::~Display()
 {
 }
 
-bool Display::init()
+bool Display::Init()
 {
     //Initialize SDL
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
@@ -84,7 +84,7 @@ bool Display::LoadFromFile(Texture* const texture, std::string relPath)
     return true;
 }
 
-bool Display::loadTextures()
+bool Display::LoadTextures()
 {
     //Loading success flag
     bool success = true;
@@ -97,7 +97,7 @@ bool Display::loadTextures()
     return success;
 }
 
-void Display::close()
+void Display::Close()
 {
     _ballTexture.Free();
     _bulletTexture.Free();

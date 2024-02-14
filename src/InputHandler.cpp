@@ -8,6 +8,8 @@
 #include <vector>
 #include <algorithm>
 
+#include <stdio.h>
+
 InputHandler::InputHandler()
 {
 }
@@ -49,7 +51,6 @@ void InputHandler::EventHandler(INPUT_FLAGS &inputs)
             inputs.NUMBER5 =        _event.key.keysym.sym == SDLK_5;
         }
     }
-
     // Handle continuous press
     // const uint8_t* keystates = SDL_GetKeyboardState(NULL);
     // // Uses SCANCODE for key codes.

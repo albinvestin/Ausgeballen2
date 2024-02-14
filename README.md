@@ -42,7 +42,9 @@ TODO:
 - [] Add music
 - [] Add sound effects
 - [] Add particles
-- [WIP] Change to ECS?
+- [x] Change to ECS?
+    - [] Fix shooting not responing sporadically
+    - [] Fix multiplayer
 
 References:
 https://floating-point-gui.de/errors/comparison/

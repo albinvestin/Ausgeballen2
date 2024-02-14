@@ -1,8 +1,8 @@
-#include "../inc/GameObj.hpp"
+#include "../inc/MainMenuScene.hpp"
 
 int main(int argc, char* args[])
 {
-    GameObj game{};
+    MainMenuScene game{};
     game.Start();
     return 0;
 }
